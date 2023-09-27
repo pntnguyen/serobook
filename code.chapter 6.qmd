@@ -1,0 +1,101 @@
+---
+title: "code chapter6"
+format: html
+editor: visual
+echo: true
+---
+
+6.1.1: Polynomial Models 
+
+## Import dataset
+
+```{r}
+library(haven)
+a <- read.table("/home/thinh/Documents/serobook/HAV-BUL.dat")
+a <- data.frame(a)
+names(a) <- a[1,]
+a <- a[-1,]
+a$Tot <- as.numeric(a$Tot)
+a$Pos <- as.numeric(a$Pos)
+a$Age <- as.numeric(a$Age)
+head(a)
+```
+
+## Type 1: Function based on name of author
+
+```{r,message= FALSE}
+library(tidyverse)
+```
+
+```{r}
+## function of formula
+model <- function(a) {
+  x <- case_when(
+    a == "Muench" ~ "cbind(Tot-Pos,Pos) ~ -1+Age",
+    a == "Griffith" ~ "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)",
+    a == "Grenfell" ~ "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)+I(Age^3)"
+  )
+  return(print(as.character(x)))
+}
+model("Muench")
+model("Griffith")
+model("Grenfell")
+```
+
+Function for using glm to estimate Force of infection
+
+```{r,message= FALSE}
+library(glm2)
+```
+
+```{r}
+foi <- function(data,type){
+  model1 <- glm2(model(type), family=binomial(link="log"),data)
+  return(summary(model1))
+}
+foi(a, type = "Muench")
+foi(a, type = "Griffith")
+foi(a, type = "Grenfell")
+```
+
+## Type 2: function based on lambda(a)
+
+```{r,message= FALSE}
+library(stringr)
+```
+
+```{r}
+## function to generate lambda(a) formula
+age <- function(b) {
+  result <- ""
+  for (i in 1:b) {
+    if( i-1 > 1) {
+      result <- paste0(result,"+", "I", "(", "Age", "^", i-1,")","+")
+    }
+  }
+  k <- str_sub(result,1,-2)
+  return(print(paste0("cbind(Tot-Pos,Pos)"," ~","-1+Age", k)))
+}
+
+for (z in 1:10) {
+  age(z)
+}
+```
+
+Function for using glm to estimate Force of infection
+
+```{r}
+foi2 <- function(data,i){
+  model1 <- glm2(age(i), family=binomial(link="log"),data)
+  return(summary(model1))
+}
+foi2(a,2)
+foi2(a,3)
+foi2(a,4)
+```
+
+
+
+
+
+
