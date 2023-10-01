@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>code chapter6</title>
+<title>Code chapter 6</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,7 +108,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">code chapter6</h1>
+<h1 class="title">Code chapter 6</h1>
 </div>
 
 
@@ -127,124 +127,78 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="import-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="import-dataset">Import dataset</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"/home/thinh/Documents/serobook/HAV-BUL.dat"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(a)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(a) <span class="ot">&lt;-</span> a[<span class="dv">1</span>,]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a[<span class="sc">-</span><span class="dv">1</span>,]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>Tot <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(a<span class="sc">$</span>Tot)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(a<span class="sc">$</span>Pos)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(a<span class="sc">$</span>Age)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Age Pos Tot
-2   1   3  16
-3   2   3  15
-4   3   3  16
-5   4   4  13
-6   5   7  12
-7   6   4  15</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"serosv"</span>,<span class="st">"tidyverse"</span>,<span class="st">"glm2"</span>, <span class="st">"glm2"</span>,<span class="st">"stringr"</span>,<span class="st">"testthat"</span>,<span class="st">"bench"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(packages, library, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(serosv)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> hav_bg_1964</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>a<span class="sc">$</span>neg <span class="ot">&lt;-</span> a<span class="sc">$</span>tot <span class="sc">-</span>a<span class="sc">$</span>pos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="type-1-function-based-on-name-of-author" class="level2">
-<h2 class="anchored" data-anchor-id="type-1-function-based-on-name-of-author">Type 1: Function based on name of author</h2>
+<section id="another-dataframe-vietnamese" class="level2">
+<h2 class="anchored" data-anchor-id="another-dataframe-vietnamese">Another dataframe (Vietnamese)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> a[]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> a1 <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="st">"duong"</span> <span class="ot">=</span> <span class="st">"pos"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"am"</span> <span class="ot">=</span> <span class="st">"neg"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"tuoi"</span> <span class="ot">=</span> <span class="st">"age"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="function-using-polynomial-to-estimate-foi" class="level2">
+<h2 class="anchored" data-anchor-id="function-using-polynomial-to-estimate-foi">Function using polynomial to estimate FOI</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="code-using-paste-function" class="level2">
+<h2 class="anchored" data-anchor-id="code-using-paste-function">Code using “paste” function</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## function of formula</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="cf">function</span>(a) {</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    a <span class="sc">==</span> <span class="st">"Muench"</span> <span class="sc">~</span> <span class="st">"cbind(Tot-Pos,Pos) ~ -1+Age"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    a <span class="sc">==</span> <span class="st">"Griffith"</span> <span class="sc">~</span> <span class="st">"cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    a <span class="sc">==</span> <span class="st">"Grenfell"</span> <span class="sc">~</span> <span class="st">"cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)+I(Age^3)"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">as.character</span>(x)))</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span>(<span class="st">"Muench"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~ -1+Age"</code></pre>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>foi_poly <span class="ot">&lt;-</span> <span class="cf">function</span>(age,positive,negative,k,type){</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  Age <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(age) </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  Pos <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(positive)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  Neg <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(negative)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">cbind</span>(Age, Pos,Neg))   </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">missing</span>(k)){                         </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Muench"</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Griffith"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Grenfell"</span> <span class="sc">~</span> <span class="dv">3</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="cf">function</span>(k){</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      formula<span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"I"</span>,<span class="st">"("</span>,<span class="fu">paste</span>(<span class="st">"Age"</span>, <span class="dv">2</span><span class="sc">:</span>k,<span class="at">sep =</span> <span class="st">"^"</span>),<span class="st">")"</span>,<span class="at">collapse =</span> <span class="st">"+"</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>,formula))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="cf">function</span>(k){</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    formula<span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"I"</span>,<span class="st">"("</span>,<span class="fu">paste</span>(<span class="st">"Age"</span>, <span class="dv">2</span><span class="sc">:</span>k,<span class="at">sep =</span> <span class="st">"^"</span>),<span class="st">")"</span>,<span class="at">collapse =</span> <span class="st">"+"</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>,formula))</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  model1 <span class="ot">&lt;-</span> <span class="fu">glm2</span>(<span class="fu">age</span>(k), <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),df)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">summary</span>(model1))</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span>(<span class="st">"Griffith"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span>(<span class="st">"Grenfell"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)+I(Age^3)"</code></pre>
-</div>
-</div>
-<p>Function for using glm to estimate Force of infection</p>
+</section>
+<section id="có-thể-extract-data-từ-nhiều-table-khác-nhau-chỉ-cần-thống-nhất-về-số-dòng" class="level1">
+<h1>Có thể extract data từ nhiều table khác nhau , chỉ cần thống nhất về số dòng</h1>
+<section id="using-k" class="level2">
+<h2 class="anchored" data-anchor-id="using-k">Using k</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>foi <span class="ot">&lt;-</span> <span class="cf">function</span>(data,type){</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  model1 <span class="ot">&lt;-</span> <span class="fu">glm2</span>(<span class="fu">model</span>(type), <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),data)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">summary</span>(model1))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">foi</span>(a, <span class="at">type =</span> <span class="st">"Muench"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi_poly</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~ -1+Age"
-[1] "cbind(Tot-Pos,Pos) ~ -1+Age"</code></pre>
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-glm2(formula = model(type), family = binomial(link = "log"), 
-    data = data)
-
-Coefficients:
-     Estimate Std. Error z value Pr(&gt;|z|)    
-Age -0.050500   0.002457  -20.55   &lt;2e-16 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance:    Inf  on 83  degrees of freedom
-Residual deviance: 97.275  on 82  degrees of freedom
-AIC: 219.19
-
-Number of Fisher Scoring iterations: 5</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi</span>(a, <span class="at">type =</span> <span class="st">"Griffith"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)"
-[1] "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-glm2(formula = model(type), family = binomial(link = "log"), 
-    data = data)
-
-Coefficients:
-           Estimate Std. Error z value Pr(&gt;|z|)    
-Age      -0.0442616  0.0053697  -8.243   &lt;2e-16 ***
-I(Age^2) -0.0001889  0.0001491  -1.266    0.205    
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance:    Inf  on 83  degrees of freedom
-Residual deviance: 95.445  on 81  degrees of freedom
-AIC: 219.36
-
-Number of Fisher Scoring iterations: 6</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi</span>(a, <span class="at">type =</span> <span class="st">"Grenfell"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)+I(Age^3)"
-[1] "cbind(Tot-Pos,Pos) ~ -1+Age+I(Age^2)+I(Age^3)"</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-Call:
-glm2(formula = model(type), family = binomial(link = "log"), 
-    data = data)
+glm2(formula = age(k), family = binomial(link = "log"), data = df)
 
 Coefficients:
            Estimate Std. Error z value Pr(&gt;|z|)    
@@ -264,55 +218,47 @@ Number of Fisher Scoring iterations: 8</code></pre>
 </div>
 </div>
 </section>
-<section id="type-2-function-based-on-lambdaa" class="level2">
-<h2 class="anchored" data-anchor-id="type-2-function-based-on-lambdaa">Type 2: function based on lambda(a)</h2>
+</section>
+<section id="code-in-the-book" class="level1">
+<h1>code in the book</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">## function to generate lambda(a) formula</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>age <span class="ot">&lt;-</span> <span class="cf">function</span>(b) {</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="st">""</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>b) {</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>( i<span class="dv">-1</span> <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>      result <span class="ot">&lt;-</span> <span class="fu">paste0</span>(result,<span class="st">"+"</span>, <span class="st">"I"</span>, <span class="st">"("</span>, <span class="st">"Age"</span>, <span class="st">"^"</span>, i<span class="dv">-1</span>,<span class="st">")"</span>,<span class="st">"+"</span>)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">str_sub</span>(result,<span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>)</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Tot-Pos,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>, k)))</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (z <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) {</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">age</span>(z)</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model4<span class="ot">=</span><span class="fu">glm</span>(<span class="fu">cbind</span>(tot<span class="sc">-</span>pos,pos)<span class="sc">~-</span><span class="dv">1</span><span class="sc">+</span>age<span class="sc">+</span><span class="fu">I</span>(age<span class="sc">^</span><span class="dv">2</span>)<span class="sc">+</span><span class="fu">I</span>(age<span class="sc">^</span><span class="dv">3</span>),<span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),a)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~-1+Age"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)++I(Age^4)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)++I(Age^4)++I(Age^5)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)++I(Age^4)++I(Age^5)++I(Age^6)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)++I(Age^4)++I(Age^5)++I(Age^6)++I(Age^7)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)++I(Age^4)++I(Age^5)++I(Age^6)++I(Age^7)++I(Age^8)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)++I(Age^4)++I(Age^5)++I(Age^6)++I(Age^7)++I(Age^8)++I(Age^9)"</code></pre>
+<pre><code>
+Call:
+glm(formula = cbind(tot - pos, pos) ~ -1 + age + I(age^2) + I(age^3), 
+    family = binomial(link = "log"), data = a)
+
+Coefficients:
+           Estimate Std. Error z value Pr(&gt;|z|)    
+age      -5.326e-02  1.032e-02  -5.159 2.49e-07 ***
+I(age^2)  5.065e-04  6.508e-04   0.778    0.436    
+I(age^3) -1.019e-05  9.149e-06  -1.114    0.265    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance:    Inf  on 83  degrees of freedom
+Residual deviance: 93.797  on 80  degrees of freedom
+AIC: 219.72
+
+Number of Fisher Scoring iterations: 8</code></pre>
 </div>
 </div>
-<p>Function for using glm to estimate Force of infection</p>
+<section id="using-type" class="level2">
+<h2 class="anchored" data-anchor-id="using-type">Using type</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>foi2 <span class="ot">&lt;-</span> <span class="cf">function</span>(data,i){</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  model1 <span class="ot">&lt;-</span> <span class="fu">glm2</span>(<span class="fu">age</span>(i), <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),data)</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">summary</span>(model1))</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">foi2</span>(a,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi_poly</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">type =</span> <span class="st">"Muench"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~-1+Age"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age"</code></pre>
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age"
+[1] "cbind(Neg,Pos) ~-1+Age"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-glm2(formula = age(i), family = binomial(link = "log"), data = data)
+glm2(formula = age(k), family = binomial(link = "log"), data = df)
 
 Coefficients:
      Estimate Std. Error z value Pr(&gt;|z|)    
@@ -328,40 +274,132 @@ AIC: 219.19
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi2</span>(a,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)"</code></pre>
 </div>
+</section>
+</section>
+<section id="code-in-the-book-1" class="level1">
+<h1>code in the book</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>model1<span class="ot">=</span><span class="fu">glm</span>(<span class="fu">cbind</span>(tot<span class="sc">-</span>pos,pos)<span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span><span class="sc">+</span>age,<span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),a)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-glm2(formula = age(i), family = binomial(link = "log"), data = data)
+glm(formula = cbind(tot - pos, pos) ~ -1 + age, family = binomial(link = "log"), 
+    data = a)
 
 Coefficients:
-           Estimate Std. Error z value Pr(&gt;|z|)    
-Age      -0.0442616  0.0053697  -8.243   &lt;2e-16 ***
-I(Age^2) -0.0001889  0.0001491  -1.266    0.205    
+     Estimate Std. Error z value Pr(&gt;|z|)    
+age -0.050500   0.002457  -20.55   &lt;2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
     Null deviance:    Inf  on 83  degrees of freedom
-Residual deviance: 95.445  on 81  degrees of freedom
-AIC: 219.36
+Residual deviance: 97.275  on 82  degrees of freedom
+AIC: 219.19
 
-Number of Fisher Scoring iterations: 6</code></pre>
+Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi2</span>(a,<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="code-using-for-loop" class="level2">
+<h2 class="anchored" data-anchor-id="code-using-for-loop">Code using “for loop”</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>foi_poly1 <span class="ot">&lt;-</span> <span class="cf">function</span>(age,positive,negative,k,type){</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  Age <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(age) </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  Pos <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(positive)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  Neg <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(negative)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">cbind</span>(Age, Pos,Neg))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">missing</span>(k)){</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    k <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      type <span class="sc">==</span> <span class="st">"Muench"</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      type <span class="sc">==</span> <span class="st">"Griffith"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      type <span class="sc">==</span> <span class="st">"Grenfell"</span> <span class="sc">~</span> <span class="dv">3</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    age <span class="ot">&lt;-</span> <span class="cf">function</span>(k) {</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>      result <span class="ot">&lt;-</span> <span class="st">""</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k) {</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>( i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>          result <span class="ot">&lt;-</span> <span class="fu">paste0</span>(result, <span class="st">"I"</span>, <span class="st">"("</span>, <span class="st">"Age"</span>, <span class="st">"^"</span>, i,<span class="st">")"</span>,<span class="st">"+"</span>)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>      k <span class="ot">&lt;-</span> <span class="fu">str_sub</span>(result,<span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>, k)))</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>     } <span class="cf">else</span> {</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    age <span class="ot">&lt;-</span> <span class="cf">function</span>(k) {</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>        result <span class="ot">&lt;-</span> <span class="st">""</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>k) {</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>( i <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>            result <span class="ot">&lt;-</span> <span class="fu">paste0</span>(result, <span class="st">"I"</span>, <span class="st">"("</span>, <span class="st">"Age"</span>, <span class="st">"^"</span>, i,<span class="st">")"</span>,<span class="st">"+"</span>)</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>        k <span class="ot">&lt;-</span> <span class="fu">str_sub</span>(result,<span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>)</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(<span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>, k)))</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>  model1 <span class="ot">&lt;-</span> <span class="fu">glm2</span>(<span class="fu">age</span>(k), <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),df)</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">summary</span>(model1))</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="using-k-1" class="level2">
+<h2 class="anchored" data-anchor-id="using-k-1">Using k</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi_poly1</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)"
-[1] "cbind(Tot-Pos,Pos) ~-1+Age+I(Age^2)++I(Age^3)"</code></pre>
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)+I(Age^5)+I(Age^6)+I(Age^7)+I(Age^8)+I(Age^9)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)+I(Age^5)+I(Age^6)+I(Age^7)+I(Age^8)+I(Age^9)"</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
-glm2(formula = age(i), family = binomial(link = "log"), data = data)
+glm2(formula = age(k), family = binomial(link = "log"), data = df)
+
+Coefficients:
+           Estimate Std. Error z value Pr(&gt;|z|)  
+Age      -1.125e-01  8.127e-02  -1.384   0.1664  
+I(Age^2) -1.625e-02  3.331e-02  -0.488   0.6257  
+I(Age^3)  6.353e-03  5.130e-03   1.238   0.2156  
+I(Age^4) -6.474e-04  3.935e-04  -1.645   0.1000 .
+I(Age^5)  3.140e-05  1.681e-05   1.868   0.0617 .
+I(Age^6) -8.316e-07  4.170e-07  -1.994   0.0461 *
+I(Age^7)  1.229e-08  5.952e-09   2.065   0.0389 *
+I(Age^8) -9.503e-11  4.519e-11  -2.103   0.0355 *
+I(Age^9)  2.987e-13  1.410e-13   2.119   0.0341 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance:    Inf  on 83  degrees of freedom
+Residual deviance: 65.259  on 74  degrees of freedom
+AIC: 203.18
+
+Number of Fisher Scoring iterations: 10</code></pre>
+</div>
+</div>
+</section>
+<section id="using-type-1" class="level2">
+<h2 class="anchored" data-anchor-id="using-type-1">Using type</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi_poly1</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">type =</span> <span class="st">"Grenfell"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm2(formula = age(k), family = binomial(link = "log"), data = df)
 
 Coefficients:
            Estimate Std. Error z value Pr(&gt;|z|)    
@@ -380,6 +418,177 @@ AIC: 219.72
 Number of Fisher Scoring iterations: 8</code></pre>
 </div>
 </div>
+</section>
+<section id="test-2-function-paste-and-for-loop" class="level2">
+<h2 class="anchored" data-anchor-id="test-2-function-paste-and-for-loop">test 2 function ( paste and for loop)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"check two function of foi"</span>,{</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(<span class="fu">foi_poly</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">4</span>),<span class="fu">foi_poly1</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">4</span>))</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"
+Test passed 🎉</code></pre>
+</div>
+</div>
+</section>
+<section id="compare-speed-between-2-function" class="level2">
+<h2 class="anchored" data-anchor-id="compare-speed-between-2-function">Compare speed between 2 function</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">mark</span>(<span class="fu">foi_poly</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">20</span>),</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">foi_poly1</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  expression                             min median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt;                          &lt;bch:&gt; &lt;bch:&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 foi_poly(a$age, a$pos, a1$am, k = … 8.66ms 9.13ms      106.     1.9MB     9.01
+2 foi_poly1(a$age, a$pos, a1$am, k =… 8.98ms 9.22ms      108.     1.9MB     6.47</code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-between-glm-and-glm2" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-between-glm-and-glm2">Comparing between glm and glm2</h2>
+<p>Using paste is faster than for loop, so use paste to build function</p>
+</section>
+<section id="foi-using-glm2" class="level2">
+<h2 class="anchored" data-anchor-id="foi-using-glm2">FOI using glm2</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>foi_glm2 <span class="ot">&lt;-</span> <span class="cf">function</span>(age,positive,negative,k,type){</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  Age <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(age) </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  Pos <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(positive)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  Neg <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(negative)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">cbind</span>(Age, Pos,Neg))   </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">missing</span>(k)){                         </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Muench"</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Griffith"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Grenfell"</span> <span class="sc">~</span> <span class="dv">3</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="cf">function</span>(k){</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>      formula<span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"I"</span>,<span class="st">"("</span>,<span class="fu">paste</span>(<span class="st">"Age"</span>, <span class="dv">2</span><span class="sc">:</span>k,<span class="at">sep =</span> <span class="st">"^"</span>),<span class="st">")"</span>,<span class="at">collapse =</span> <span class="st">"+"</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>,formula))</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="cf">function</span>(k){</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    formula<span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"I"</span>,<span class="st">"("</span>,<span class="fu">paste</span>(<span class="st">"Age"</span>, <span class="dv">2</span><span class="sc">:</span>k,<span class="at">sep =</span> <span class="st">"^"</span>),<span class="st">")"</span>,<span class="at">collapse =</span> <span class="st">"+"</span>)</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>,formula))</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>  model1 <span class="ot">&lt;-</span> <span class="fu">glm2</span>(<span class="fu">age</span>(k), <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),df)</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">summary</span>(model1))</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="foi-using-glm" class="level2">
+<h2 class="anchored" data-anchor-id="foi-using-glm">FOI using glm</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>foi_glm <span class="ot">&lt;-</span> <span class="cf">function</span>(age,positive,negative,k,type){</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  Age <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(age) </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  Pos <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(positive)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  Neg <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(negative)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">cbind</span>(Age, Pos,Neg))   </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">missing</span>(k)){                         </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">case_when</span>(</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Muench"</span> <span class="sc">~</span> <span class="dv">1</span> ,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Griffith"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    type <span class="sc">==</span> <span class="st">"Grenfell"</span> <span class="sc">~</span> <span class="dv">3</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="cf">function</span>(k){</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>      formula<span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"I"</span>,<span class="st">"("</span>,<span class="fu">paste</span>(<span class="st">"Age"</span>, <span class="dv">2</span><span class="sc">:</span>k,<span class="at">sep =</span> <span class="st">"^"</span>),<span class="st">")"</span>,<span class="at">collapse =</span> <span class="st">"+"</span>)</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>,formula))</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  age <span class="ot">&lt;-</span> <span class="cf">function</span>(k){</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(k<span class="sc">&gt;</span><span class="dv">1</span>){</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    formula<span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"I"</span>,<span class="st">"("</span>,<span class="fu">paste</span>(<span class="st">"Age"</span>, <span class="dv">2</span><span class="sc">:</span>k,<span class="at">sep =</span> <span class="st">"^"</span>),<span class="st">")"</span>,<span class="at">collapse =</span> <span class="st">"+"</span>)</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age+"</span>,formula))</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"cbind(Neg,Pos)"</span>,<span class="st">" ~"</span>,<span class="st">"-1+Age"</span>))</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>  model1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">age</span>(k), <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">"log"</span>),df)</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">summary</span>(model1))</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi_glm2</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm2(formula = age(k), family = binomial(link = "log"), data = df)
+
+Coefficients:
+           Estimate Std. Error z value Pr(&gt;|z|)    
+Age      -7.609e-02  1.546e-02  -4.922 8.58e-07 ***
+I(Age^2)  3.367e-03  1.418e-03   2.374  0.01759 *  
+I(Age^3) -1.012e-04  3.830e-05  -2.642  0.00825 ** 
+I(Age^4)  7.988e-07  3.007e-07   2.657  0.00789 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance:    Inf  on 83  degrees of freedom
+Residual deviance: 87.133  on 79  degrees of freedom
+AIC: 215.05
+
+Number of Fisher Scoring iterations: 7</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foi_glm</span>(a<span class="sc">$</span>age,a<span class="sc">$</span>pos,a1<span class="sc">$</span>am, <span class="at">k =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"
+[1] "cbind(Neg,Pos) ~-1+Age+I(Age^2)+I(Age^3)+I(Age^4)"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = age(k), family = binomial(link = "log"), data = df)
+
+Coefficients:
+           Estimate Std. Error z value Pr(&gt;|z|)    
+Age      -7.609e-02  1.546e-02  -4.922 8.58e-07 ***
+I(Age^2)  3.367e-03  1.418e-03   2.374  0.01759 *  
+I(Age^3) -1.012e-04  3.830e-05  -2.642  0.00825 ** 
+I(Age^4)  7.988e-07  3.007e-07   2.657  0.00789 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance:    Inf  on 83  degrees of freedom
+Residual deviance: 87.133  on 79  degrees of freedom
+AIC: 215.05
+
+Number of Fisher Scoring iterations: 7</code></pre>
+</div>
+</div>
+</section>
+<section id="test-2-function-glm-and-glm2" class="level2">
+<h2 class="anchored" data-anchor-id="test-2-function-glm-and-glm2">test 2 function ( glm and glm2)</h2>
+<p>Không test được vì hiện dòng này</p>
+<pre><code> "Component \"call\": target, current do not match when deparsed"</code></pre>
+<p>em có search thử thì nghĩ là do mình dùng glm với glm2 giống y chang nhau nên test that không test</p>
+</section>
 </section>
 
 </main>
