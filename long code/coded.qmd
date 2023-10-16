@@ -1,0 +1,785 @@
+---
+title: "Tổng hợp code Long đã code"
+format: html
+editor: visual
+echo: true
+---
+
+## Chapter 3.5.1
+
+**Code in the book**
+
+```{r,message= FALSE,results='hide'}
+library(testthat)
+library(deSolve)
+library(serosv)
+```
+
+```{r}
+SIRtwo=function(t,state,parameters)
+{
+with(as.list(c(state, parameters)),
+{
+ds1 = -(betatilde11*i1+betatilde12*i2)*s1+mu-mu*s1
+di1 = (betatilde11*i1+betatilde12*i2)*s1-nu1*i1-mu*I1
+dr1 = nu1*i1 - mu*r1
+ds2 = -(betatilde21*i1+betatilde22*i2)*s2+mu-mu*s2
+di2 = (betatilde21*i1+betatilde22*i2)*s2-nu2*i2-mu*i2
+dr2 = nu2*i2-mu*r2
+list(c(ds1,di1,dr1,ds2,di2,dr2))
+})
+}
+```
+
+**Long's function**
+
+```{r}
+ds <- function(state, parameters, i)
+{
+  with(as.list(c(state, parameters)), {
+    sum_beta_i <- 0
+    for (j in 1:k) {
+      sum_beta_i <- sum_beta_i + beta[i,j]*get(paste0("i", j))
+    }
+    -sum_beta_i*get(paste0("s", i)) + mu - mu*get(paste0("s", i))
+  })
+}
+
+di <- function(state, parameters, i)
+{
+  with(as.list(c(state, parameters)), {
+    sum_beta_i <- 0
+    for (j in 1:k) {
+      sum_beta_i <- sum_beta_i + beta[i,j]*get(paste0("i", j))
+    }
+    sum_beta_i*get(paste0("s", i)) - nu[i]*get(paste0("i", i)) - mu*get(paste0("i", i))
+  })
+}
+
+dr <- function(state, parameters, i)
+{
+  with(as.list(c(state, parameters)), {
+    nu[i]*get(paste0("i", i)) - mu*get(paste0("r", i))
+  })
+}
+
+sir_subpop <- function(t, state, parameters) {
+  with(as.list(c(state, parameters)), {
+    s_states <- c()
+    i_states <- c()
+    r_states <- c()
+
+    for (i in 1:k) {
+      s_states <- c(s_states, ds(state, parameters, i))
+      i_states <- c(i_states, di(state, parameters, i))
+      r_states <- c(r_states, dr(state, parameters, i))
+    }
+
+    list(c(s_states, i_states, r_states))
+  })
+}
+```
+
+
+**Run function**
+
+```{r}
+k <- 2                
+state <- c(
+s = c(0.8, 0.8),
+i = c(0.2, 0.2),
+r = c(  0,   0)
+)
+
+beta_matrix <- c(
+ c(0.05, 0.00),
+ c(0.00, 0.05)
+ )
+parameters <- list(
+   beta = matrix(beta_matrix, nrow=k, ncol=k, byrow=TRUE),
+   nu = c(1/30, 1/30),
+   mu = 0.001,
+   k = k
+ )
+times<-seq(0,10000,by=0.5)
+model <- sir_subpop(times, state, parameters)
+
+sir_subpops_model <- function(times, state, parameters) {
+  as.data.frame(
+    ode(y=state,times=times,func=sir_subpop,parms=parameters)
+  )
+}
+
+out <- sir_subpops_model(times, state, parameters)
+out[out$time == "10000",]
+```
+
+**explain function**
+
+```{r}
+## sub population = 2 => k =2
+i = c(0.2, 0.2)
+beta_matrix <- c(
+ c(0.05, 0.00),
+ c(0.00, 0.05)
+ )
+beta = matrix(beta_matrix, nrow=2, ncol=2, byrow=TRUE)
+beta
+beta[1,1]
+paste0("i", 1)
+s_state <- c(ds(state, parameters, 1),ds(state, parameters, 2))
+s_state
+```
+
+**test function**
+
+```{r}
+test_that("sir_subpops_model returns expected results", {
+  expected <- list(
+    time=10000,
+    s1=0.6869925,
+    s2=0.6869925,
+    i1=0.009141676,
+    i2=0.009141676,
+    r1=0.3038659,
+    r2=0.3038659
+  )
+
+  k <- 2
+  state <- c(
+    s = c(0.8, 0.8),
+    i = c(0.2, 0.2),
+    r = c(  0,   0)
+  )
+  beta_matrix <- c(
+    c(0.05, 0.00),
+    c(0.00, 0.05)
+  )
+  parameters <- list(
+    beta = matrix(beta_matrix, nrow=k, ncol=k, byrow=TRUE),
+    nu = c(1/30, 1/30),
+    mu = 0.001,
+    k = k
+  )
+  times<-seq(0,10000,by=10)
+
+  output <- sir_subpops_model(times, state, parameters)
+  actual <- as.list(tail(output, 1))
+
+  expect_equal(actual, expected, tolerance = 0.000001)
+})
+```
+
+## Chapter 6.1.1
+
+Polynomial model
+
+```{r}
+X <- function(t, degree) {
+  X_matrix <- matrix(rep(1, length(t)), ncol = 1)
+  if (degree > 1) {
+    for (i in 2:degree) {
+      X_matrix <- cbind(X_matrix, i * t^(i-1))
+    }
+  }
+  -X_matrix
+}
+
+predictor <- function(degree) {
+  formula <- "cbind(tot-pos, pos)~-1"
+  for (i in 1:degree) {
+    formula <- paste0(formula, "+I(age^", i, ")")
+  }
+  formula
+}
+
+predictor(1)
+## trong sách là cbind(tot-pos, pos)~-1+age
+```
+
+```{r}
+polynomial_model <- function(age, pos, tot, deg=1) {
+  model <- list()
+  f <- predictor(deg)
+  model$info <- glm(
+    as.formula(f),
+    family=binomial(link="log")
+  )
+  X <- X(age, deg)
+  model$sp <- 1 - model$info$fitted.values
+  model$foi <- X%*%model$info$coefficients
+  model$df <- list(age=age, pos=pos, tot=tot)
+  class(model) <- "polynomial_model"
+  model
+}
+a <- hav_bg_1964
+polymodel <- polynomial_model(a$age,a$pos,a$tot, deg = 3)
+str(polymodel$info)
+```
+
+**fitted value: the fitted mean values, obtained by transforming the linear predictors by the inverse of the link function.**
+
+```{r}
+head(polymodel$info$fitted.values)
+head(polymodel$sp)
+```
+
+**ABOUT OPERATOR**
+
+The operator "%*%" is used for matrix multiplication satisfying the condition that the number of columns in the first matrix is equal to the number of rows in second.
+
+```{r}
+m <- matrix(1:8, nrow=2)
+n <- matrix(8:15, nrow=4)
+m
+n
+print(m %*% n)
+```
+
+This is how multiplication takes place: 
+
+````
+1*8+3*9+5*10+7*11 = 162      1*12+3*13+5*14+7*15=226
+2*8+4*9+6*10+8*11 = 200      2*12+4*13+6*14+8*15=280
+````
+
+**Estimate force of infection**
+
+![](hinh/1.png)
+
+```{r}
+polymodel$info$coefficients
+
+## X theo Grenfell
+head(X(a$age,3))
+```
+
+Calculation of FOI in Long's code
+
+````
+model$foi <- X%*%model$info$coefficients
+````
+```{r}
+head(polymodel$foi)
+```
+
+**function to plot polynomial**
+
+```{r}
+plot.polynomial_model <- function(x, ...) {
+  CEX_SCALER <- 4 # arbitrary number for better visual
+  
+  with(x$df, {
+    par(las=1,cex.axis=1,cex.lab=1,lwd=2,mgp=c(2, 0.5, 0),mar=c(4,4,4,3))
+    plot(
+      age,
+      pos/tot,
+      cex=CEX_SCALER*tot/max(tot),
+      xlab="age", ylab="seroprevalence",
+      xlim=c(0, max(age)), ylim=c(0,1)
+    )
+    lines(age, x$sp, lwd=2)
+    lines(age, x$foi, lwd=2, lty=2)
+    axis(side=4, at=round(seq(0.0, max(x$foi), length.out=3), 2))
+    mtext(side=4, "force of infection", las=3, line=2)
+  })
+}
+```
+
+
+::: {layout-ncol=2}
+
+```{r}
+plot.polynomial_model(polymodel)
+```
+
+![](hinh/2.png)
+
+:::
+
+**test polynomial function**
+```{r}
+library(stats4)
+
+test_that("polynomial_model returns same result as in the book (Muench)", {
+  expected <- c(-0.0505004)
+
+  df <- hav_bg_1964
+  model <- polynomial_model(
+    df$age, df$pos, df$tot,
+    deg=1
+    )
+  actual <- unname(c(
+    coef(model$info)[1]
+    ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+test_that("polynomial_model returns same result as in the book (Griffiths)", {
+  expected <- c(-0.0442615740, -0.0001888796)
+
+  df <- hav_bg_1964
+  model <- polynomial_model(
+    df$age, df$pos, df$tot,
+    deg=2
+  )
+  actual <- unname(c(
+    coef(model$info)[1],
+    coef(model$info)[2]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+
+test_that("polynomial_model returns same result as in the book (Grenfell & Anderson)", {
+  expected <- c(-5.325918e-02, 5.065095e-04, -1.018736e-05)
+
+  df <- hav_bg_1964
+  model <- polynomial_model(
+    df$age, df$pos, df$tot,
+    deg=3
+  )
+  actual <- unname(c(
+    coef(model$info)[1],
+    coef(model$info)[2],
+    coef(model$info)[3]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+```
+
+
+
+
+
+## 6.1.2 Nonlinear Models
+
+![](hinh/3.png)
+
+```{r}
+farrington_model <- function(age, pos, tot, start, fixed=list())
+{
+  farrington <- function(alpha,beta,gamma) {
+    p=1-exp((alpha/beta)*age*exp(-beta*age)
+            +(1/beta)*((alpha/beta)-gamma)*(exp(-beta*age)-1)-gamma*age)
+    ll=pos*log(p)+(tot-pos)*log(1-p)
+    return(-sum(ll))
+  }
+
+  model <- list()
+
+  model$info <- mle(farrington, fixed=fixed, start=start)
+  alpha <- model$info@coef[1]
+  beta  <- model$info@coef[2]
+  gamma <- model$info@coef[3]
+  model$sp <- 1-exp(
+    (alpha/beta)*age*exp(-beta*age)
+    +(1/beta)*((alpha/beta)-gamma)*(exp(-beta*age)-1)
+    -gamma*age)
+  model$foi <- (alpha*age-gamma)*exp(-beta*age)+gamma
+  model$df <- list(age=age, pos=pos, tot=tot)
+
+  class(model) <- "farrington_model"
+  model
+}
+```
+
+```{r,warning= FALSE,results='hide'}
+df <- rubella_uk_1986_1987
+model <- farrington_model(
+   df$age, df$pos, df$tot,
+   start=list(alpha=0.07,beta=0.1,gamma=0.03)
+   )
+```
+
+````
+Warning in log(p): NaNs produced
+
+Warning in log(p): NaNs produced
+
+Warning in log(p): NaNs produced
+
+Warning in log(p): NaNs produced
+````
+
+**Vì model ra kết quả như trên nên xử lí bằng suppressWarnings **
+
+```{r}
+model <- suppressWarnings(farrington_model(
+   df$age, df$pos, df$tot,
+   start=list(alpha=0.07,beta=0.1,gamma=0.03)
+   ))
+str(model$info)
+```
+
+**test function**
+
+```{r}
+test_that("farrington_model returns same result as in the book", {
+  expected <- c(
+    alpha=0.07034904,
+    beta=0.20243950,
+    gamma=0.03665599
+  )
+
+  df <- rubella_uk_1986_1987
+  model <- suppressWarnings(farrington_model(
+      df$age, df$pos, df$tot,
+      start=list(alpha=0.07,beta=0.1,gamma=0.03)
+    ))
+  actual <- c(
+    model$info@coef[1],
+    model$info@coef[2],
+    model$info@coef[3]
+    )
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+```
+
+## Weibull model
+
+::: {layout-ncol=2}
+
+![](hinh/4.png)
+
+![](hinh/5.png)
+
+:::
+
+```{r}
+weibull_model <- function(t, spos)
+{
+  model <- list()
+
+  model$info <- glm(
+    spos~log(t),
+    family=binomial(link="cloglog")
+    )
+  b0 <- coef(model$info)[1]
+  b1 <- coef(model$info)[2]
+  model$foi <- exp(b0)*b1*exp(log(t))^(b1-1)
+  model$sp <- 1-exp(-exp(b0)*t^b1)
+  model$df <- data.frame(t=t, spos=spos)
+
+  class(model) <- "weibull_model"
+  model
+}
+```
+
+**apply**
+
+```{r}
+df <- hcv_be_2006[order(hcv_be_2006$dur),]
+
+   model <- weibull_model(
+   t=df$dur,
+   spos=df$seropositive
+   )
+model$info$coefficients
+```
+
+![](hinh/6.png)
+**test Weibull model**
+
+```{r}
+test_that("weibull_model returns same result as in the book", {
+  expected_coefs <- c(-0.27596492, 0.38073667) # page 97
+  expected_beta_0_hat <- 0.759
+
+  df <- hcv_be_2006[order(hcv_be_2006$dur), ]
+  model <- weibull_model(
+    t=df$dur,
+    spos=df$seropositive
+  )
+  actual_coefs <- unname(c(
+    coef(model$info)[1], # intercept
+    coef(model$info)[2]
+  ))
+  actual_beta_0_hat <- exp(unname(coef(model$info)[1]))
+
+  expect_equal(actual_coefs, expected_coefs, tolerance=0.000001)
+  expect_equal(actual_beta_0_hat, expected_beta_0_hat, tolerance=0.001)
+})
+```
+
+## 6.2 Fractional Polynomial Models
+
+**How to use predict function**
+
+create dataframe
+
+```{r}
+df <- datasets::cars
+head(df)
+```
+
+create a linear model
+
+```{r}
+linear_model <- lm(dist~speed, data = df)
+linear_model
+```
+
+apply predict
+
+```{r}
+variable_speed <- data.frame(speed = c(11,11,12,12,12,12,13,13,13,13))
+predict(linear_model, newdata = variable_speed)
+```
+
+```{r}
+predict(linear_model)
+```
+
+```{r}
+diff(predict(linear_model))
+```
+
+```{r}
+sum(diff(predict(linear_model)) < 0) == 0 
+```
+
+
+**Long function**
+
+```{r}
+is_monotone <- function(model) {
+  (sum(diff(predict(model))<0)==0)
+}
+```
+
+```{r}
+formulate <- function(p) {
+  equation <- "cbind(pos,tot-pos)~"
+  prev_term <- ""
+
+  for (i in 1:length(p)) {
+    if (i > 1 && p[i] == p[i-1]) {
+      cur_term <- paste0("I(", prev_term, "*log(age))")
+    } else if (p[i] == 0) {
+      cur_term <- "log(age)"
+    } else {
+      cur_term <- paste0("I(age^", p[i], ")")
+    }
+    equation <- paste0(equation, "+", cur_term)
+    prev_term <- cur_term
+  }
+  equation
+}
+
+## power in the book
+formulate(c( -2 , -1, - 0.5, 0, 0.5, 1, 2,3))
+```
+
+**Function to find the best power value**
+
+```{r}
+find_best_fp_powers <- function(age, pos, tot, p, mc, degree, link="logit"){
+  glm_best <- NULL
+  d_best <- NULL
+  p_best <- NULL
+  #----
+  min_p <- 1
+  max_p <- length(p)
+  state <- rep(min_p, degree)
+  i <- degree
+  #----
+
+  get_cur_p <- function(cur_state) {
+    cur_p <- c()
+    for (i in 1:degree) {
+      cur_p <- c(cur_p, p[cur_state[i]])
+    }
+    cur_p
+  }
+
+  repeat {
+    if (
+      (i < degree && state[i] == max_p)
+      || (i == degree && state[i] == max_p+1)
+    ) {
+      if (i-1 == 0) break
+      if (state[i-1] < max_p) {
+        state[i-1] <- state[i-1]+1
+        for (j in i:degree) state[j] <- state[i-1]
+        i <- degree
+      } else {
+        i <- i-1
+        next
+      }
+    }
+    #------ iteration implementation -------
+    p_cur <- get_cur_p(state)
+
+    glm_cur <- glm(
+      as.formula(formulate(p_cur)),
+      family=binomial(link=link)
+    )
+    if (glm_cur$converged == TRUE) {
+      d_cur <- deviance(glm_cur)
+      if (is.null(glm_best) || d_cur < d_best) {
+        if ((mc && is_monotone(glm_cur)) | !mc) {
+          glm_best <- glm_cur
+          d_best <- d_cur
+          p_best <- p_cur
+        }
+      }
+    }
+    #---------------------------------------
+    if (sum(state != max_p) == 0) break
+    state[i] <- state[i]+1
+  }
+  return(list(p=p_best, deviance=d_best, model=glm_best))
+}
+
+```
+
+
+```{r}
+df <- hav_be_1993_1994
+   best_p <- suppressWarnings(find_best_fp_powers(
+   df$age, df$pos, df$tot,
+   p=seq(-2,3,0.1), mc=FALSE, degree=2, link="cloglog"
+  ))
+best_p
+```
+
+
+**explain function**
+
+```{r}
+# degree = 2
+state <- rep(1, 2)
+state
+p=seq(-2,3,0.1)
+#---
+"p[cur_state[i]]"
+state[1]
+p[1]
+p[state[1]]
+
+p_cur <- c(p[state[1]],p[state[2]])
+p_cur
+#---
+formulate(p_cur)
+class(formulate(p_cur))
+
+#---
+
+str(best_p$model)
+
+```
+
+**test function**
+
+```{r}
+test_that("find_best_fp_powers returns same result as in the book (non-monotone)", {
+  expected_p <- c(1.9, 2.0)
+
+  df <- hav_be_1993_1994
+  output <- suppressWarnings(find_best_fp_powers(
+    df$age, df$pos, df$tot,
+    p=seq(-2,3,0.1), mc=F, degree=2, link="logit"
+  ))
+
+  actual_p <- output$p
+
+  expect_equal(actual_p, expected_p)
+})
+
+test_that("find_best_fp_powers returns same result as in the book (monotone)", {
+  expected_p <- c(1.0, 1.6)
+
+  df <- hav_be_1993_1994
+  output <- suppressWarnings(find_best_fp_powers(
+    df$age, df$pos, df$tot,
+    p=seq(-2,3,0.1), mc=T, degree=2, link="logit"
+  ))
+
+  actual_p <- output$p
+
+  expect_equal(actual_p, expected_p)
+})
+```
+
+
+
+**fractional polynomial function**
+
+```{r}
+## ultis
+
+est_foi <- function(t, sp)
+{
+  dsp <- diff(sp)/diff(t)
+  foi <- approx(
+    (t[-1]+t[-length(t)])/2,
+    dsp,
+    t[c(-1,-length(t))]
+  )$y/(1-sp[c(-1,-length(t))])
+
+  foi
+}
+
+fp_model <- function(age, pos, tot, p, link="logit") {
+  model <- list()
+
+  model$info <- glm(
+    as.formula(formulate(p)),
+    family=binomial(link=link)
+  )
+  model$sp  <- model$info$fitted.values
+  model$foi <- est_foi(
+    t=age,
+    sp=model$info$fitted.values
+  )
+  model$df <- list(age=age, pos=pos, tot=tot)
+
+  class(model) <- "fp_model"
+  model
+}
+```
+
+**apply**
+
+```{r}
+df <- hav_be_1993_1994
+   model <- fp_model(
+   df$age, df$pos, df$tot,
+   p=c(1.5, 1.6), link="cloglog")
+   plot(model)
+   
+```
+
+**test function**
+
+```{r}
+test_that("fp_model returns same result as in the book (Hepatitis A (BG))", {
+  expected_coefs <- c(-1.09473686, 0.02622843, -0.01613128)
+  expected_D <- 77.748963
+
+  df <- hav_bg_1964
+  model <- fp_model(
+    df$age, df$pos, df$tot,
+    p=c(1.9, 2.0), link="logit"
+  )
+  actual_coefs <- unname(c(
+    coef(model$info)[1], # intercept
+    coef(model$info)[2],
+    coef(model$info)[3]
+  ))
+  actual_D <- model$info$deviance
+
+  expect_equal(actual_coefs, expected_coefs)
+  expect_equal(actual_D, expected_D)
+})
+```
+
+
+
+
+
