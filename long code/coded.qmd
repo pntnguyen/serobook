@@ -112,6 +112,37 @@ sir_subpops_model <- function(times, state, parameters) {
 
 out <- sir_subpops_model(times, state, parameters)
 out[out$time == "10000",]
+
+
+```
+
+
+```{r}
+SIRtwo=function(t,state,parameters)
+{
+with(as.list(c(state, parameters)),
+{
+ds1 = -(betatilde11*i1+betatilde12*i2)*s1+mu-mu*s1
+di1 = (betatilde11*i1+betatilde12*i2)*s1-nu1*i1-mu*i1
+dr1 = nu1*i1 - mu*r1
+ds2 = -(betatilde21*i1+betatilde22*i2)*s2+mu-mu*s2
+di2 = (betatilde21*i1+betatilde22*i2)*s2-nu2*i2-mu*i2
+dr2 = nu2*i2-mu*r2
+list(c(ds1,di1,dr1,ds2,di2,dr2))
+})
+}
+
+parameters=c(betatilde11=0.05,betatilde12=0,betatilde21=0,
+betatilde22=0.05,nu1=1/30,nu2=1/30,mu=0.001)
+state=c(s1=0.8,i1=0.2,r1=0,s2=0.8,i2=0.2,r2=0)
+times=seq(0,10000,by=0.01)
+
+out2 <- as.data.frame(
+  ode(y=state,times=times,func=SIRtwo,parms=parameters)
+)
+
+out2[out2$time == "10000",]
+
 ```
 
 **explain function**
