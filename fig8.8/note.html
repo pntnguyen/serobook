@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>note</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="note_files/libs/clipboard/clipboard.min.js"></script>
+<script src="note_files/libs/quarto-html/quarto.js"></script>
+<script src="note_files/libs/quarto-html/popper.min.js"></script>
+<script src="note_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="note_files/libs/quarto-html/anchor.min.js"></script>
+<link href="note_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="note_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="note_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="note_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="note_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">note</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"OUCRU-Modelling/serosv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(serosv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>rubella <span class="ot">&lt;-</span> rubella_uk_1986_1987</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rubella<span class="sc">$</span>neg <span class="ot">&lt;-</span> rubella<span class="sc">$</span>tot <span class="sc">-</span> rubella<span class="sc">$</span>pos</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> rubella<span class="sc">$</span>age</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> rubella<span class="sc">$</span>pos<span class="sc">/</span>rubella<span class="sc">$</span>tot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="farringtons-model-code-in-the-book" class="level2">
+<h2 class="anchored" data-anchor-id="farringtons-model-code-in-the-book">Farrington’s model code in the book</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Nonlinear 1</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>loglik1<span class="ot">&lt;-</span><span class="cf">function</span>(theta){</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>alpha<span class="ot">&lt;-</span><span class="fu">abs</span>(theta[<span class="dv">1</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">&lt;-</span><span class="fu">abs</span>(theta[<span class="dv">2</span>])</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>gamma<span class="ot">&lt;-</span><span class="fu">abs</span>(theta[<span class="dv">3</span>])</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>p<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">-</span><span class="fu">exp</span>((alpha<span class="sc">/</span>beta)<span class="sc">*</span>a<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>beta<span class="sc">*</span>a)<span class="sc">+</span><span class="dv">1</span><span class="sc">/</span>beta<span class="sc">*</span>(alpha<span class="sc">/</span>beta<span class="sc">-</span>gamma)<span class="sc">*</span>(<span class="fu">exp</span>(<span class="sc">-</span>beta<span class="sc">*</span>a)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">-</span>gamma<span class="sc">*</span>a)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(<span class="sc">-</span><span class="fu">sum</span>(y<span class="sc">*</span><span class="fu">log</span>(p)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">-</span>y)<span class="sc">*</span>(<span class="fu">log</span>(<span class="dv">1</span><span class="sc">-</span>p))))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>result<span class="ot">&lt;-</span><span class="fu">abs</span>(<span class="fu">nlminb</span>(<span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>),loglik1)<span class="sc">$</span>par)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>alphaopt<span class="ot">&lt;-</span>result[<span class="dv">1</span>]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>betaopt<span class="ot">&lt;-</span>result[<span class="dv">2</span>]</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>gammaopt<span class="ot">&lt;-</span>result[<span class="dv">3</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>p1<span class="ot">&lt;-</span><span class="cf">function</span>(a){<span class="dv">1</span><span class="sc">-</span><span class="fu">exp</span>((alphaopt<span class="sc">/</span>betaopt)<span class="sc">*</span>a<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>betaopt<span class="sc">*</span>a)<span class="sc">+</span><span class="dv">1</span><span class="sc">/</span>betaopt<span class="sc">*</span>(alphaopt<span class="sc">/</span>betaopt<span class="sc">-</span>gammaopt)<span class="sc">*</span>(<span class="fu">exp</span>(<span class="sc">-</span>betaopt<span class="sc">*</span>a)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">-</span>gammaopt<span class="sc">*</span>a)}</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># BIC-value</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">*</span><span class="fu">nlminb</span>(<span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>),loglik1)<span class="sc">$</span>objective<span class="sc">+</span><span class="fu">log</span>(<span class="fu">length</span>(y))<span class="sc">*</span><span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 44.02741</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Nonlinear 2</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>loglik2<span class="ot">&lt;-</span><span class="cf">function</span>(theta){</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>alpha<span class="ot">&lt;-</span><span class="fu">abs</span>(theta[<span class="dv">1</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>beta<span class="ot">&lt;-</span><span class="fu">abs</span>(theta[<span class="dv">2</span>])</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>p<span class="ot">&lt;-</span><span class="dv">1</span><span class="sc">-</span><span class="fu">exp</span>((alpha<span class="sc">/</span>beta)<span class="sc">*</span>a<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>beta<span class="sc">*</span>a)<span class="sc">+</span><span class="dv">1</span><span class="sc">/</span>beta<span class="sc">*</span>(alpha<span class="sc">/</span>beta)<span class="sc">*</span>(<span class="fu">exp</span>(<span class="sc">-</span>beta<span class="sc">*</span>a)<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(<span class="sc">-</span><span class="fu">sum</span>(y<span class="sc">*</span><span class="fu">log</span>(p)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">-</span>y)<span class="sc">*</span>(<span class="fu">log</span>(<span class="dv">1</span><span class="sc">-</span>p))))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>result<span class="ot">&lt;-</span><span class="fu">abs</span>(<span class="fu">nlminb</span>(<span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="dv">0</span>),loglik2)<span class="sc">$</span>par)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in nlminb(c(0.1, 0.1, 0), loglik2): NA/NaN function evaluation</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>alphaopt<span class="ot">&lt;-</span>result[<span class="dv">1</span>]</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>betaopt<span class="ot">&lt;-</span>result[<span class="dv">2</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>p2<span class="ot">&lt;-</span><span class="cf">function</span>(a){<span class="dv">1</span><span class="sc">-</span><span class="fu">exp</span>((alphaopt<span class="sc">/</span>betaopt)<span class="sc">*</span>a<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>betaopt<span class="sc">*</span>a)<span class="sc">+</span><span class="dv">1</span><span class="sc">/</span>betaopt<span class="sc">*</span>(alphaopt<span class="sc">/</span>betaopt)<span class="sc">*</span>(<span class="fu">exp</span>(<span class="sc">-</span>betaopt<span class="sc">*</span>a)<span class="sc">-</span><span class="dv">1</span>))}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># BIC-value</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span><span class="sc">*</span><span class="fu">nlminb</span>(<span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="dv">0</span>),loglik2)<span class="sc">$</span>objective<span class="sc">+</span><span class="fu">log</span>(<span class="fu">length</span>(y))<span class="sc">*</span><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in nlminb(c(0.1, 0.1, 0), loglik2): NA/NaN function evaluation</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40.35425</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nlminb</span>(<span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="dv">0</span>),loglik1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$par
+[1] -0.07097580  0.21326470  0.04252439
+
+$objective
+[1] 16.33742
+
+$convergence
+[1] 0
+
+$iterations
+[1] 38
+
+$evaluations
+function gradient 
+      59      128 
+
+$message
+[1] "relative convergence (4)"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nlminb</span>(<span class="fu">c</span>(<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="dv">0</span>),loglik2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in nlminb(c(0.1, 0.1, 0), loglik2): NA/NaN function evaluation</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$par
+[1] -0.06194153  0.14741202  0.00000000
+
+$objective
+[1] 16.39294
+
+$convergence
+[1] 0
+
+$iterations
+[1] 14
+
+$evaluations
+function gradient 
+      22       50 
+
+$message
+[1] "relative convergence (4)"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(<span class="fu">farrington_model</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>   rubella<span class="sc">$</span>age, rubella<span class="sc">$</span>pos, rubella<span class="sc">$</span>tot,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>   <span class="at">start=</span><span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.1</span>,<span class="at">beta=</span><span class="fl">0.1</span>,<span class="at">gamma=</span><span class="dv">0</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>   ))</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$info
+
+Call:
+mle(minuslogl = farrington, start = start, fixed = fixed)
+
+Coefficients:
+     alpha       beta      gamma 
+0.07033815 0.20229769 0.03656653 
+
+$sp
+ [1] 0.06979096 0.16281138 0.26572308 0.36496568 0.45393110 0.53042575
+ [7] 0.59464891 0.64788649 0.69177331 0.72792390 0.75777494 0.78253842
+[13] 0.80320700 0.82058032 0.83529695 0.84786480 0.85868747 0.86808608
+[19] 0.87631669 0.88358414 0.89005282 0.89585521 0.90109841 0.90586937
+[25] 0.91023892 0.91426496 0.91799500 0.92146816 0.92471677 0.92776766
+[31] 0.93064315 0.93336193 0.93593968 0.93838965 0.94072307 0.94294953
+[37] 0.94507726 0.94711338 0.94906407 0.95093474 0.95273018 0.95445463
+[43] 0.95611189 0.95770539
+
+$foi
+ [1] 0.08746333 0.12055955 0.13982549 0.14921699 0.15170476 0.14950261
+ [7] 0.14424498 0.13712495 0.12900108 0.12047989 0.11197942 0.10377792
+[13] 0.09605100 0.08889994 0.08237298 0.07648139 0.07121136 0.06653286
+[19] 0.06240597 0.05878558 0.05562458 0.05287615 0.05049519 0.04843929
+[25] 0.04666924 0.04514931 0.04384724 0.04273422 0.04178468 0.04097607
+[31] 0.04028861 0.03970506 0.03921041 0.03879167 0.03843763 0.03813864
+[37] 0.03788640 0.03767382 0.03749484 0.03734427 0.03721772 0.03711144
+[43] 0.03702224 0.03694744
+
+$df
+$df$age
+ [1]  1.5  2.5  3.5  4.5  5.5  6.5  7.5  8.5  9.5 10.5 11.5 12.5 13.5 14.5 15.5
+[16] 16.5 17.5 18.5 19.5 20.5 21.5 22.5 23.5 24.5 25.5 26.5 27.5 28.5 29.5 30.5
+[31] 31.5 32.5 33.5 34.5 35.5 36.5 37.5 38.5 39.5 40.5 41.5 42.5 43.5 44.5
+
+$df$pos
+ [1]  31  30  34  57  95 104  90  96 134 110 111 147 138 141  53  49  73  69  97
+[20]  65  74  84  82  79  90  84  81  72  71  51  45  45  35  39  36  37  37  37
+[39]  28  26  25  21  18  18
+
+$df$tot
+ [1] 206 146 168 189 219 195 164 145 180 160 148 178 177 165  67  58  81  79 111
+[20]  76  82 101  88  85  94  91  89  76  79  56  52  48  37  41  40  38  39  41
+[39]  30  27  25  22  19  18
+
+
+attr(,"class")
+[1] "farrington_model"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Farrington MODEL</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">las=</span><span class="dv">1</span>,<span class="at">cex.axis=</span><span class="fl">1.1</span>,<span class="at">cex.lab=</span><span class="fl">1.1</span>,<span class="at">lwd=</span><span class="dv">2</span>,<span class="at">mgp=</span><span class="fu">c</span>(<span class="dv">2</span>, <span class="fl">0.5</span>, <span class="dv">0</span>),<span class="at">mar=</span><span class="fu">c</span>(<span class="fl">3.1</span>,<span class="fl">3.1</span>,<span class="fl">3.1</span>,<span class="dv">3</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>grid<span class="ot">&lt;-</span>a</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>pos<span class="ot">&lt;-</span>rubella<span class="sc">$</span>pos</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>tot<span class="ot">&lt;-</span>rubella<span class="sc">$</span>tot</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(grid,pos<span class="sc">/</span>tot,<span class="at">cex=</span><span class="fl">0.015</span><span class="sc">*</span>tot,<span class="at">pch=</span><span class="dv">1</span>,<span class="at">xlab=</span><span class="st">"age"</span>,<span class="at">ylab=</span><span class="st">"seroprevalence"</span>,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">45</span>),<span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span> <span class="fu">lines</span>(a,<span class="fu">p2</span>(a),<span class="at">lty=</span><span class="dv">4</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="note_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>integer(0)</code></pre>
+</div>
+</div>
+</section>
+<section id="code-in-the-book-to-find-best-fractional-polynomial" class="level2">
+<h2 class="anchored" data-anchor-id="code-in-the-book-to-find-best-fractional-polynomial">Code in the book to find best fractional polynomial</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>search.fracpoly.twoR<span class="ot">&lt;-</span><span class="cf">function</span>(y,tot,x,pow,mc){</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     deviance<span class="ot">&lt;-</span><span class="fu">deviance</span>(<span class="fu">glm</span>(<span class="fu">cbind</span>(y,tot<span class="sc">-</span>y)<span class="sc">~</span>x<span class="sc">+</span><span class="fu">I</span>(x<span class="sc">^</span><span class="dv">2</span>), <span class="at">family=</span><span class="st">"binomial"</span>(<span class="at">link=</span>logit)))</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>     mistake<span class="ot">&lt;-</span><span class="cn">NULL</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span> (<span class="fu">length</span>(pow))){</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> (j <span class="cf">in</span> i<span class="sc">:</span> (<span class="fu">length</span>(pow))){</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(pow[i]<span class="sc">==</span><span class="dv">0</span>){term1<span class="ot">&lt;-</span><span class="fu">log</span>(x)} <span class="cf">else</span>{term1<span class="ot">&lt;-</span>(x)<span class="sc">^</span>(pow[i])}</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(pow[j]<span class="sc">==</span>pow[i]){term2<span class="ot">&lt;-</span>term1<span class="sc">*</span><span class="fu">log</span>(x)} </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span> <span class="cf">if</span>(pow[j]<span class="sc">==</span><span class="dv">0</span>){term2<span class="ot">&lt;-</span><span class="fu">log</span>(x)} </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span>{term2<span class="ot">&lt;-</span>(x)<span class="sc">^</span>(pow[j])}</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>          glm.try<span class="ot">&lt;-</span><span class="fu">glm</span>(<span class="fu">cbind</span>(y,tot<span class="sc">-</span>y)<span class="sc">~</span>term1<span class="sc">+</span>term2, <span class="at">family=</span><span class="st">"binomial"</span>(<span class="at">link=</span>logit))</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="fu">c</span>(pow[i],pow[j],<span class="fu">deviance</span>(glm.try),(<span class="fu">sum</span>(<span class="fu">diff</span>(<span class="fu">predict</span>(glm.try))<span class="sc">&lt;</span><span class="dv">0</span>)<span class="sc">==</span><span class="dv">0</span>)))</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span>(glm.try<span class="sc">$</span>converged<span class="sc">==</span><span class="cn">FALSE</span>){mistake<span class="ot">&lt;-</span><span class="fu">rbind</span>(mistake, <span class="fu">c</span>(<span class="dv">1</span>,pow[i],pow[j]))}</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span>{</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>               <span class="cf">if</span>(<span class="fu">deviance</span>(glm.try)<span class="sc">&lt;</span>deviance){</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> (((mc)<span class="sc">&amp;&amp;</span>(<span class="fu">sum</span>(<span class="fu">diff</span>(<span class="fu">predict</span>(glm.try))<span class="sc">&lt;</span><span class="dv">0</span>)<span class="sc">==</span><span class="dv">0</span>))<span class="sc">|</span>(<span class="sc">!</span>mc)){</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                 <span class="co">#print(c(mc,(sum(diff(predict(glm.try))&lt;0)==0)))</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                       deviance<span class="ot">&lt;-</span><span class="fu">deviance</span>(glm.try)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>                       power<span class="ot">&lt;-</span><span class="fu">c</span>(pow[i],pow[j])</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>                    } </span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>                                   }</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>               }</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>                                     </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>     <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">power=</span>power, <span class="at">deviance=</span>deviance, <span class="at">mistake=</span>mistake))</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="fu">search.fracpoly.twoR</span>(rubella<span class="sc">$</span>pos,rubella<span class="sc">$</span>tot,rubella<span class="sc">$</span>age,<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">3</span>,<span class="fl">0.1</span>),<span class="at">mc=</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  -2.0000  -2.0000 129.8421   0.0000
+[1]  -2.0000  -1.9000 121.5597   0.0000
+[1]  -2.0000  -1.8000 113.2842   0.0000
+[1]  -2.0000  -1.7000 105.0692   0.0000
+[1] -2.00000 -1.60000 96.97506  0.00000
+[1] -2.00000 -1.50000 89.06886  0.00000
+[1] -2.00000 -1.40000 81.42421  0.00000
+[1] -2.00000 -1.30000 74.12079  0.00000
+[1] -2.00000 -1.20000 67.24358  0.00000
+[1] -2.00000 -1.10000 60.88175  0.00000
+[1] -2.00000 -1.00000 55.12725  0.00000
+[1] -2.00000 -0.90000 50.07301  0.00000
+[1] -2.00000 -0.80000 45.81084  0.00000
+[1] -2.00000 -0.70000 42.42908  0.00000
+[1] -2.00000 -0.60000 40.01001  0.00000
+[1] -2.00000 -0.50000 38.62722  0.00000
+[1] -2.00000 -0.40000 38.34301  0.00000
+[1] -2.00000 -0.30000 39.20594  1.00000
+[1] -2.0000 -0.2000 41.2488  1.0000
+[1] -2.00000 -0.10000 44.48695  1.00000
+[1] -2.00000  0.00000 48.91736  1.00000
+[1] -2.00000  0.10000 54.51825  1.00000
+[1] -2.00000  0.20000 61.24949  1.00000
+[1] -2.00000  0.30000 69.05369  1.00000
+[1] -2.00000  0.40000 77.85792  1.00000
+[1] -2.00000  0.50000 87.57602  1.00000
+[1] -2.0000  0.6000 98.1113  1.0000
+[1]  -2.0000   0.7000 109.3595   1.0000
+[1]  -2.0000   0.8000 121.2118   1.0000
+[1]  -2.0000   0.9000 133.5579   1.0000
+[1]  -2.000   1.000 146.289   1.000
+[1]  -2.0000   1.1000 159.2997   1.0000
+[1]  -2.0000   1.2000 172.4909   1.0000
+[1]  -2.0000   1.3000 185.7707   1.0000
+[1]  -2.0000   1.4000 199.0561   1.0000
+[1]  -2.0000   1.5000 212.2734   1.0000
+[1]  -2.0000   1.6000 225.3587   1.0000
+[1]  -2.0000   1.7000 238.2575   1.0000
+[1]  -2.0000   1.8000 250.9248   1.0000
+[1]  -2.0000   1.9000 263.3242   1.0000
+[1]  -2.0000   2.0000 275.4273   1.0000
+[1]  -2.0000   2.1000 287.2128   1.0000
+[1]  -2.0000   2.2000 298.6656   1.0000
+[1]  -2.0000   2.3000 309.7761   1.0000
+[1]  -2.0000   2.4000 320.5391   1.0000
+[1]  -2.0000   2.5000 330.9534   1.0000
+[1]  -2.0000   2.6000 341.0207   1.0000
+[1]  -2.0000   2.7000 350.7453   1.0000
+[1]  -2.0000   2.8000 360.1333   1.0000
+[1]  -2.0000   2.9000 369.1924   1.0000
+[1]  -2.0000   3.0000 377.9313   1.0000
+[1]  -1.9000  -1.9000 113.8945   0.0000
+[1]  -1.900  -1.800 106.242   0.000
+[1] -1.90000 -1.70000 98.65276  0.00000
+[1] -1.90000 -1.60000 91.18369  0.00000
+[1] -1.9000 -1.5000 83.8981  0.0000
+[1] -1.90000 -1.40000 76.86544  0.00000
+[1] -1.90000 -1.30000 70.16082  0.00000
+[1] -1.90000 -1.20000 63.86428  0.00000
+[1] -1.90000 -1.10000 58.05979  0.00000
+[1] -1.90000 -1.00000 52.83386  0.00000
+[1] -1.90000 -0.90000 48.27385  0.00000
+[1] -1.90000 -0.80000 44.46599  0.00000
+[1] -1.90000 -0.70000 41.49315  0.00000
+[1] -1.90000 -0.60000 39.43236  0.00000
+[1] -1.90000 -0.50000 38.35239  0.00000
+[1] -1.9000 -0.4000 38.3112  1.0000
+[1] -1.90000 -0.30000 39.35374  1.00000
+[1] -1.90000 -0.20000 41.50992  1.00000
+[1] -1.90000 -0.10000 44.79317  1.00000
+[1] -1.90000  0.00000 49.19945  1.00000
+[1] -1.900  0.100 54.707  1.000
+[1] -1.9000  0.2000 61.2767  1.0000
+[1] -1.90000  0.30000 68.85312  1.00000
+[1] -1.90000  0.40000 77.36625  1.00000
+[1] -1.90000  0.50000 86.73362  1.00000
+[1] -1.90000  0.60000 96.86295  1.00000
+[1]  -1.9000   0.7000 107.6549   1.0000
+[1]  -1.9000   0.8000 119.0062   1.0000
+[1]  -1.9000   0.9000 130.8122   1.0000
+[1]  -1.9000   1.0000 142.9698   1.0000
+[1]  -1.9000   1.1000 155.3795   1.0000
+[1]  -1.9000   1.2000 167.9477   1.0000
+[1]  -1.9000   1.3000 180.5882   1.0000
+[1]  -1.9000   1.4000 193.2228   1.0000
+[1]  -1.9000   1.5000 205.7827   1.0000
+[1]  -1.9000   1.6000 218.2081   1.0000
+[1]  -1.9000   1.7000 230.4484   1.0000
+[1]  -1.9000   1.8000 242.4617   1.0000
+[1]  -1.9000   1.9000 254.2144   1.0000
+[1]  -1.9000   2.0000 265.6804   1.0000
+[1]  -1.9000   2.1000 276.8403   1.0000
+[1]  -1.9000   2.2000 287.6805   1.0000
+[1]  -1.9000   2.3000 298.1924   1.0000
+[1]  -1.9000   2.4000 308.3717   1.0000
+[1]  -1.9000   2.5000 318.2177   1.0000
+[1]  -1.9000   2.6000 327.7325   1.0000
+[1]  -1.9000   2.7000 336.9204   1.0000
+[1]  -1.9000   2.8000 345.7876   1.0000
+[1]  -1.9000   2.9000 354.3415   1.0000
+[1]  -1.9000   3.0000 362.5906   1.0000
+[1] -1.80000 -1.80000 99.21829  0.00000
+[1] -1.80000 -1.70000 92.26054  0.00000
+[1] -1.80000 -1.60000 85.42231  0.00000
+[1] -1.80000 -1.50000 78.76304  0.00000
+[1] -1.8000 -1.4000 72.3479  0.0000
+[1] -1.80000 -1.30000 66.24733  0.00000
+[1] -1.80000 -1.20000 60.53633  0.00000
+[1] -1.80000 -1.10000 55.29353  0.00000
+[1] -1.80000 -1.00000 50.59985  0.00000
+[1] -1.80000 -0.90000 46.53692  0.00000
+[1] -1.80000 -0.80000 43.18521  0.00000
+[1] -1.80000 -0.70000 40.62191  0.00000
+[1] -1.80000 -0.60000 38.91868  0.00000
+[1] -1.80000 -0.50000 38.13921  0.00000
+[1] -1.800 -0.400 38.337  1.000
+[1] -1.80000 -0.30000 39.55317  1.00000
+[1] -1.80000 -0.20000 41.81465  1.00000
+[1] -1.80000 -0.10000 45.13274  1.00000
+[1] -1.80000  0.00000 49.50233  1.00000
+[1] -1.80000  0.10000 54.90156  1.00000
+[1] -1.80000  0.20000 61.29229  1.00000
+[1] -1.80000  0.30000 68.62108  1.00000
+[1] -1.8000  0.4000 76.8208  1.0000
+[1] -1.80000  0.50000 85.81279  1.00000
+[1] -1.80000  0.60000 95.50926  1.00000
+[1]  -1.800   0.700 105.816   1.000
+[1]  -1.8000   0.8000 116.6353   1.0000
+[1]  -1.8000   0.9000 127.8684   1.0000
+[1]  -1.8000   1.0000 139.4181   1.0000
+[1]  -1.8000   1.1000 151.1911   1.0000
+[1]  -1.8000   1.2000 163.0997   1.0000
+[1]  -1.8000   1.3000 175.0632   1.0000
+[1]  -1.8000   1.4000 187.0089   1.0000
+[1]  -1.8000   1.5000 198.8726   1.0000
+[1]  -1.8000   1.6000 210.5992   1.0000
+[1]  -1.8000   1.7000 222.1419   1.0000
+[1]  -1.8000   1.8000 233.4623   1.0000
+[1]  -1.8000   1.9000 244.5296   1.0000
+[1]  -1.8000   2.0000 255.3203   1.0000
+[1]  -1.8000   2.1000 265.8167   1.0000
+[1]  -1.800   2.200 276.007   1.000
+[1]  -1.8000   2.3000 285.8837   1.0000
+[1]  -1.8000   2.4000 295.4435   1.0000
+[1]  -1.800   2.500 304.686   1.000
+[1]  -1.8000   2.6000 313.6139   1.0000
+[1]  -1.8000   2.7000 322.2316   1.0000
+[1]  -1.8000   2.8000 330.5453   1.0000
+[1]  -1.8000   2.9000 338.5622   1.0000
+[1]  -1.8000   3.0000 346.2906   1.0000
+[1] -1.70000 -1.70000 85.93706  0.00000
+[1] -1.70000 -1.60000 79.73239  0.00000
+[1] -1.70000 -1.50000 73.70205  0.00000
+[1] -1.70000 -1.40000 67.90687  0.00000
+[1] -1.70000 -1.30000 62.41251  0.00000
+[1] -1.70000 -1.20000 57.28886  0.00000
+[1] -1.70000 -1.10000 52.60905  0.00000
+[1] -1.70000 -1.00000 48.44829  0.00000
+[1] -1.70000 -0.90000 44.88235  0.00000
+[1] -1.70000 -0.80000 41.98578  0.00000
+[1] -1.70000 -0.70000 39.82996  0.00000
+[1] -1.70000 -0.60000 38.48092  0.00000
+[1] -1.7000 -0.5000 37.9972  0.0000
+[1] -1.7000 -0.4000 38.4276  1.0000
+[1] -1.7000 -0.3000 39.8093  1.0000
+[1] -1.70000 -0.20000 42.16605  1.00000
+[1] -1.70000 -0.10000 45.50697  1.00000
+[1] -1.70000  0.00000 49.82571  1.00000
+[1] -1.7000  0.1000 55.1003  1.0000
+[1] -1.70000  0.20000 61.29349  1.00000
+[1] -1.70000  0.30000 68.35382  1.00000
+[1] -1.70000  0.40000 76.21714  1.00000
+[1] -1.7000  0.5000 84.8086  1.0000
+[1] -1.70000  0.60000 94.04506  1.00000
+[1]  -1.7000   0.7000 103.8376   1.0000
+[1]  -1.7000   0.8000 114.0941   1.0000
+[1]  -1.700   0.900 124.722   1.000
+[1]  -1.7000   1.0000 135.6303   1.0000
+[1]  -1.700   1.100 146.732   1.000
+[1]  -1.7000   1.2000 157.9453   1.0000
+[1]  -1.7000   1.3000 169.1957   1.0000
+[1]  -1.7000   1.4000 180.4157   1.0000
+[1]  -1.7000   1.5000 191.5466   1.0000
+[1]  -1.7000   1.6000 202.5374   1.0000
+[1]  -1.7000   1.7000 213.3457   1.0000
+[1]  -1.7000   1.8000 223.9367   1.0000
+[1]  -1.7000   1.9000 234.2825   1.0000
+[1]  -1.7000   2.0000 244.3621   1.0000
+[1]  -1.7000   2.1000 254.1601   1.0000
+[1]  -1.7000   2.2000 263.6661   1.0000
+[1]  -1.700   2.300 272.874   1.000
+[1]  -1.7000   2.4000 281.7812   1.0000
+[1]  -1.7000   2.5000 290.3883   1.0000
+[1]  -1.700   2.600 298.698   1.000
+[1]  -1.700   2.700 306.715   1.000
+[1]  -1.7000   2.8000 314.4455   1.0000
+[1]  -1.7000   2.9000 321.8967   1.0000
+[1]  -1.7000   3.0000 329.0765   1.0000
+[1] -1.60000 -1.60000 74.16047  0.00000
+[1] -1.60000 -1.50000 68.75814  0.00000
+[1] -1.60000 -1.40000 63.58179  0.00000
+[1] -1.60000 -1.30000 58.69226  0.00000
+[1] -1.6000 -1.2000 54.1542  0.0000
+[1] -1.6000 -1.1000 50.0352  0.0000
+[1] -1.60000 -1.00000 46.40462  0.00000
+[1] -1.60000 -0.90000 43.33224  0.00000
+[1] -1.60000 -0.80000 40.88657  0.00000
+[1] -1.60000 -0.70000 39.13301  0.00000
+[1] -1.60000 -0.60000 38.13187  0.00000
+[1] -1.60000 -0.50000 37.93633  0.00000
+[1] -1.6000 -0.4000 38.5904  1.0000
+[1] -1.60000 -0.30000 40.12712  1.00000
+[1] -1.600 -0.200 42.567  1.000
+[1] -1.60000 -0.10000 45.91682  1.00000
+[1] -1.60000  0.00000 50.16895  1.00000
+[1] -1.60000  0.10000 55.30119  1.00000
+[1] -1.60000  0.20000 61.27722  1.00000
+[1] -1.60000  0.30000 68.04754  1.00000
+[1] -1.60000  0.40000 75.55098  1.00000
+[1] -1.60000  0.50000 83.71665  1.00000
+[1] -1.60000  0.60000 92.46612  1.00000
+[1]  -1.6000   0.7000 101.7159   1.0000
+[1]  -1.6000   0.8000 111.3798   1.0000
+[1]  -1.6000   0.9000 121.3714   1.0000
+[1]  -1.6000   1.0000 131.6062   1.0000
+[1]  -1.6000   1.1000 142.0037   1.0000
+[1]  -1.6000   1.2000 152.4886   1.0000
+[1]  -1.6000   1.3000 162.9921   1.0000
+[1]  -1.6000   1.4000 173.4527   1.0000
+[1]  -1.6000   1.5000 183.8168   1.0000
+[1]  -1.6000   1.6000 194.0384   1.0000
+[1]  -1.6000   1.7000 204.0791   1.0000
+[1]  -1.6000   1.8000 213.9078   1.0000
+[1]  -1.6000   1.9000 223.4999   1.0000
+[1]  -1.6000   2.0000 232.8368   1.0000
+[1]  -1.6000   2.1000 241.9054   1.0000
+[1]  -1.6000   2.2000 250.6969   1.0000
+[1]  -1.6000   2.3000 259.2065   1.0000
+[1]  -1.6000   2.4000 267.4327   1.0000
+[1]  -1.6000   2.5000 275.3765   1.0000
+[1]  -1.600   2.600 283.041   1.000
+[1]  -1.6000   2.7000 290.4313   1.0000
+[1]  -1.6000   2.8000 297.5534   1.0000
+[1]  -1.6000   2.9000 304.4144   1.0000
+[1]  -1.6000   3.0000 311.0219   1.0000
+[1] -1.50000 -1.50000 63.97888  0.00000
+[1] -1.50000 -1.40000 59.41622  0.00000
+[1] -1.50000 -1.30000 55.12611  0.00000
+[1] -1.50000 -1.20000 51.16792  0.00000
+[1] -1.50000 -1.10000 47.60358  0.00000
+[1] -1.50000 -1.00000 44.49656  0.00000
+[1] -1.50000 -0.90000 41.91053  0.00000
+[1] -1.50000 -0.80000 39.90784  0.00000
+[1] -1.50000 -0.70000 38.54784  0.00000
+[1] -1.50000 -0.60000 37.88498  0.00000
+[1] -1.50000 -0.50000 37.96695  1.00000
+[1] -1.50000 -0.40000 38.83286  1.00000
+[1] -1.50000 -0.30000 40.51153  1.00000
+[1] -1.50000 -0.20000 43.02008  1.00000
+[1] -1.50000 -0.10000 46.36288  1.00000
+[1] -1.50000  0.00000 50.53096  1.00000
+[1] -1.50000  0.10000 55.50187  1.00000
+[1] -1.50000  0.20000 61.24016  1.00000
+[1] -1.50000  0.30000 67.69836  1.00000
+[1] -1.50000  0.40000 74.81836  1.00000
+[1] -1.50000  0.50000 82.53326  1.00000
+[1] -1.50000  0.60000 90.76951  1.00000
+[1] -1.50000  0.70000 99.44915  1.00000
+[1]  -1.5000   0.8000 108.4921   1.0000
+[1]  -1.5000   0.9000 117.8185   1.0000
+[1]  -1.5000   1.0000 127.3503   1.0000
+[1]  -1.5000   1.1000 137.0138   1.0000
+[1]  -1.5000   1.2000 146.7401   1.0000
+[1]  -1.5000   1.3000 156.4668   1.0000
+[1]  -1.5000   1.4000 166.1382   1.0000
+[1]  -1.5000   1.5000 175.7061   1.0000
+[1]  -1.5000   1.6000 185.1295   1.0000
+[1]  -1.5000   1.7000 194.3742   1.0000
+[1]  -1.500   1.800 203.413   1.000
+[1]  -1.5000   1.9000 212.2244   1.0000
+[1]  -1.5000   2.0000 220.7925   1.0000
+[1]  -1.5000   2.1000 229.1063   1.0000
+[1]  -1.5000   2.2000 237.1587   1.0000
+[1]  -1.5000   2.3000 244.9463   1.0000
+[1]  -1.5000   2.4000 252.4684   1.0000
+[1]  -1.5000   2.5000 259.7268   1.0000
+[1]  -1.5000   2.6000 266.7249   1.0000
+[1]  -1.5000   2.7000 273.4678   1.0000
+[1]  -1.5000   2.8000 279.9617   1.0000
+[1]  -1.5000   2.9000 286.2135   1.0000
+[1]  -1.5000   3.0000 292.2306   1.0000
+[1] -1.40000 -1.40000 55.45764  0.00000
+[1] -1.40000 -1.30000 51.75707  0.00000
+[1] -1.40000 -1.20000 48.36855  0.00000
+[1] -1.40000 -1.10000 45.34833  0.00000
+[1] -1.4000 -1.0000 42.7539  0.0000
+[1] -1.40000 -0.90000 40.64279  0.00000
+[1] -1.40000 -0.80000 39.07113  0.00000
+[1] -1.40000 -0.70000 38.09209  0.00000
+[1] -1.4000 -0.6000 37.7542  0.0000
+[1] -1.4000 -0.5000 38.0996  1.0000
+[1] -1.40000 -0.40000 39.16239  1.00000
+[1] -1.4000 -0.3000 40.9671  1.0000
+[1] -1.40000 -0.20000 43.52741  1.00000
+[1] -1.40000 -0.10000 46.84522  1.00000
+[1] -1.40000  0.00000 50.91015  1.00000
+[1] -1.40000  0.10000 55.69953  1.00000
+[1] -1.40000  0.20000 61.17882  1.00000
+[1] -1.40000  0.30000 67.30257  1.00000
+[1] -1.40000  0.40000 74.01581  1.00000
+[1] -1.4000  0.5000 81.2558  1.0000
+[1] -1.40000  0.60000 88.95396  1.00000
+[1] -1.40000  0.70000 97.03807  1.00000
+[1]  -1.4000   0.8000 105.4343   1.0000
+[1]  -1.4000   0.9000 114.0694   1.0000
+[1]  -1.4000   1.0000 122.8723   1.0000
+[1]  -1.4000   1.1000 131.7759   1.0000
+[1]  -1.4000   1.2000 140.7181   1.0000
+[1]  -1.400   1.300 149.643   1.000
+[1]  -1.4000   1.4000 158.5009   1.0000
+[1]  -1.400   1.500 167.249   1.000
+[1]  -1.4000   1.6000 175.8512   1.0000
+[1]  -1.4000   1.7000 184.2779   1.0000
+[1]  -1.4000   1.8000 192.5056   1.0000
+[1]  -1.4000   1.9000 200.5159   1.0000
+[1]  -1.4000   2.0000 208.2958   1.0000
+[1]  -1.4000   2.1000 215.8363   1.0000
+[1]  -1.400   2.200 223.132   1.000
+[1]  -1.4000   2.3000 230.1807   1.0000
+[1]  -1.4000   2.4000 236.9826   1.0000
+[1]  -1.4000   2.5000 243.5402   1.0000
+[1]  -1.4000   2.6000 249.8573   1.0000
+[1]  -1.4000   2.7000 255.9391   1.0000
+[1]  -1.4000   2.8000 261.7916   1.0000
+[1]  -1.4000   2.9000 267.4216   1.0000
+[1]  -1.4000   3.0000 272.8363   1.0000
+[1] -1.30000 -1.30000 48.63124  0.00000
+[1] -1.30000 -1.20000 45.79729  0.00000
+[1] -1.30000 -1.10000 43.30579  0.00000
+[1] -1.30000 -1.00000 41.20825  0.00000
+[1] -1.30000 -0.90000 39.55599  0.00000
+[1] -1.30000 -0.80000 38.39891  0.00000
+[1] -1.30000 -0.70000 37.78397  0.00000
+[1] -1.30000 -0.60000 37.75375  1.00000
+[1] -1.30000 -0.50000 38.34478  1.00000
+[1] -1.30000 -0.40000 39.58614  1.00000
+[1] -1.300 -0.300 41.498  1.000
+[1] -1.30000 -0.20000 44.09058  1.00000
+[1] -1.30000 -0.10000 47.36331  1.00000
+[1] -1.30000  0.00000 51.30444  1.00000
+[1] -1.30000  0.10000 55.89106  1.00000
+[1] -1.30000  0.20000 61.08958  1.00000
+[1] -1.30000  0.30000 66.85668  1.00000
+[1] -1.30000  0.40000 73.14066  1.00000
+[1] -1.300  0.500 79.883  1.000
+[1] -1.30000  0.60000 87.02031  1.00000
+[1] -1.30000  0.70000 94.48621  1.00000
+[1]  -1.3000   0.8000 102.2134   1.0000
+[1]  -1.3000   0.9000 110.1352   1.0000
+[1]  -1.3000   1.0000 118.1878   1.0000
+[1]  -1.300   1.100 126.311   1.000
+[1]  -1.3000   1.2000 134.4496   1.0000
+[1]  -1.3000   1.3000 142.5539   1.0000
+[1]  -1.3000   1.4000 150.5805   1.0000
+[1]  -1.3000   1.5000 158.4922   1.0000
+[1]  -1.3000   1.6000 166.2578   1.0000
+[1]  -1.3000   1.7000 173.8522   1.0000
+[1]  -1.3000   1.8000 181.2553   1.0000
+[1]  -1.3000   1.9000 188.4523   1.0000
+[1]  -1.3000   2.0000 195.4325   1.0000
+[1]  -1.3000   2.1000 202.1891   1.0000
+[1]  -1.3000   2.2000 208.7184   1.0000
+[1]  -1.3000   2.3000 215.0194   1.0000
+[1]  -1.3000   2.4000 221.0931   1.0000
+[1]  -1.3000   2.5000 226.9425   1.0000
+[1]  -1.3000   2.6000 232.5717   1.0000
+[1]  -1.300   2.700 237.986   1.000
+[1]  -1.3000   2.8000 243.1915   1.0000
+[1]  -1.3000   2.9000 248.1946   1.0000
+[1]  -1.3000   3.0000 253.0021   1.0000
+[1] -1.20000 -1.20000 43.49751  0.00000
+[1] -1.20000 -1.10000 41.51408  0.00000
+[1] -1.20000 -1.00000 39.89254  0.00000
+[1] -1.20000 -0.90000 38.67805  0.00000
+[1] -1.20000 -0.80000 37.91427  0.00000
+[1] -1.200 -0.700 37.642  0.000
+[1] -1.20000 -0.60000 37.89783  1.00000
+[1] -1.20000 -0.50000 38.71273  1.00000
+[1] -1.20000 -0.40000 40.11074  1.00000
+[1] -1.20000 -0.30000 42.10774  1.00000
+[1] -1.20000 -0.20000 44.71049  1.00000
+[1] -1.200 -0.100 47.916  1.000
+[1] -1.20000  0.00000 51.71118  1.00000
+[1] -1.20000  0.10000 56.07297  1.00000
+[1] -1.20000  0.20000 60.96883  1.00000
+[1] -1.20000  0.30000 66.35769  1.00000
+[1] -1.20000  0.40000 72.19122  1.00000
+[1] -1.2000  0.5000 78.4153  1.0000
+[1] -1.20000  0.60000 84.97186  1.00000
+[1] -1.20000  0.70000 91.80055  1.00000
+[1] -1.20000  0.80000 98.84064  1.00000
+[1]  -1.2000   0.9000 106.0326   1.0000
+[1]  -1.2000   1.0000 113.3194   1.0000
+[1]  -1.2000   1.1000 120.6481   1.0000
+[1]  -1.2000   1.2000 127.9703   1.0000
+[1]  -1.2000   1.3000 135.2429   1.0000
+[1]  -1.2000   1.4000 142.4286   1.0000
+[1]  -1.2000   1.5000 149.4957   1.0000
+[1]  -1.2000   1.6000 156.4178   1.0000
+[1]  -1.2000   1.7000 163.1741   1.0000
+[1]  -1.2000   1.8000 169.7484   1.0000
+[1]  -1.2000   1.9000 176.1287   1.0000
+[1]  -1.200   2.000 182.307   1.000
+[1]  -1.2000   2.1000 188.2783   1.0000
+[1]  -1.2000   2.2000 194.0406   1.0000
+[1]  -1.2000   2.3000 199.5938   1.0000
+[1]  -1.2000   2.4000 204.9399   1.0000
+[1]  -1.2000   2.5000 210.0823   1.0000
+[1]  -1.2000   2.6000 215.0253   1.0000
+[1]  -1.2000   2.7000 219.7743   1.0000
+[1]  -1.2000   2.8000 224.3352   1.0000
+[1]  -1.2000   2.9000 228.7141   1.0000
+[1]  -1.2000   3.0000 232.9176   1.0000
+[1] -1.10000 -1.10000 40.01244  0.00000
+[1] -1.10000 -1.00000 38.84051  0.00000
+[1] -1.10000 -0.90000 38.03736  0.00000
+[1] -1.10000 -0.80000 37.64046  0.00000
+[1] -1.10000 -0.70000 37.68452  1.00000
+[1] -1.10000 -0.60000 38.20023  1.00000
+[1] -1.10000 -0.50000 39.21307  1.00000
+[1] -1.10000 -0.40000 40.74212  1.00000
+[1] -1.10000 -0.30000 42.79903  1.00000
+[1] -1.10000 -0.20000 45.38724  1.00000
+[1] -1.10000 -0.10000 48.50139  1.00000
+[1] -1.10000  0.00000 52.12718  1.00000
+[1] -1.10000  0.10000 56.24154  1.00000
+[1] -1.10000  0.20000 60.81311  1.00000
+[1] -1.10000  0.30000 65.80324  1.00000
+[1] -1.10000  0.40000 71.16709  1.00000
+[1] -1.10000  0.50000 76.85515  1.00000
+[1] -1.1000  0.6000 82.8148  1.0000
+[1] -1.10000  0.70000 88.99189  1.00000
+[1] -1.10000  0.80000 95.33239  1.00000
+[1]  -1.1000   0.9000 101.7838   1.0000
+[1]  -1.1000   1.0000 108.2963   1.0000
+[1]  -1.1000   1.1000 114.8241   1.0000
+[1]  -1.1000   1.2000 121.3255   1.0000
+[1]  -1.100   1.300 127.764   1.000
+[1]  -1.1000   1.4000 134.1082   1.0000
+[1]  -1.1000   1.5000 140.3317   1.0000
+[1]  -1.1000   1.6000 146.4132   1.0000
+[1]  -1.1000   1.7000 152.3357   1.0000
+[1]  -1.1000   1.8000 158.0865   1.0000
+[1]  -1.1000   1.9000 163.6568   1.0000
+[1]  -1.1000   2.0000 169.0407   1.0000
+[1]  -1.1000   2.1000 174.2351   1.0000
+[1]  -1.1000   2.2000 179.2394   1.0000
+[1]  -1.1000   2.3000 184.0545   1.0000
+[1]  -1.1000   2.4000 188.6831   1.0000
+[1]  -1.1000   2.5000 193.1289   1.0000
+[1]  -1.1000   2.6000 197.3965   1.0000
+[1]  -1.1000   2.7000 201.4911   1.0000
+[1]  -1.1000   2.8000 205.4185   1.0000
+[1]  -1.1000   2.9000 209.1846   1.0000
+[1]  -1.1000   3.0000 212.7954   1.0000
+[1] -1.000 -1.000 38.086  0.000
+[1] -1.00000 -0.90000 37.66212  0.00000
+[1] -1.00000 -0.80000 37.60029  1.00000
+[1] -1.00000 -0.70000 37.92926  1.00000
+[1] -1.00000 -0.60000 38.67395  1.00000
+[1] -1.0000 -0.5000 39.8545  1.0000
+[1] -1.00000 -0.40000 41.48519  1.00000
+[1] -1.00000 -0.30000 43.57359  1.00000
+[1] -1.00000 -0.20000 46.11996  1.00000
+[1] -1.00000 -0.10000 49.11678  1.00000
+[1] -1.00000  0.00000 52.54874  1.00000
+[1] -1.00000  0.10000 56.39288  1.00000
+[1] -1.00000  0.20000 60.61927  1.00000
+[1] -1.00000  0.30000 65.19182  1.00000
+[1] -1.00000  0.40000 70.06943  1.00000
+[1] -1.00000  0.50000 75.20732  1.00000
+[1] -1.00000  0.60000 80.55849  1.00000
+[1] -1.00000  0.70000 86.07509  1.00000
+[1] -1.0000  0.8000 91.7099  1.0000
+[1] -1.00000  0.90000 97.41746  1.00000
+[1]  -1.0000   1.0000 103.1552   1.0000
+[1]  -1.0000   1.1000 108.8841   1.0000
+[1]  -1.0000   1.2000 114.5695   1.0000
+[1]  -1.0000   1.3000 120.1811   1.0000
+[1]  -1.0000   1.4000 125.6931   1.0000
+[1]  -1.0000   1.5000 131.0845   1.0000
+[1]  -1.0000   1.6000 136.3384   1.0000
+[1]  -1.0000   1.7000 141.4418   1.0000
+[1]  -1.0000   1.8000 146.3853   1.0000
+[1]  -1.0000   1.9000 151.1626   1.0000
+[1]  -1.00   2.00 155.77   1.00
+[1]  -1.0000   2.1000 160.2063   1.0000
+[1]  -1.0000   2.2000 164.4717   1.0000
+[1]  -1.0000   2.3000 168.5683   1.0000
+[1]  -1.0000   2.4000 172.4993   1.0000
+[1]  -1.0000   2.5000 176.2685   1.0000
+[1]  -1.0000   2.6000 179.8807   1.0000
+[1]  -1.0000   2.7000 183.3411   1.0000
+[1]  -1.000   2.800 186.655   1.000
+[1]  -1.0000   2.9000 189.8281   1.0000
+[1]  -1.0000   3.0000 192.8661   1.0000
+[1] -0.90000 -0.90000 37.57966  1.00000
+[1] -0.90000 -0.80000 37.81555  1.00000
+[1] -0.90000 -0.70000 38.39277  1.00000
+[1] -0.90000 -0.60000 39.33074  1.00000
+[1] -0.90000 -0.50000 40.64443  1.00000
+[1] -0.90000 -0.40000 42.34356  1.00000
+[1] -0.90000 -0.30000 44.43191  1.00000
+[1] -0.90000 -0.20000 46.90676  1.00000
+[1] -0.90000 -0.10000 49.75872  1.00000
+[1] -0.90000  0.00000 52.97167  1.00000
+[1] -0.90000  0.10000 56.52308  1.00000
+[1] -0.90000  0.20000 60.38464  1.00000
+[1] -0.90000  0.30000 64.52306  1.00000
+[1] -0.90000  0.40000 68.90118  1.00000
+[1] -0.90000  0.50000 73.47914  1.00000
+[1] -0.90000  0.60000 78.21564  1.00000
+[1] -0.90000  0.70000 83.06925  1.00000
+[1] -0.90000  0.80000 87.99951  1.00000
+[1] -0.90000  0.90000 92.96802  1.00000
+[1] -0.90000  1.00000 97.93919  1.00000
+[1]  -0.9000   1.1000 102.8809   1.0000
+[1]  -0.9000   1.2000 107.7649   1.0000
+[1]  -0.900   1.300 112.567   1.000
+[1]  -0.9000   1.4000 117.2669   1.0000
+[1]  -0.9000   1.5000 121.8483   1.0000
+[1]  -0.9000   1.6000 126.2987   1.0000
+[1]  -0.9000   1.7000 130.6086   1.0000
+[1]  -0.9000   1.8000 134.7715   1.0000
+[1]  -0.9000   1.9000 138.7837   1.0000
+[1]  -0.9000   2.0000 142.6433   1.0000
+[1]  -0.9000   2.1000 146.3505   1.0000
+[1]  -0.9000   2.2000 149.9066   1.0000
+[1]  -0.9000   2.3000 153.3144   1.0000
+[1]  -0.9000   2.4000 156.5774   1.0000
+[1]  -0.9000   2.5000 159.6997   1.0000
+[1]  -0.900   2.600 162.686   1.000
+[1]  -0.9000   2.7000 165.5413   1.0000
+[1]  -0.9000   2.8000 168.2708   1.0000
+[1]  -0.9000   2.9000 170.8795   1.0000
+[1]  -0.9000   3.0000 173.3729   1.0000
+[1] -0.80000 -0.80000 38.30625  1.00000
+[1] -0.80000 -0.70000 39.08985  1.00000
+[1] -0.80000 -0.60000 40.18057  1.00000
+[1] -0.80000 -0.50000 41.58857  1.00000
+[1] -0.80000 -0.40000 43.31933  1.00000
+[1] -0.80000 -0.30000 45.37312  1.00000
+[1] -0.80000 -0.20000 47.74465  1.00000
+[1] -0.80000 -0.10000 50.42294  1.00000
+[1] -0.80000  0.00000 53.39142  1.00000
+[1] -0.80000  0.10000 56.62831  1.00000
+[1] -0.80000  0.20000 60.10719  1.00000
+[1] -0.80000  0.30000 63.79785  1.00000
+[1] -0.80000  0.40000 67.66726  1.00000
+[1] -0.80000  0.50000 71.68059  1.00000
+[1] -0.8000  0.6000 75.8024  1.0000
+[1] -0.80000  0.70000 79.99759  1.00000
+[1] -0.80000  0.80000 84.23245  1.00000
+[1] -0.8000  0.9000 88.4754  1.0000
+[1] -0.80000  1.00000 92.69767  1.00000
+[1] -0.80000  1.10000 96.87368  1.00000
+[1]  -0.8000   1.2000 100.9813   1.0000
+[1]  -0.800   1.300 105.002   1.000
+[1]  -0.8000   1.4000 108.9206   1.0000
+[1]  -0.8000   1.5000 112.7252   1.0000
+[1]  -0.8000   1.6000 116.4071   1.0000
+[1]  -0.80   1.70 119.96   1.00
+[1]  -0.8000   1.8000 123.3802   1.0000
+[1]  -0.8000   1.9000 126.6659   1.0000
+[1]  -0.800   2.000 129.817   1.000
+[1]  -0.8000   2.1000 132.8346   1.0000
+[1]  -0.8000   2.2000 135.7211   1.0000
+[1]  -0.8000   2.3000 138.4796   1.0000
+[1]  -0.8000   2.4000 141.1141   1.0000
+[1]  -0.8000   2.5000 143.6286   1.0000
+[1]  -0.8000   2.6000 146.0277   1.0000
+[1]  -0.8000   2.7000 148.3161   1.0000
+[1]  -0.8000   2.8000 150.4987   1.0000
+[1]  -0.8000   2.9000 152.5802   1.0000
+[1]  -0.8000   3.0000 154.5653   1.0000
+[1] -0.70000 -0.70000 40.03288  1.00000
+[1] -0.7000 -0.6000 41.2312  1.0000
+[1] -0.7000 -0.5000 42.6906  1.0000
+[1] -0.70000 -0.40000 44.41275  1.00000
+[1] -0.70000 -0.30000 46.39485  1.00000
+[1] -0.70000 -0.20000 48.62946  1.00000
+[1] -0.70000 -0.10000 51.10445  1.00000
+[1] -0.7000  0.0000 53.8032  1.0000
+[1] -0.70000  0.10000 56.70503  1.00000
+[1] -0.70000  0.20000 59.78578  1.00000
+[1] -0.70000  0.30000 63.01856  1.00000
+[1] -0.70000  0.40000 66.37465  1.00000
+[1] -0.70000  0.50000 69.82441  1.00000
+[1] -0.70000  0.60000 73.33819  1.00000
+[1] -0.70000  0.70000 76.88719  1.00000
+[1] -0.70000  0.80000 80.44422  1.00000
+[1] -0.70000  0.90000 83.98429  1.00000
+[1] -0.70000  1.00000 87.48503  1.00000
+[1] -0.700  1.100 90.927  1.000
+[1] -0.70000  1.20000 94.29375  1.00000
+[1] -0.70000  1.30000 97.57186  1.00000
+[1]  -0.7000   1.4000 100.7508   1.0000
+[1]  -0.7000   1.5000 103.8226   1.0000
+[1]  -0.7000   1.6000 106.7819   1.0000
+[1]  -0.7000   1.7000 109.6252   1.0000
+[1]  -0.700   1.800 112.351   1.000
+[1]  -0.7000   1.9000 114.9593   1.0000
+[1]  -0.7000   2.0000 117.4511   1.0000
+[1]  -0.7000   2.1000 119.8288   1.0000
+[1]  -0.7000   2.2000 122.0951   1.0000
+[1]  -0.7000   2.3000 124.2536   1.0000
+[1]  -0.7000   2.4000 126.3083   1.0000
+[1]  -0.7000   2.5000 128.2631   1.0000
+[1]  -0.7000   2.6000 130.1225   1.0000
+[1]  -0.7000   2.7000 131.8909   1.0000
+[1]  -0.7000   2.8000 133.5725   1.0000
+[1]  -0.7000   2.9000 135.1718   1.0000
+[1]  -0.7000   3.0000 136.6928   1.0000
+[1] -0.60000 -0.60000 42.48766  1.00000
+[1] -0.60000 -0.50000 43.95181  1.00000
+[1] -0.60000 -0.40000 45.62207  1.00000
+[1] -0.60000 -0.30000 47.49312  1.00000
+[1] -0.60000 -0.20000 49.55589  1.00000
+[1] -0.6000 -0.1000 51.7976  1.0000
+[1] -0.60000  0.00000 54.20208  1.00000
+[1] -0.60000  0.10000 56.75017  1.00000
+[1] -0.60000  0.20000 59.42028  1.00000
+[1] -0.60000  0.30000 62.18913  1.00000
+[1] -0.60000  0.40000 65.03248  1.00000
+[1] -0.60000  0.50000 67.92588  1.00000
+[1] -0.60000  0.60000 70.84543  1.00000
+[1] -0.60000  0.70000 73.76842  1.00000
+[1] -0.60000  0.80000 76.67388  1.00000
+[1] -0.60000  0.90000 79.54297  1.00000
+[1] -0.60000  1.00000 82.35927  1.00000
+[1] -0.60000  1.10000 85.10891  1.00000
+[1] -0.60000  1.20000 87.78055  1.00000
+[1] -0.60000  1.30000 90.36533  1.00000
+[1] -0.60000  1.40000 92.85668  1.00000
+[1] -0.60000  1.50000 95.25012  1.00000
+[1] -0.60000  1.60000 97.54301  1.00000
+[1] -0.60000  1.70000 99.73424  1.00000
+[1]  -0.6000   1.8000 101.8241   1.0000
+[1]  -0.6000   1.9000 103.8138   1.0000
+[1]  -0.6000   2.0000 105.7056   1.0000
+[1]  -0.6000   2.1000 107.5023   1.0000
+[1]  -0.6000   2.2000 109.2071   1.0000
+[1]  -0.6000   2.3000 110.8238   1.0000
+[1]  -0.600   2.400 112.356   1.000
+[1]  -0.6000   2.5000 113.8079   1.0000
+[1]  -0.6000   2.6000 115.1833   1.0000
+[1]  -0.6000   2.7000 116.4862   1.0000
+[1]  -0.6000   2.8000 117.7206   1.0000
+[1]  -0.6000   2.9000 118.8901   1.0000
+[1]  -0.6000   3.0000 119.9984   1.0000
+[1] -0.50000 -0.50000 45.37082  1.00000
+[1] -0.50000 -0.40000 46.94339  1.00000
+[1] -0.50000 -0.30000 48.66234  1.00000
+[1] -0.50000 -0.20000 50.51757  1.00000
+[1] -0.50000 -0.10000 52.49627  1.00000
+[1] -0.50000  0.00000 54.58322  1.00000
+[1] -0.50000  0.10000 56.76124  1.00000
+[1] -0.50000  0.20000 59.01169  1.00000
+[1] -0.50000  0.30000 61.31511  1.00000
+[1] -0.50000  0.40000 63.65184  1.00000
+[1] -0.50000  0.50000 66.00259  1.00000
+[1] -0.50000  0.60000 68.34903  1.00000
+[1] -0.50000  0.70000 70.67421  1.00000
+[1] -0.50000  0.80000 72.96293  1.00000
+[1] -0.50000  0.90000 75.20201  1.00000
+[1] -0.50000  1.00000 77.38035  1.00000
+[1] -0.50000  1.10000 79.48898  1.00000
+[1] -0.50000  1.20000 81.52101  1.00000
+[1] -0.50000  1.30000 83.47147  1.00000
+[1] -0.50000  1.40000 85.33713  1.00000
+[1] -0.50000  1.50000 87.11629  1.00000
+[1] -0.50000  1.60000 88.80857  1.00000
+[1] -0.50000  1.70000 90.41468  1.00000
+[1] -0.50000  1.80000 91.93619  1.00000
+[1] -0.5000  1.9000 93.3754  1.0000
+[1] -0.50000  2.00000 94.73509  1.00000
+[1] -0.50000  2.10000 96.01843  1.00000
+[1] -0.50000  2.20000 97.22883  1.00000
+[1] -0.50000  2.30000 98.36987  1.00000
+[1] -0.50000  2.40000 99.44514  1.00000
+[1]  -0.5000   2.5000 100.4583   1.0000
+[1]  -0.5000   2.6000 101.4128   1.0000
+[1]  -0.5000   2.7000 102.3122   1.0000
+[1]  -0.5000   2.8000 103.1597   1.0000
+[1]  -0.5000   2.9000 103.9587   1.0000
+[1]  -0.5000   3.0000 104.7121   1.0000
+[1] -0.40000 -0.40000 48.37058  1.00000
+[1] -0.4000 -0.3000 49.8953  1.0000
+[1] -0.40000 -0.20000 51.50717  1.00000
+[1] -0.40000 -0.10000 53.19397  1.00000
+[1] -0.40000  0.00000 54.94202  1.00000
+[1] -0.40000  0.10000 56.73656  1.00000
+[1] -0.40000  0.20000 58.56224  1.00000
+[1] -0.40000  0.30000 60.40363  1.00000
+[1] -0.40000  0.40000 62.24564  1.00000
+[1] -0.40000  0.50000 64.07403  1.00000
+[1] -0.40000  0.60000 65.87571  1.00000
+[1] -0.40000  0.70000 67.63907  1.00000
+[1] -0.40000  0.80000 69.35415  1.00000
+[1] -0.40000  0.90000 71.01273  1.00000
+[1] -0.40000  1.00000 72.60833  1.00000
+[1] -0.40000  1.10000 74.13617  1.00000
+[1] -0.40000  1.20000 75.59302  1.00000
+[1] -0.40000  1.30000 76.97707  1.00000
+[1] -0.40000  1.40000 78.28772  1.00000
+[1] -0.40000  1.50000 79.52541  1.00000
+[1] -0.40000  1.60000 80.69143  1.00000
+[1] -0.40000  1.70000 81.78774  1.00000
+[1] -0.4000  1.8000 82.8168  1.0000
+[1] -0.40000  1.90000 83.78145  1.00000
+[1] -0.40000  2.00000 84.68477  1.00000
+[1] -0.40000  2.10000 85.52999  1.00000
+[1] -0.40000  2.20000 86.32038  1.00000
+[1] -0.40000  2.30000 87.05923  1.00000
+[1] -0.40000  2.40000 87.74978  1.00000
+[1] -0.40000  2.50000 88.39514  1.00000
+[1] -0.40000  2.60000 88.99834  1.00000
+[1] -0.40000  2.70000 89.56224  1.00000
+[1] -0.40000  2.80000 90.08957  1.00000
+[1] -0.40000  2.90000 90.58289  1.00000
+[1] -0.40000  3.00000 91.04461  1.00000
+[1] -0.30000 -0.30000 51.18336  1.00000
+[1] -0.3000 -0.2000 52.5166  1.0000
+[1] -0.30000 -0.10000 53.88411  1.00000
+[1] -0.30000  0.00000 55.27431  1.00000
+[1] -0.30000  0.10000 56.67535  1.00000
+[1] -0.30000  0.20000 58.07544  1.00000
+[1] -0.30000  0.30000 59.46325  1.00000
+[1] -0.30000  0.40000 60.82827  1.00000
+[1] -0.30000  0.50000 62.16099  1.00000
+[1] -0.30000  0.60000 63.45321  1.00000
+[1] -0.30000  0.70000 64.69808  1.00000
+[1] -0.3000  0.8000 65.8902  1.0000
+[1] -0.30000  0.90000 67.02556  1.00000
+[1] -0.30000  1.00000 68.10153  1.00000
+[1] -0.30000  1.10000 69.11666  1.00000
+[1] -0.3000  1.2000 70.0706  1.0000
+[1] -0.30000  1.30000 70.96389  1.00000
+[1] -0.30000  1.40000 71.79785  1.00000
+[1] -0.30000  1.50000 72.57438  1.00000
+[1] -0.30000  1.60000 73.29581  1.00000
+[1] -0.30000  1.70000 73.96481  1.00000
+[1] -0.30000  1.80000 74.58425  1.00000
+[1] -0.30000  1.90000 75.15709  1.00000
+[1] -0.30000  2.00000 75.68636  1.00000
+[1] -0.30000  2.10000 76.17502  1.00000
+[1] -0.30000  2.20000 76.62598  1.00000
+[1] -0.30000  2.30000 77.04204  1.00000
+[1] -0.30000  2.40000 77.42586  1.00000
+[1] -0.30000  2.50000 77.77997  1.00000
+[1] -0.30000  2.60000 78.10672  1.00000
+[1] -0.30000  2.70000 78.40831  1.00000
+[1] -0.3000  2.8000 78.6868  1.0000
+[1] -0.30000  2.90000 78.94408  1.00000
+[1] -0.30000  3.00000 79.18188  1.00000
+[1] -0.20000 -0.20000 53.53724  1.00000
+[1] -0.20000 -0.10000 54.56018  1.00000
+[1] -0.20000  0.00000 55.57656  1.00000
+[1] -0.2000  0.1000 56.5778  1.0000
+[1] -0.20000  0.20000 57.55593  1.00000
+[1] -0.20000  0.30000 58.50377  1.00000
+[1] -0.20000  0.40000 59.41514  1.00000
+[1] -0.20000  0.50000 60.28499  1.00000
+[1] -0.20000  0.60000 61.10942  1.00000
+[1] -0.20000  0.70000 61.88572  1.00000
+[1] -0.20000  0.80000 62.61227  1.00000
+[1] -0.20000  0.90000 63.28848  1.00000
+[1] -0.20000  1.00000 63.91464  1.00000
+[1] -0.20000  1.10000 64.49181  1.00000
+[1] -0.20000  1.20000 65.02164  1.00000
+[1] -0.20000  1.30000 65.50626  1.00000
+[1] -0.2000  1.4000 65.9481  1.0000
+[1] -0.20000  1.50000 66.34985  1.00000
+[1] -0.20000  1.60000 66.71427  1.00000
+[1] -0.20000  1.70000 67.04419  1.00000
+[1] -0.20000  1.80000 67.34239  1.00000
+[1] -0.20000  1.90000 67.61155  1.00000
+[1] -0.20000  2.00000 67.85425  1.00000
+[1] -0.20000  2.10000 68.07292  1.00000
+[1] -0.20000  2.20000 68.26983  1.00000
+[1] -0.20000  2.30000 68.44709  1.00000
+[1] -0.20000  2.40000 68.60661  1.00000
+[1] -0.20000  2.50000 68.75017  1.00000
+[1] -0.20000  2.60000 68.87937  1.00000
+[1] -0.20000  2.70000 68.99566  1.00000
+[1] -0.20000  2.80000 69.10036  1.00000
+[1] -0.20000  2.90000 69.19465  1.00000
+[1] -0.20000  3.00000 69.27958  1.00000
+[1] -0.10000 -0.10000 55.21602  1.00000
+[1] -0.10000  0.00000 55.84598  1.00000
+[1] -0.10000  0.10000 56.44514  1.00000
+[1] -0.10000  0.20000 57.00947  1.00000
+[1] -0.10000  0.30000 57.53586  1.00000
+[1] -0.10000  0.40000 58.02224  1.00000
+[1] -0.1000  0.5000 58.4675  1.0000
+[1] -0.10000  0.60000 58.87146  1.00000
+[1] -0.10000  0.70000 59.23478  1.00000
+[1] -0.1000  0.8000 59.5588  1.0000
+[1] -0.10000  0.90000 59.84545  1.00000
+[1] -0.10000  1.00000 60.09707  1.00000
+[1] -0.1000  1.1000 60.3163  1.0000
+[1] -0.10000  1.20000 60.50595  1.00000
+[1] -0.10000  1.30000 60.66887  1.00000
+[1] -0.10000  1.40000 60.80791  1.00000
+[1] -0.10000  1.50000 60.92582  1.00000
+[1] -0.10000  1.60000 61.02519  1.00000
+[1] -0.10000  1.70000 61.10843  1.00000
+[1] -0.10000  1.80000 61.17776  1.00000
+[1] -0.10000  1.90000 61.23516  1.00000
+[1] -0.10000  2.00000 61.28244  1.00000
+[1] -0.10000  2.10000 61.32116  1.00000
+[1] -0.10000  2.20000 61.35269  1.00000
+[1] -0.10000  2.30000 61.37824  1.00000
+[1] -0.10000  2.40000 61.39883  1.00000
+[1] -0.10000  2.50000 61.41533  1.00000
+[1] -0.10000  2.60000 61.42849  1.00000
+[1] -0.10000  2.70000 61.43893  1.00000
+[1] -0.10000  2.80000 61.44717  1.00000
+[1] -0.10000  2.90000 61.45364  1.00000
+[1] -0.10000  3.00000 61.45869  1.00000
+[1]  0.00000  0.00000 56.08064  1.00000
+[1]  0.00000  0.10000 56.27956  1.00000
+[1]  0.00000  0.20000 56.44268  1.00000
+[1]  0.00000  0.30000 56.57081  1.00000
+[1]  0.00000  0.40000 56.66558  1.00000
+[1]  0.0000  0.5000 56.7293  1.0000
+[1]  0.00000  0.60000 56.76481  1.00000
+[1]  0.00000  0.70000 56.77533  1.00000
+[1]  0.00000  0.80000 56.76428  1.00000
+[1]  0.0000  0.9000 56.7352  1.0000
+[1]  0.00000  1.00000 56.69154  1.00000
+[1]  0.00000  1.10000 56.63663  1.00000
+[1]  0.00000  1.20000 56.57355  1.00000
+[1]  0.00000  1.30000 56.50511  1.00000
+[1]  0.00000  1.40000 56.43378  1.00000
+[1]  0.0000  1.5000 56.3617  1.0000
+[1]  0.00000  1.60000 56.29067  1.00000
+[1]  0.00000  1.70000 56.22216  1.00000
+[1]  0.00000  1.80000 56.15734  1.00000
+[1]  0.0000  1.9000 56.0971  1.0000
+[1]  0.00000  2.00000 56.04207  1.00000
+[1]  0.00000  2.10000 55.99269  1.00000
+[1]  0.00000  2.20000 55.94919  1.00000
+[1]  0.00000  2.30000 55.91165  1.00000
+[1]  0.00000  2.40000 55.88003  1.00000
+[1]  0.00000  2.50000 55.85419  1.00000
+[1]  0.0000  2.6000 55.8339  1.0000
+[1]  0.00000  2.70000 55.81888  1.00000
+[1]  0.00000  2.80000 55.80881  1.00000
+[1]  0.00000  2.90000 55.80334  1.00000
+[1]  0.0000  3.0000 55.8021  1.0000
+[1]  0.10000  0.10000 56.08417  1.00000
+[1]  0.10000  0.20000 55.86284  1.00000
+[1]  0.10000  0.30000 55.62005  1.00000
+[1]  0.10000  0.40000 55.36067  1.00000
+[1]  0.1000  0.5000 55.0898  1.0000
+[1]  0.10000  0.60000 54.81254  1.00000
+[1]  0.10000  0.70000 54.53383  1.00000
+[1]  0.10000  0.80000 54.25829  1.00000
+[1]  0.10000  0.90000 53.99011  1.00000
+[1]  0.10000  1.00000 53.73295  1.00000
+[1]  0.10000  1.10000 53.48993  1.00000
+[1]  0.10000  1.20000 53.26355  1.00000
+[1]  0.10000  1.30000 53.05576  1.00000
+[1]  0.10000  1.40000 52.86793  1.00000
+[1]  0.10000  1.50000 52.70093  1.00000
+[1]  0.10000  1.60000 52.55516  1.00000
+[1]  0.10000  1.70000 52.43064  1.00000
+[1]  0.10000  1.80000 52.32702  1.00000
+[1]  0.10000  1.90000 52.24368  1.00000
+[1]  0.10000  2.00000 52.17978  1.00000
+[1]  0.10000  2.10000 52.13429  1.00000
+[1]  0.10000  2.20000 52.10608  1.00000
+[1]  0.10000  2.30000 52.09393  1.00000
+[1]  0.10000  2.40000 52.09656  0.00000
+[1]  0.10000  2.50000 52.11268  0.00000
+[1]  0.10000  2.60000 52.14103  0.00000
+[1]  0.10000  2.70000 52.18034  0.00000
+[1]  0.10000  2.80000 52.22941  0.00000
+[1]  0.10000  2.90000 52.28709  0.00000
+[1]  0.10000  3.00000 52.35229  0.00000
+[1]  0.20000  0.20000 55.27763  1.00000
+[1]  0.20000  0.30000 54.69482  1.00000
+[1]  0.20000  0.40000 54.12202  1.00000
+[1]  0.20000  0.50000 53.56644  1.00000
+[1]  0.20000  0.60000 53.03466  1.00000
+[1]  0.20000  0.70000 52.53247  1.00000
+[1]  0.20000  0.80000 52.06478  1.00000
+[1]  0.20000  0.90000 51.63552  1.00000
+[1]  0.20000  1.00000 51.24766  1.00000
+[1]  0.20000  1.10000 50.90323  1.00000
+[1]  0.20000  1.20000 50.60332  1.00000
+[1]  0.20000  1.30000 50.34825  1.00000
+[1]  0.20000  1.40000 50.13757  1.00000
+[1]  0.20000  1.50000 49.97026  1.00000
+[1]  0.20000  1.60000 49.84474  1.00000
+[1]  0.20000  1.70000 49.75903  1.00000
+[1]  0.20000  1.80000 49.71086  0.00000
+[1]  0.2000  1.9000 49.6977  0.0000
+[1]  0.20000  2.00000 49.71691  0.00000
+[1]  0.20000  2.10000 49.76574  0.00000
+[1]  0.20000  2.20000 49.84146  0.00000
+[1]  0.20000  2.30000 49.94134  0.00000
+[1]  0.20000  2.40000 50.06275  0.00000
+[1]  0.20000  2.50000 50.20315  0.00000
+[1]  0.20000  2.60000 50.36013  0.00000
+[1]  0.2000  2.7000 50.5314  0.0000
+[1]  0.20000  2.80000 50.71486  0.00000
+[1]  0.20000  2.90000 50.90852  0.00000
+[1]  0.20000  3.00000 51.11059  0.00000
+[1]  0.30000  0.30000 53.80579  1.00000
+[1]  0.30000  0.40000 52.96273  1.00000
+[1]  0.30000  0.50000 52.17426  1.00000
+[1]  0.30000  0.60000 51.44762  1.00000
+[1]  0.30000  0.70000 50.78863  1.00000
+[1]  0.30000  0.80000 50.20159  1.00000
+[1]  0.30000  0.90000 49.68928  1.00000
+[1]  0.3000  1.0000 49.2531  1.0000
+[1]  0.30000  1.10000 48.89312  1.00000
+[1]  0.30000  1.20000 48.60827  1.00000
+[1]  0.30000  1.30000 48.39646  1.00000
+[1]  0.30000  1.40000 48.25478  0.00000
+[1]  0.30000  1.50000 48.17966  0.00000
+[1]  0.30000  1.60000 48.16701  0.00000
+[1]  0.30000  1.70000 48.21239  0.00000
+[1]  0.30000  1.80000 48.31116  0.00000
+[1]  0.30000  1.90000 48.45853  0.00000
+[1]  0.30000  2.00000 48.64974  0.00000
+[1]  0.3000  2.1000 48.8801  0.0000
+[1]  0.30000  2.20000 49.14504  0.00000
+[1]  0.30000  2.30000 49.44019  0.00000
+[1]  0.30000  2.40000 49.76142  0.00000
+[1]  0.30000  2.50000 50.10483  0.00000
+[1]  0.30000  2.60000 50.46683  0.00000
+[1]  0.30000  2.70000 50.84406  0.00000
+[1]  0.30000  2.80000 51.23348  0.00000
+[1]  0.3000  2.9000 51.6323  0.0000
+[1]  0.30000  3.00000 52.03801  0.00000
+[1]  0.40000  0.40000 51.89412  1.00000
+[1]  0.40000  0.50000 50.92551  1.00000
+[1]  0.40000  0.60000 50.06404  1.00000
+[1]  0.4000  0.7000 49.3147  1.0000
+[1]  0.4000  0.8000 48.6803  1.0000
+[1]  0.40000  0.90000 48.16166  1.00000
+[1]  0.40000  1.00000 47.75773  1.00000
+[1]  0.40000  1.10000 47.46586  0.00000
+[1]  0.40000  1.20000 47.28202  0.00000
+[1]  0.40000  1.30000 47.20103  0.00000
+[1]  0.40000  1.40000 47.21685  0.00000
+[1]  0.40000  1.50000 47.32281  0.00000
+[1]  0.40000  1.60000 47.51178  0.00000
+[1]  0.40000  1.70000 47.77642  0.00000
+[1]  0.4000  1.8000 48.1093  0.0000
+[1]  0.40000  1.90000 48.50308  0.00000
+[1]  0.40000  2.00000 48.95059  0.00000
+[1]  0.40000  2.10000 49.44493  0.00000
+[1]  0.40000  2.20000 49.97956  0.00000
+[1]  0.4000  2.3000 50.5483  0.0000
+[1]  0.40000  2.40000 51.14543  0.00000
+[1]  0.40000  2.50000 51.76562  0.00000
+[1]  0.40000  2.60000 52.40402  0.00000
+[1]  0.40000  2.70000 53.05621  0.00000
+[1]  0.40000  2.80000 53.71821  0.00000
+[1]  0.40000  2.90000 54.38642  0.00000
+[1]  0.40000  3.00000 55.05766  0.00000
+[1]  0.50000  0.50000 49.82951  1.00000
+[1]  0.50000  0.60000 48.89255  1.00000
+[1]  0.50000  0.70000 48.11797  1.00000
+[1]  0.5000  0.8000 47.5063  1.0000
+[1]  0.50000  0.90000 47.05554  1.00000
+[1]  0.50000  1.00000 46.76143  0.00000
+[1]  0.50000  1.10000 46.61782  0.00000
+[1]  0.50000  1.20000 46.61701  0.00000
+[1]  0.50000  1.30000 46.75007  0.00000
+[1]  0.50000  1.40000 47.00726  0.00000
+[1]  0.50000  1.50000 47.37821  0.00000
+[1]  0.50000  1.60000 47.85232  0.00000
+[1]  0.5000  1.7000 48.4189  0.0000
+[1]  0.50000  1.80000 49.06742  0.00000
+[1]  0.50000  1.90000 49.78764  0.00000
+[1]  0.50000  2.00000 50.56976  0.00000
+[1]  0.50000  2.10000 51.40449  0.00000
+[1]  0.50000  2.20000 52.28313  0.00000
+[1]  0.50000  2.30000 53.19761  0.00000
+[1]  0.5000  2.4000 54.1405  0.0000
+[1]  0.50000  2.50000 55.10502  0.00000
+[1]  0.50000  2.60000 56.08504  0.00000
+[1]  0.50000  2.70000 57.07506  0.00000
+[1]  0.50000  2.80000 58.07015  0.00000
+[1]  0.50000  2.90000 59.06596  0.00000
+[1]  0.50000  3.00000 60.05868  0.00000
+[1]  0.60000  0.60000 47.93784  1.00000
+[1]  0.60000  0.70000 47.20085  1.00000
+[1]  0.60000  0.80000 46.67905  0.00000
+[1]  0.60000  0.90000 46.36685  0.00000
+[1]  0.60000  1.00000 46.25604  0.00000
+[1]  0.60000  1.10000 46.33627  0.00000
+[1]  0.60000  1.20000 46.59547  0.00000
+[1]  0.6000  1.3000 47.0204  0.0000
+[1]  0.60000  1.40000 47.59698  0.00000
+[1]  0.60000  1.50000 48.31074  0.00000
+[1]  0.60000  1.60000 49.14711  0.00000
+[1]  0.60000  1.70000 50.09171  0.00000
+[1]  0.60000  1.80000 51.13057  0.00000
+[1]  0.60000  1.90000 52.25031  0.00000
+[1]  0.60000  2.00000 53.43829  0.00000
+[1]  0.60000  2.10000 54.68265  0.00000
+[1]  0.60000  2.20000 55.97244  0.00000
+[1]  0.60000  2.30000 57.29757  0.00000
+[1]  0.6000  2.4000 58.6489  0.0000
+[1]  0.60000  2.50000 60.01813  0.00000
+[1]  0.60000  2.60000 61.39786  0.00000
+[1]  0.60000  2.70000 62.78151  0.00000
+[1]  0.60000  2.80000 64.16326  0.00000
+[1]  0.60000  2.90000 65.53805  0.00000
+[1]  0.60000  3.00000 66.90146  0.00000
+[1]  0.70000  0.70000 46.56115  0.00000
+[1]  0.70000  0.80000 46.19257  0.00000
+[1]  0.70000  0.90000 46.08523  0.00000
+[1]  0.70000  1.00000 46.22625  0.00000
+[1]  0.7000  1.1000 46.6004  0.0000
+[1]  0.70000  1.20000 47.19068  0.00000
+[1]  0.70000  1.30000 47.97891  0.00000
+[1]  0.70000  1.40000 48.94624  0.00000
+[1]  0.70000  1.50000 50.07359  0.00000
+[1]  0.70000  1.60000 51.34206  0.00000
+[1]  0.70000  1.70000 52.73325  0.00000
+[1]  0.70000  1.80000 54.22948  0.00000
+[1]  0.70000  1.90000 55.81402  0.00000
+[1]  0.7000  2.0000 57.4712  0.0000
+[1]  0.7000  2.1000 59.1865  0.0000
+[1]  0.70000  2.20000 60.94658  0.00000
+[1]  0.70000  2.30000 62.73933  0.00000
+[1]  0.70000  2.40000 64.55383  0.00000
+[1]  0.70000  2.50000 66.38029  0.00000
+[1]  0.70000  2.60000 68.21004  0.00000
+[1]  0.70000  2.70000 70.03547  0.00000
+[1]  0.70000  2.80000 71.84991  0.00000
+[1]  0.70000  2.90000 73.64761  0.00000
+[1]  0.70000  3.00000 75.42365  0.00000
+[1]  0.80000  0.80000 46.03612  0.00000
+[1]  0.80000  0.90000 46.19484  0.00000
+[1]  0.80000  1.00000 46.65056  0.00000
+[1]  0.80000  1.10000 47.38258  0.00000
+[1]  0.80000  1.20000 48.36838  0.00000
+[1]  0.80000  1.30000 49.58436  0.00000
+[1]  0.80000  1.40000 51.00641  0.00000
+[1]  0.80000  1.50000 52.61046  0.00000
+[1]  0.80000  1.60000 54.37297  0.00000
+[1]  0.8000  1.7000 56.2712  0.0000
+[1]  0.80000  1.80000 58.28357  0.00000
+[1]  0.80000  1.90000 60.38982  0.00000
+[1]  0.80000  2.00000 62.57112  0.00000
+[1]  0.80000  2.10000 64.81018  0.00000
+[1]  0.80000  2.20000 67.09127  0.00000
+[1]  0.80000  2.30000 69.40019  0.00000
+[1]  0.80000  2.40000 71.72425  0.00000
+[1]  0.80000  2.50000 74.05221  0.00000
+[1]  0.80000  2.60000 76.37416  0.00000
+[1]  0.8000  2.7000 78.6815  0.0000
+[1]  0.80000  2.80000 80.96678  0.00000
+[1]  0.80000  2.90000 83.22365  0.00000
+[1]  0.80000  3.00000 85.44674  0.00000
+[1]  0.90000  0.90000 46.67525  0.00000
+[1]  0.90000  1.00000 47.50243  0.00000
+[1]  0.90000  1.10000 48.64964  0.00000
+[1]  0.90000  1.20000 50.08835  0.00000
+[1]  0.90000  1.30000 51.78906  0.00000
+[1]  0.90000  1.40000 53.72202  0.00000
+[1]  0.90000  1.50000 55.85785  0.00000
+[1]  0.90000  1.60000 58.16804  0.00000
+[1]  0.90000  1.70000 60.62535  0.00000
+[1]  0.90000  1.80000 63.20407  0.00000
+[1]  0.90000  1.90000 65.88029  0.00000
+[1]  0.90000  2.00000 68.63195  0.00000
+[1]  0.90000  2.10000 71.43895  0.00000
+[1]  0.90000  2.20000 74.28312  0.00000
+[1]  0.9000  2.3000 77.1482  0.0000
+[1]  0.90000  2.40000 80.01976  0.00000
+[1]  0.90000  2.50000 82.88513  0.00000
+[1]  0.90000  2.60000 85.73324  0.00000
+[1]  0.90000  2.70000 88.55457  0.00000
+[1]  0.90000  2.80000 91.34095  0.00000
+[1]  0.90000  2.90000 94.08552  0.00000
+[1]  0.90000  3.00000 96.78254  0.00000
+[1]  1.00000  1.00000 48.75142  0.00000
+[1]  1.00000  1.10000 50.36425  0.00000
+[1]  1.00000  1.20000 52.30595  0.00000
+[1]  1.00000  1.30000 54.54073  0.00000
+[1]  1.00000  1.40000 57.03286  0.00000
+[1]  1.00000  1.50000 59.74735  0.00000
+[1]  1.00000  1.60000 62.65051  0.00000
+[1]  1.0000  1.7000 65.7104  0.0000
+[1]  1.00000  1.80000 68.89709  0.00000
+[1]  1.00000  1.90000 72.18291  0.00000
+[1]  1.00000  2.00000 75.54254  0.00000
+[1]  1.00000  2.10000 78.95304  0.00000
+[1]  1.00000  2.20000 82.39382  0.00000
+[1]  1.0000  2.3000 85.8466  0.0000
+[1]  1.00000  2.40000 89.29527  0.00000
+[1]  1.00000  2.50000 92.72577  0.00000
+[1]  1.00000  2.60000 96.12598  0.00000
+[1]  1.0000  2.7000 99.4855  0.0000
+[1]   1.0000   2.8000 102.7956   0.0000
+[1]   1.0000   2.9000 106.0489   0.0000
+[1]   1.0000   3.0000 109.2394   0.0000
+[1]  1.10000  1.10000 52.48621  0.00000
+[1]  1.10000  1.20000 54.97365  0.00000
+[1]  1.1000  1.3000 57.7842  0.0000
+[1]  1.10000  1.40000 60.87586  0.00000
+[1]  1.10000  1.50000 64.20779  0.00000
+[1]  1.10000  1.60000 67.74097  0.00000
+[1]  1.10000  1.70000 71.43861  0.00000
+[1]  1.10000  1.80000 75.26649  0.00000
+[1]  1.10000  1.90000 79.19315  0.00000
+[1]  1.10000  2.00000 83.18997  0.00000
+[1]  1.10000  2.10000 87.23122  0.00000
+[1]  1.10000  2.20000 91.29394  0.00000
+[1]  1.10000  2.30000 95.35786  0.00000
+[1]  1.10000  2.40000 99.40527  0.00000
+[1]   1.1000   2.5000 103.4208   0.0000
+[1]   1.1000   2.6000 107.3914   0.0000
+[1]   1.1000   2.7000 111.3059   0.0000
+[1]   1.100   2.800 115.155   0.000
+[1]   1.100   2.900 118.931   0.000
+[1]   1.1000   3.0000 122.6278   0.0000
+[1]  1.20000  1.20000 58.04243  0.00000
+[1]  1.200  1.300 61.463  0.000
+[1]  1.20000  1.40000 65.18687  0.00000
+[1]  1.20000  1.50000 69.16722  0.00000
+[1]  1.20000  1.60000 73.35953  0.00000
+[1]  1.20000  1.70000 77.72211  0.00000
+[1]  1.20000  1.80000 82.21641  0.00000
+[1]  1.20000  1.90000 86.80716  0.00000
+[1]  1.20000  2.00000 91.46251  0.00000
+[1]  1.20000  2.10000 96.15394  0.00000
+[1]   1.2000   2.2000 100.8562   0.0000
+[1]   1.2000   2.3000 105.5471   0.0000
+[1]   1.2000   2.4000 110.2075   0.0000
+[1]   1.2000   2.5000 114.8208   0.0000
+[1]   1.200   2.600 119.373   0.000
+[1]   1.2000   2.7000 123.8523   0.0000
+[1]   1.200   2.800 128.249   0.000
+[1]   1.2000   2.9000 132.5552   0.0000
+[1]   1.2000   3.0000 136.7646   0.0000
+[1]  1.30000  1.30000 65.52073  0.00000
+[1]  1.30000  1.40000 69.90223  0.00000
+[1]  1.30000  1.50000 74.55457  0.00000
+[1]  1.30000  1.60000 79.42769  0.00000
+[1]  1.30000  1.70000 84.47494  0.00000
+[1]  1.30000  1.80000 89.65343  0.00000
+[1]  1.30000  1.90000 94.92415  0.00000
+[1]   1.300   2.000 100.252   0.000
+[1]   1.3000   2.1000 105.6059   0.0000
+[1]   1.3000   2.2000 110.9582   0.0000
+[1]   1.3000   2.3000 116.2851   0.0000
+[1]   1.3000   2.4000 121.5659   0.0000
+[1]   1.3000   2.5000 126.7831   0.0000
+[1]   1.3000   2.6000 131.9217   0.0000
+[1]   1.3000   2.7000 136.9695   0.0000
+[1]   1.3000   2.8000 141.9164   0.0000
+[1]   1.3000   2.9000 146.7544   0.0000
+[1]   1.3000   3.0000 151.4773   0.0000
+[1]  1.40000  1.40000 74.96003  0.00000
+[1]  1.4000  1.5000 80.3011  0.0000
+[1]  1.40000  1.60000 85.86982  0.00000
+[1]  1.40000  1.70000 91.61462  0.00000
+[1]  1.40000  1.80000 97.48828  0.00000
+[1]   1.4000   1.9000 103.4481   0.0000
+[1]   1.400   2.000 109.456   0.000
+[1]   1.400   2.100 115.478   0.000
+[1]   1.4000   2.2000 121.4846   0.0000
+[1]   1.4000   2.3000 127.4503   0.0000
+[1]   1.400   2.400 133.353   0.000
+[1]   1.4000   2.5000 139.1742   0.0000
+[1]   1.4000   2.6000 144.8984   0.0000
+[1]   1.4000   2.7000 150.5129   0.0000
+[1]   1.4000   2.8000 156.0074   0.0000
+[1]   1.4000   2.9000 161.3738   0.0000
+[1]   1.400   3.000 166.606   0.000
+[1]  1.50000  1.50000 86.34141  0.00000
+[1]  1.50000  1.60000 92.61434  0.00000
+[1]  1.50000  1.70000 99.06339  0.00000
+[1]   1.5000   1.8000 105.6371   0.0000
+[1]   1.5000   1.9000 112.2893   0.0000
+[1]   1.5000   2.0000 118.9786   0.0000
+[1]   1.5000   2.1000 125.6689   0.0000
+[1]   1.5000   2.2000 132.3285   0.0000
+[1]   1.5000   2.3000 138.9303   0.0000
+[1]   1.5000   2.4000 145.4511   0.0000
+[1]   1.5000   2.5000 151.8716   0.0000
+[1]   1.5000   2.6000 158.1758   0.0000
+[1]   1.5000   2.7000 164.3505   0.0000
+[1]   1.5000   2.8000 170.3854   0.0000
+[1]   1.5000   2.9000 176.2724   0.0000
+[1]   1.5000   3.0000 182.0057   0.0000
+[1]  1.60000  1.60000 99.59453  0.00000
+[1]   1.6000   1.7000 106.7491   0.0000
+[1]   1.6000   1.8000 114.0225   0.0000
+[1]   1.6000   1.9000 121.3649   0.0000
+[1]   1.6000   2.0000 128.7322   0.0000
+[1]   1.6000   2.1000 136.0858   0.0000
+[1]   1.6000   2.2000 143.3923   0.0000
+[1]   1.600   2.300 150.623   0.000
+[1]   1.6000   2.4000 157.7538   0.0000
+[1]   1.6000   2.5000 164.7646   0.0000
+[1]   1.6000   2.6000 171.6388   0.0000
+[1]   1.6000   2.7000 178.3633   0.0000
+[1]   1.6000   2.8000 184.9277   0.0000
+[1]   1.600   2.900 191.324   0.000
+[1]   1.6000   3.0000 197.5467   0.0000
+[1]   1.7000   1.7000 114.6058   0.0000
+[1]   1.7000   1.8000 122.5738   0.0000
+[1]   1.7000   1.9000 130.5999   0.0000
+[1]   1.7000   2.0000 138.6373   0.0000
+[1]   1.7000   2.1000 146.6452   0.0000
+[1]   1.7000   2.2000 154.5884   0.0000
+[1]   1.7000   2.3000 162.4369   0.0000
+[1]   1.7000   2.4000 170.1658   0.0000
+[1]   1.7000   2.5000 177.7543   0.0000
+[1]   1.7000   2.6000 185.1856   0.0000
+[1]   1.7000   2.7000 192.4462   0.0000
+[1]   1.7000   2.8000 199.5261   0.0000
+[1]   1.7000   2.9000 206.4175   0.0000
+[1]   1.7000   3.0000 213.1151   0.0000
+[1]   1.8000   1.8000 131.2274   0.0000
+[1]   1.800   1.900 139.927   0.000
+[1]   1.8000   2.0000 148.6231   0.0000
+[1]   1.8000   2.1000 157.2727   0.0000
+[1]   1.8000   2.2000 165.8391   0.0000
+[1]   1.8000   2.3000 174.2914   0.0000
+[1]   1.8000   2.4000 182.6035   0.0000
+[1]   1.8000   2.5000 190.7542   0.0000
+[1]   1.8000   2.6000 198.7267   0.0000
+[1]   1.8000   2.7000 206.5075   0.0000
+[1]   1.8000   2.8000 214.0865   0.0000
+[1]   1.8000   2.9000 221.4564   0.0000
+[1]   1.8000   3.0000 228.6124   0.0000
+[1]   1.9000   1.9000 149.2867   0.0000
+[1]   1.900   2.000 158.627   0.000
+[1]   1.9000   2.1000 167.9031   0.0000
+[1]   1.9000   2.2000 177.0768   0.0000
+[1]   1.9000   2.3000 186.1159   0.0000
+[1]   1.9000   2.4000 194.9941   0.0000
+[1]   1.9000   2.5000 203.6896   0.0000
+[1]   1.9000   2.6000 212.1854   0.0000
+[1]   1.9000   2.7000 220.4682   0.0000
+[1]   1.9000   2.8000 228.5282   0.0000
+[1]   1.9000   2.9000 236.3585   0.0000
+[1]   1.9000   3.0000 243.9549   0.0000
+[1]   2.0000   2.0000 168.5948   0.0000
+[1]   2.0000   2.1000 178.4799   0.0000
+[1]   2.0000   2.2000 188.2427   0.0000
+[1]   2.0000   2.3000 197.8502   0.0000
+[1]   2.0000   2.4000 207.2754   0.0000
+[1]   2.0000   2.5000 216.4965   0.0000
+[1]   2.0000   2.6000 225.4962   0.0000
+[1]   2.0000   2.7000 234.2617   0.0000
+[1]   2.0000   2.8000 242.7834   0.0000
+[1]   2.0000   2.9000 251.0549   0.0000
+[1]   2.0000   3.0000 259.0725   0.0000
+[1]   2.1000   2.1000 188.9548   0.0000
+[1]   2.1000   2.2000 199.2871   0.0000
+[1]   2.100   2.300 209.443   0.000
+[1]   2.1000   2.4000 219.3951   0.0000
+[1]   2.1000   2.5000 229.1214   0.0000
+[1]   2.1000   2.6000 238.6048   0.0000
+[1]   2.1000   2.7000 247.8326   0.0000
+[1]   2.1000   2.8000 256.7958   0.0000
+[1]   2.1000   2.9000 265.4885   0.0000
+[1]   2.1000   3.0000 273.9077   0.0000
+[1]   2.2000   2.2000 210.1682   0.0000
+[1]   2.2000   2.3000 220.8517   0.0000
+[1]   2.2000   2.4000 231.3097   0.0000
+[1]   2.2000   2.5000 241.5202   0.0000
+[1]   2.2000   2.6000 251.4663   0.0000
+[1]   2.2000   2.7000 261.1357   0.0000
+[1]   2.2000   2.8000 270.5198   0.0000
+[1]   2.2000   2.9000 279.6135   0.0000
+[1]   2.2000   3.0000 288.4143   0.0000
+[1]   2.3000   2.3000 232.0413   0.0000
+[1]   2.3000   2.4000 242.9837   0.0000
+[1]   2.3000   2.5000 253.6571   0.0000
+[1]   2.3000   2.6000 264.0448   0.0000
+[1]   2.3000   2.7000 274.1348   0.0000
+[1]   2.3000   2.8000 283.9193   0.0000
+[1]   2.3000   2.9000 293.3937   0.0000
+[1]   2.3000   3.0000 302.5564   0.0000
+[1]   2.4000   2.4000 254.3891   0.0000
+[1]   2.400   2.500 265.504   0.000
+[1]   2.400   2.600 276.312   0.000
+[1]   2.4000   2.7000 286.8019   0.0000
+[1]   2.4000   2.8000 296.9664   0.0000
+[1]   2.4000   2.9000 306.8015   0.0000
+[1]   2.4000   3.0000 316.3065   0.0000
+[1]   2.5000   2.5000 277.0391   0.0000
+[1]   2.5000   2.6000 288.2468   0.0000
+[1]   2.5000   2.7000 299.1162   0.0000
+[1]   2.5000   2.8000 309.6405   0.0000
+[1]   2.5000   2.9000 319.8169   0.0000
+[1]   2.5000   3.0000 329.6453   0.0000
+[1]   2.6000   2.6000 299.8338   0.0000
+[1]   2.6000   2.7000 311.0627   0.0000
+[1]   2.6000   2.8000 321.9276   0.0000
+[1]   2.6000   2.9000 332.4263   0.0000
+[1]   2.6000   3.0000 342.5597   0.0000
+[1]   2.7000   2.7000 322.6319   0.0000
+[1]   2.7000   2.8000 333.8186   0.0000
+[1]   2.7000   2.9000 344.6216   0.0000
+[1]   2.7000   3.0000 355.0425   0.0000
+[1]   2.8000   2.8000 345.3094   0.0000
+[1]   2.8000   2.9000 356.3993   0.0000
+[1]   2.800   3.000 367.091   0.000
+[1]   2.9000   2.9000 367.7597   0.0000
+[1]   2.9000   3.0000 378.7064   0.0000
+[1]   3.0000   3.0000 389.8931   0.0000</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$power
+[1] -0.9 -0.9
+
+$deviance
+[1] 37.57966
+
+$mistake
+NULL</code></pre>
+</div>
+</div>
+<p><img src="hinh/1.png" class="img-fluid"></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
