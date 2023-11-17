@@ -1,0 +1,831 @@
+---
+title: "serosv package"
+format: 
+  html:
+    page-layout: full
+editor: visual
+echo: true
+---
+
+## Install package "serosv"
+
+```{r,message = FALSE}
+devtools::install_github("OUCRU-Modelling/serosv")
+library(serosv)
+library(tidyverse)
+```
+
+## Section 3.1.3 The Basic Model in R 
+
+Let us consider a population of size N = 5,000 with S(0) = 4,999, I(0) = 1, and R(0) = 0. We assume $v^{-1}$ = 1 year, a life expectancy $\mu^{−1}$ of 75 years, $\mu$ = 1/75, and $\beta$ = 0.0005.
+
+::::{.columns}
+:::{.column width="50%"}
+
+Function in the package
+
+```{r}
+state <- c(S=4999, I=1, R=0)
+ parameters <- c(
+   mu=1/75,     # 1 divided by life expectancy (75 years old)
+   alpha=0,     # no disease-related death
+   beta=0.0005, # transmission rate
+   nu=1,        # 1 year for infected to recover
+   p=0          # no vaccination at birth
+ )
+times <- seq(0, 250, by=0.1)
+sir <- sir_basic_model(times, state, parameters)
+```
+
+```{r,echo = F}
+head(sir)
+```
+
+:::
+:::{.column width="50%"}
+
+Code in the book
+
+```{r,message = FALSE}
+SIR<-function(t,state,parameters)
+{
+	with(as.list(c(state, parameters)),
+	{
+	dX <- N*mu*(1-p)-beta*Y*X - mu*X
+	dY <- beta*Y*X - (nu+alpha+mu)*Y
+	dZ <- N*mu*p+nu*Y -mu*Z
+	list(c(dX, dY, dZ))
+	})
+}
+  
+parameters <- c(mu=1/75,beta=0.0005,nu=1,N=5000,p=0,alpha=0)
+state <- c(X=4999,Y=1,Z=0)
+times<-seq(0,250,by=0.1)
+require(deSolve)
+res.scen1 <-as.data.frame(ode(y=state,times=times,func=SIR,parms=parameters))
+```
+
+```{r,echo = F}
+head(res.scen1) 
+```
+
+:::
+::::
+
+## Section 3.1.5 The Basic SIR Model with Vaccination in R
+
+For a population of size 5,000, $\beta$ = 0.0005, ν = 1 $year^{−1}$ , life expectancy of 75 years, and vaccination coverage of 20% of newborns
+
+::::{.columns}
+
+:::{.column width="50%"}
+```{r}
+state <- c(S=4999, I=1, R=0)
+ parameters <- c(
+   mu=1/75,     # 1 divided by life expectancy (75 years old)
+   alpha=0,     # no disease-related death
+   beta=0.0005, # transmission rate
+   nu=1,        # 1 year for infected to recover
+   p=0.2        # 20% population vaccination at birth
+ )
+times <- seq(0,800,by=0.01)
+sir_vaccine <- sir_basic_model(times, state, parameters)
+head(sir_vaccine)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+SIR<-function(t,state,parameters)
+{
+	with(as.list(c(state, parameters)),
+	{
+	dX <- N*mu*(1-p)-beta*Y*X - mu*X
+	dY <- beta*Y*X - v*Y - mu*Y
+	dZ <- v*Y -mu*Z+N*mu*p
+	list(c(dX, dY, dZ))
+	}) 
+}
+parameters <- c(mu=1/75,beta=0.0005,v=1,p=0.2)
+state <- c(X=4999,Y=1,Z=0)
+times<-seq(0,800,by=0.01)
+N<-5000
+outp02 <- as.data.frame(ode(y=state,times=times,func=SIR,parms=parameters))
+head(outp02)
+```
+
+:::
+
+::::
+
+
+## Section 3.2.2 The SIR Model with Constant Force of Infection at Endemic State in R
+
+We assume that the duration in the infected class is 10 days, which means that ν = 1/10 $days^{−1}$ or 1/(10/365) = 36.5 $years^{−1}$ .
+
+::::{.columns}
+
+:::{.column width="50%"}
+```{r}
+state <- c(s=0.99,i=0.01,r=0)
+ parameters <- c(
+   lambda = 0.05,
+   nu=1/(14/365)  # 2 weeks to recover
+ )
+ages<-seq(0, 90, by=0.01)
+static <- sir_static_model(ages, state, parameters)
+head(static)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+SIR<-function(t,state,parameters)
+	{
+	with(as.list(c(state, parameters)),
+	{
+	ds <- -lambda*s 
+	di <- lambda*s - nu*i
+	dr <- nu*r
+	list(c(ds, di, dr))
+	}) 
+}
+## define parameters
+parameters <- c(lambda = 0.05, nu=1/(14/365))
+state <- c(s=0.99,i=0.01,r=0)
+times<-seq(0,90,by=0.01)
+require(deSolve)
+
+out <- as.data.frame(ode(y=state,times=times,func=SIR,parms=parameters))
+head(out)
+```
+
+:::
+::::
+
+
+## Section 3.4 Models with Maternal Antibodies and Latent Periods 
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+mseir <- mseir_model(
+   a=seq(from=1,to=40,length=500), # age range from 0 -> 20 yo
+   gamma=1/0.5, # 6 months in the maternal antibodies
+   lambda=0.2,  # 5 years in the susceptible class
+   sigma=26.07, # 14 days in the latent class
+   nu=36.5      # 10 days in the infected class
+)
+head(mseir)
+```
+
+**Function này em viết để plot do bên sách viết thẳng ra plot luôn,nên nếu a thấy cần a push lên package nha a**
+
+```{r}
+plot_mseir <- function(model){
+  a <- model$a
+  m <- model$m
+  s <- model$s
+  e <- model$e
+  i <- model$i
+  r <- model$r
+plot(a,m,type="l",xlab="Age",ylab="M(a)",pch=0.5,xlim=c(0,max(a)))
+title("a:Proportion of host with maternal antibodies",adj=0,cex=0.35)
+plot(a,s,type="l",xlab="Age",ylab="S(a)",pch=0.5,xlim=c(0,max(a)))
+title("b:Proportion of susceptibles",adj=0,cex=0.35)
+plot(a,e,type="l",xlab="Age",ylab="E(a)",pch=0.5,xlim=c(0,max(a)))
+title("c:Proportion of host in the latent class",adj=0,cex=0.35)
+plot(a,i,type="l",xlab="Age",ylab="I(a)",pch=0.5,xlim=c(0,max(a)))
+title("d:Proportion of infected",adj=0,cex=0.35)
+plot(a,r,type="l",xlab="Age",ylab="R(a)",pch=0.5,xlim=c(0,max(a)))
+title("e:Proportion host in the immune class",adj=0,cex=0.35)
+plot(a,(m+r+i),type="l",xlab="Age",ylab="seroprevalence",pch=0.5,xlim=c(0,max(a)))
+title("f:Proportion of sero-positive",adj=0,cex=0.35)
+}
+```
+
+
+##
+
+
+```{r}
+plot_mseir(mseir)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+epi11<- function(last.age,d,lambda,sigma,ni)
+{
+        #d          <- (1/0.5)
+        #lambda     <- (1/5) 
+        #sigma      <- (34.76)
+        #ni         <- (31.74)
+        N0         <- 1000
+        a          <- seq(from=1,to=last.age,length=500)
+        la         <- 1
+        N1a <- N0*la
+        ia  <- exp(-d*a)
+        kk1 <- (d/(d-lambda))
+        kk2 <- (exp(-lambda*a)-exp(-d*a))
+        xa  <- (d/(d-lambda))*(exp(-lambda*a)-exp(-d*a))
+        #browser()
+        ha  <- (
+               (lambda*d)/(d-lambda)
+               )*
+               (
+               ((exp(-sigma*a)-exp(-lambda*a))/(lambda-sigma))
+              -((exp(-sigma*a)-exp(-d*a))/(d-sigma))
+               )
+        ya  <- (sigma*lambda*d)*
+               (
+               ((exp(-ni*a)-exp(-sigma*a))/((lambda-sigma)*(d-sigma)*(sigma-ni)))
+              +((exp(-ni*a)-exp(-lambda*a))/((lambda-d)*(lambda-sigma)*(lambda-ni)))
+              +((exp(-ni*a)-exp(-d*a))/((d-lambda)*(d-sigma)*(d-ni)))
+               )  
+        a  <- c(0,a)
+        ia <- c(1,ia)
+        xa <- c(0,xa)
+        ha <- c(0,ha)
+        ya <- c(0,ya)
+        za  <- 1 - ia - xa - ha -ya   
+plot(a,ia,type="l",xlab="Age",ylab="M(a)",pch=0.5,xlim=c(0,last.age))
+title("a:Proportion of host with maternal antibodies",adj=0,cex=0.35)
+plot(a,xa,type="l",xlab="Age",ylab="S(a)",pch=0.5,xlim=c(0,last.age))
+title("b:Proportion of susceptibles",adj=0,cex=0.35)
+plot(a,ha,type="l",xlab="Age",ylab="E(a)",pch=0.5,xlim=c(0,last.age))
+title("c:Proportion of host in the latent class",adj=0,cex=0.35)
+plot(a,ya,type="l",xlab="Age",ylab="I(a)",pch=0.5,xlim=c(0,last.age))
+title("d:Proportion of infected",adj=0,cex=0.35)
+plot(a,za,type="l",xlab="Age",ylab="R(a)",pch=0.5,xlim=c(0,last.age))
+title("e:Proportion host in the immune class",adj=0,cex=0.35)
+plot(a,(ia+za+ya),type="l",xlab="Age",ylab="seroprevalence",pch=0.5,xlim=c(0,last.age))
+title("f:Proportion of sero-positive",adj=0,cex=0.35)
+}
+epi11(40,1/0.5,0.2,26.07,36.5)
+```
+
+:::
+::::
+
+## 3.5.1 An SIR Model with Interacting Subpopulations
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+k <- 2
+state <- c(
+   s = c(0.8, 0.8),
+   i = c(0.2, 0.2),
+   r = c(  0,   0)
+ )
+beta_matrix <- c(
+   c(0.05, 0.00),
+   c(0.00, 0.05)
+ )
+parameters <- list(
+   beta = matrix(beta_matrix, nrow=k, ncol=k, byrow=TRUE),
+   nu = c(1/30, 1/30),
+   mu = 0.001,
+   k = k
+ )
+times <- seq(0,10000,by=0.5)
+
+
+sir_sp <- sir_subpops_model(times, state, parameters)
+head(sir_sp)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+state <- c(Y1=0.8,Y2=0.2,Y3=0,Y4=0.8,Y5=0.2,Y6=0)
+times<-seq(0,10000,by=0.01)
+
+SIRtwo<-function(t,state,parameters)
+{
+	with(as.list(c(state, parameters)),
+	{
+	dY1 <- -(beta11*Y2+beta12*Y5)*Y1+mu-mu*Y1
+	dY2 <- (beta11*Y2+beta12*Y5)*Y1-v1*Y2-mu*Y2
+	dY3 <- v1*Y2 - mu*Y3
+	dY4 <- -(beta21*Y2+beta22*Y5)*Y4+mu-mu*Y4
+	dY5 <-  (beta21*Y2+beta22*Y5)*Y4-v2*Y5-mu*Y5
+	dY6 <- v2*Y5-mu*Y6
+	list(c(dY1,dY2,dY3,dY4,dY5,dY6))
+}) 
+}
+times<-seq(0,10000,by=0.5)
+require(deSolve)
+parameters <- c(beta11=0.05,beta12=0.00,beta21=0.00,beta22=0.05,v1=1/30,v2=1/30,mu=0.001)
+out <- as.data.frame(ode(y=state,times=times,func=SIRtwo,parms=parameters))
+head(out)
+```
+
+:::
+::::
+
+## 6.1.1 Polynomial Models
+
+Function của em chưa push được lên github
+```{r,echo = FALSE}
+X <- function(t, degree) {
+  X_matrix <- matrix(rep(1, length(t)), ncol = 1)
+  if (degree > 1) {
+    for (i in 2:degree) {
+      X_matrix <- cbind(X_matrix, i * t^(i-1))
+    }
+  }
+  -X_matrix
+}
+
+polynomial_model <- function(age,positive,negative,k,type){
+  Age <- as.numeric(age) 
+  Pos <- as.numeric(positive)
+  Neg <- as.numeric(negative)
+  df <- data.frame(cbind(Age, Pos,Neg)) 
+  model <- list()
+  if(missing(k)){                         
+  k <- switch(type,
+    "Muench" = 1 ,
+    "Griffith" = 2,
+    "Grenfell" = 3)}
+  age <- function(k){
+    if(k>1){
+      formula<- paste0("I","(",paste("Age", 2:k,sep = "^"),")",collapse = "+")
+      paste0("cbind(Neg,Pos)"," ~","-1+Age+",formula)
+    } else {
+      paste0("cbind(Neg,Pos)"," ~","-1+Age")
+    }
+  }
+  model$info <- glm(age(k), family=binomial(link="log"),df)
+  X <- X(Age, k)
+  model$sp <- 1 - model$info$fitted.values
+  model$foi <- X%*%model$info$coefficients
+  model$df <- list(Age=Age, Pos=Pos, Tot= Pos + Neg)
+  class(model) <- "polynomial_model"
+  model
+}
+```
+
+Setup data 
+
+```{r}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+```
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+muench_model<- polynomial_model(age,pos,neg,k =1)
+muench_model
+plot(muench_model)
+gf_model <- polynomial_model(age,pos,neg,type = "Griffith")
+plot(gf_model)
+grf_model <- polynomial_model(age,pos,neg,type = "Grenfell")
+plot(grf_model)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+model1 <- glm(cbind(tot-pos,pos)~-1+age,family=binomial(link="log"))
+summary(model1)
+model3<-glm(cbind(tot-pos,pos)~-1+age+I(age^2),
+                               family=binomial(link="log"))
+summary(model3)
+model4<-glm(cbind(tot-pos,pos)~-1+age+I(age^2)+I(age^3),
+                               family=binomial(link="log"))
+summary(model4)
+
+
+par(las=1,cex.axis=1.1,cex.lab=1.1,lwd=3,mgp=c(2, 0.5, 0),mar=c(4.1,4.1,4.1,3))
+
+plot(age,pos/tot,cex=0.1*tot,xlab="age",xlim=c(0,86),ylim=c(0,1),ylab="seroprevalence")
+lines(age,1-model1$fitted.values,lwd=2)
+lines(age,1-model3$fitted.values,lwd=2,lty=2)
+lines(age,1-model4$fitted.values,lwd=2,lty=3)
+
+X<--matrix(rep(1,length(age)))
+lines(age,5*X%*%model1$coefficients,lwd=2)
+X<--cbind(rep(1,length(age)),2*age)
+lines(age,5*X%*%model3$coefficients,lwd=2,lty=2)
+X<--cbind(rep(1,length(age)),2*age,3*age^2)
+lines(age,5*X%*%model4$coefficients,lwd=2,lty=3)
+axis(side=4,at=c(0.0,0.2,0.4),labels=c(0.00,0.04,0.08))
+mtext(side=4,"force of infection", las=3,line=2)
+
+```
+
+:::
+::::
+
+
+## Section 6.1.2 Nonlinear Models
+
+# Farrington model
+
+setup data
+
+```{r}
+rb <- rubella_uk_1986_1987
+pos <- rb$pos
+tot <- rb$tot
+age <- rb$age
+```
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+farrington_md <- suppressWarnings(farrington_model(
+   age, pos, tot,
+   start=list(alpha=0.07,beta=0.1,gamma=0.03)
+   ))
+farrington_md
+plot(farrington_md)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+farrington=function(alpha,beta,gamma)
+{
+p=1-exp((alpha/beta)*age*exp(-beta*age)
+       +(1/beta)*((alpha/beta)-gamma)*(exp(-beta*age)-1)-gamma*age)
+ll=pos*log(p)+(tot-pos)*log(1-p)
+#alternative definition of the log-likelihood
+ll=sum(log(dbinom(pos,tot,prob=p)))
+return(-sum(ll))
+}
+library(stats4)
+model5=suppressWarnings(mle(farrington,start=list(alpha=0.07,beta=0.1,gamma=0.03)))
+summary(model5)
+AIC(model5)
+```
+
+:::
+::::
+
+# Weibull model 
+
+setup data
+
+```{r}
+hcv <- hcv_be_2006[order(hcv_be_2006$dur), ]
+dur <- hcv$dur
+infected <- hcv$seropositive
+```
+
+**Ở đây có code em fix lại a check rồi push lên github nha a** 
+```{r,echo = F}
+plot.weibull_model <- function(x, ...) {
+  CEX_SCALER <- 4 # arbitrary number for better visual
+
+  df_ <- transform(x$df$t, x$df$spos)
+  names(df_)[names(df_) == "t"] <- "exposure"
+
+  with(c(x$df, df_), {
+    par(las=1,cex.axis=1,cex.lab=1,lwd=2,mgp=c(2, 0.5, 0),mar=c(4,4,4,3))
+    plot(
+      exposure,
+      pos/tot,
+      cex=CEX_SCALER*tot/max(tot),
+      xlab="exposure", ylab="seroprevalence",
+      xlim=c(0, max(exposure)), ylim=c(0,1)
+    )
+    lines(t, x$sp, lwd=2)
+    lines(t, x$foi, lwd=2, lty=2)
+    axis(side=4, at=round(seq(0.0, max(x$foi), length.out=10), 2))
+    mtext(side=4, "force of infection", las=3, line=2)
+  })
+}
+```
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+wb_md <- weibull_model(
+   t= dur ,
+   spos= infected
+   )
+wb_md
+plot(wb_md)
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+log.d <- log(dur)
+hcvfit=(glm(infected~log.d, family=binomial(link="cloglog")))
+summary(hcvfit)
+```
+
+:::
+::::
+
+## Section 6.2 Fractional Polynomial Models
+
+Hepatitis A data from Belgium anno 1993–1994
+
+```{r}
+hav <- hav_be_1993_1994
+age <- hav$age
+pos <- hav$pos
+tot <- hav$tot
+neg <- hav$neg <- hav$tot - hav$pos
+```
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r, warning = F}
+best_1d <- find_best_fp_powers(
+   age, pos, tot,
+   p=seq(-2,3,0.01), mc=FALSE, degree=1, link="logit"
+  )
+best_1d
+```
+
+```{r, warning = F}
+best_2d_mono <- find_best_fp_powers(
+   age, pos, tot,
+   p=seq(-2,3,0.1), mc= TRUE, degree=2, link="logit"
+  )
+best_2d_mono
+```
+
+```{r, warning = F}
+best_2d <- find_best_fp_powers(
+   age, pos, tot,
+   p=seq(-2,3,0.1), mc= FALSE, degree=2, link="logit"
+  )
+best_2d
+```
+
+| Fractional polynomials         | Deviance |    Power    |  AIC  |
+|--------------------------------|:--------:|:-----------:|:-----:|
+| First degree                   |  114.25   |    0.42     | 391.8 |
+| Second degree without monocity |  93.45   | (1.0,1.6) | 373 |
+| Second degree with monocity    |  79.58   | (1.9,2.0) | 359.2 |
+
+```{r}
+
+fp_1d<- fp_model(
+   age, pos, tot,
+p=c(0.42), link="logit")
+plot(fp_1d)
+
+fp_2d<- fp_model(
+   age, pos, tot,
+p=c(1.0, 1.6), link="logit")
+plot(fp_2d)
+
+fp_2d_mono <- fp_model(
+   age, pos, tot,
+p=c(1.9, 2.0), link="logit")
+plot(fp_2d_mono)
+```
+
+
+:::
+:::{.column width="50%"}
+
+
+```{r,echo = F}
+search.fracpoly.one<-function(y,tot,x){
+     pow1<-seq(-2,3,0.01)
+     deviance<-deviance(glm(cbind(y,tot-y)~x, family="binomial"(link=logit)))
+     power<-1
+     mistake<-NULL
+
+     for (i in 1: (length(pow1))){
+          if(pow1[i]==0){term1<-log(x)} else{term1<-(x)^(pow1[i])}
+          glm.try<-glm(cbind(y,tot-y)~term1, family="binomial"(link=logit))
+          if(glm.try$converged==FALSE){mistake<-rbind(mistake, c(1,pow1[i]))}
+          else{
+               if(deviance(glm.try)<deviance){
+                    deviance<-deviance(glm.try)
+                    power<-pow1[i]
+                                   }
+               }
+                                     }
+     return(list(power=power, deviance=deviance, mistake=mistake))
+}
+
+search.fracpoly.two<-function(y,tot,x){
+     pow<-seq(-2,3,0.1)
+     deviance<-deviance(glm(cbind(y,tot-y)~x+I(x^2), family="binomial"(link=logit)))
+     mistake<-NULL
+
+     for (i in 1: (length(pow))){
+     for (j in i: (length(pow))){
+          if(pow[i]==0){term1<-log(x)} else{term1<-(x)^(pow[i])}
+          if(pow[j]==pow[i]){term2<-term1*log(x)} 
+          else if(pow[j]==0){term2<-log(x)} 
+          else{term2<-(x)^(pow[j])}
+          glm.try<-glm(cbind(y,tot-y)~term1+term2, family="binomial"(link=logit))
+          if(glm.try$converged==FALSE){mistake<-rbind(mistake, c(1,pow[i],pow[j]))}
+          else{
+               if(deviance(glm.try)<deviance){
+                    deviance<-deviance(glm.try)
+                    power<-c(pow[i],pow[j])
+                                   }
+               }
+                                     
+      }
+      }
+     return(list(power=power, deviance=deviance, mistake=mistake))
+}
+
+search.fracpoly.twoR<-function(y,tot,x,pow,mc){
+     deviance<-deviance(glm(cbind(y,tot-y)~x+I(x^2), family="binomial"(link=logit)))
+     mistake<-NULL
+
+     for (i in 1: (length(pow))){
+     for (j in i: (length(pow))){
+          if(pow[i]==0){term1<-log(x)} else{term1<-(x)^(pow[i])}
+          if(pow[j]==pow[i]){term2<-term1*log(x)} 
+          else if(pow[j]==0){term2<-log(x)} 
+          else{term2<-(x)^(pow[j])}
+          glm.try<-glm(cbind(y,tot-y)~term1+term2, family="binomial"(link=logit))
+	    print(c(pow[i],pow[j],deviance(glm.try),(sum(diff(predict(glm.try))<0)==0)))
+          if(glm.try$converged==FALSE){mistake<-rbind(mistake, c(1,pow[i],pow[j]))}
+          else{
+               if(deviance(glm.try)<deviance){
+                    if (((mc)&&(sum(diff(predict(glm.try))<0)==0))|(!mc)){
+			     #print(c(mc,(sum(diff(predict(glm.try))<0)==0)))
+                       deviance<-deviance(glm.try)
+                       power<-c(pow[i],pow[j])
+                    } 
+                                   }
+               }
+                                     
+      }
+      }
+     return(list(power=power, deviance=deviance, mistake=mistake))
+}
+foi.num<-function(x,p)
+{
+grid<-sort(unique(x))
+pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+dp<-diff(pgrid)/diff(grid)
+foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+}
+```
+
+```{r, warning = F }
+search.fracpoly.one(y=hav$neg,tot=hav$tot,x=hav$age)
+agep=hav$age^(0.42)
+fitp1=glm(cbind(hav$neg,hav$tot-hav$neg)~agep,family=binomial(link="logit"))
+fitlin=glm(cbind(hav$neg,hav$tot-hav$neg)~hav$age,family=binomial(link="logit"))
+fitlin$deviance-fitp1$deviance
+search.fracpoly.two(y=hav$neg,tot=hav$tot,x=hav$age)
+model.fp1 <- glm(cbind(pos,tot-pos) ~ age, family=binomial(link="logit"))
+model.fp2 <- glm(cbind(pos,tot-pos) ~ I(age^1.9) + I(age^2), family=binomial(link="logit"))
+model.fp2.m <- glm(cbind(pos,tot-pos) ~ I(age) + I(age^1.6), family=binomial(link="logit"))
+model.fp1
+model.fp2
+model.fp2.m
+```
+
+```{r,results='hide',warning = F }
+search.fracpoly.twoR(y=hav$neg,tot=hav$tot,x=hav$age,seq(-2,3,0.1),T)
+```
+
+
+```{r}
+library(scatterplot3d)
+par(las=1,cex.axis=1.1,cex.lab=1.1,lwd=3,mgp=c(2, 0.5, 0),mar=c(4.1,4.1,4.1,3))
+
+plot(hav$age,hav$pos/hav$tot,cex=0.03*hav$tot,xlab="age",ylab="seroprevalence",xlim=c(0,86),ylim=c(-0.2,1),yaxt="n")
+
+lines(hav$age,model.fp1$fitted.values,lwd=2)
+lines(hav$age,model.fp2$fitted.values,lwd=2,lty=2)
+lines(hav$age,model.fp2.m$fitted.values,lwd=2,lty=3)
+
+model.fp1.foi<-c(foi.num(hav$age,model.fp1$fitted.values))
+model.fp2.foi<-foi.num(hav$age,model.fp2$fitted.values)
+model.fp2.m.foi<-foi.num(hav$age,model.fp2.m$fitted.values)
+
+lines(model.fp1.foi$grid,4*model.fp1.foi$foi,lwd=2)
+lines(model.fp2.foi$grid,4*model.fp2.foi$foi,lwd=2,lty=2)
+lines(model.fp2.m.foi$grid,4*model.fp2.m.foi$foi,lwd=2,lty=3)
+abline(0,0)
+axis(side=4,at=c(-0.2,0.0,0.2,0.4),labels=c(-0.05,0.00,0.05,0.10))
+axis(side=2,at= seq(0,1,0.2),labels=seq(0,1,0.2))
+
+abline(0,0,lwd=2)
+axis(side=4,at=c(0.0,0.2,0.4),labels=c(0.00,0.05,0.10))
+axis(side=2,at=seq(0,1,0.2),labels=seq(0,1,0.2))
+mtext(side=4,"force of infection", las=3,line=2)
+```
+
+:::
+::::
+
+## 7.1.2 Local Estimation by Polynomials
+
+Application to UK Mumps Data
+
+```{r}
+mump <- mumps_uk_1986_1987
+a = age <- mump$age
+pos <- mump$pos
+tot <- mump$tot
+y <- pos/tot
+```
+
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+plot_gcv(
+   age, pos, tot,
+   nn_seq = seq(0.2, 0.8, by=0.1),
+   h_seq = seq(5, 25, by=1)
+ )
+```
+
+:::
+:::{.column width="50%"}
+
+```{r}
+library(locfit)
+alpha=seq(0.2,0.8, by=0.05)
+res=cbind(alpha,summary(gcvplot(y~a,family="binomial",alpha=alpha)))
+plot(res[,1],res[,3],type="n",xlab="% Neighbors",ylab=" ")
+lines(res[,1],res[,3])
+mtext(side=2,"GCV",las=3,line=2.4,cex=0.9)
+
+alpha=cbind(rep(0,length(seq(5,25, by=1))),seq(5,25, by=1))
+res=cbind(alpha[,2],summary(gcvplot(y~a,family="binomial",alpha=alpha)))
+plot(res[,1],res[,3],type="n",xlab="Bandwidth",ylab=" ")
+lines(res[,1],res[,3])
+mtext(side=2,"GCV",las=3,line=3,cex=0.9)
+
+```
+
+:::
+::::
+
+## Fit local polynomial model
+
+::::{.columns}
+
+:::{.column width="50%"}
+
+```{r}
+lp1 <- lp_model(age, pos, tot, kern="tcub", nn=0.7, deg=2)
+plot(lp1)
+```
+
+:::
+
+:::{.column width="50%"}
+```{r}
+plot(age,y,cex=0.003*tot,pch=19,xlab="age",ylab="seroprevalence",ylim=c(-0.1,1))
+lpfit<-locfit(y~a,family="binomial")
+lines(a,fitted(lpfit),lty=1,lwd=2)
+lpfitd1<-locfit(y~a,deriv=1,family="binomial")
+lpfoi=fitted(lpfitd1)*fitted(lpfit)
+lines(a,lpfoi,lty=1,lwd=2)
+axis(side=4,at=c(0.0,0.1,0.2,0.3,0.4))
+abline(h=0)
+mtext(side=4,"force of infection", las=3,line=1.6,cex=0.9)
+```
+
+:::
+::::
+
+
+
+
+
