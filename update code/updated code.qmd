@@ -1,0 +1,1428 @@
+---
+title: "Updated code"
+format: 
+  html:
+    page-layout: full
+editor: visual
+echo: true
+---
+
+## Install package "serosv"
+
+```{r,message = FALSE}
+devtools::install_github("OUCRU-Modelling/serosv")
+library(serosv)
+library(tidyverse)
+```
+
+## **Chap 6**
+
+## Polynomial model
+
+::: columns
+::: {.column width="50%"}
+**Old**
+
+```{r}
+X <- function(t, degree) {
+  X_matrix <- matrix(rep(1, length(t)), ncol = 1)
+  if (degree > 1) {
+    for (i in 2:degree) {
+      X_matrix <- cbind(X_matrix, i * t^(i-1))
+    }
+  }
+  -X_matrix
+}
+
+#' Polynomial models
+#'
+#'Refers to section 6.1.1
+#' @param age the age vector
+#' @param positive the positive vector
+#' @param negative the negative vector
+#' @param k  degree of the model
+#' @param type name of method
+#'
+#' @examples
+#' a <- hav_bg_1964
+#' a$neg <- a$tot - a$pos
+#' model <- polynomial_model(a$age, a$pos, a$neg, type = "Muench")
+#'
+#' @export
+polynomial_model <- function(age,positive,negative,k,type){
+  Age <- as.numeric(age)
+  Pos <- as.numeric(positive)
+  Neg <- as.numeric(negative)
+  df <- data.frame(cbind(Age, Pos,Neg))
+  model <- list()
+  if(missing(k)){
+    k <- switch(type,
+                "Muench" = 1 ,
+                "Griffith" = 2,
+                "Grenfell" = 3)}
+  age <- function(k){
+    if(k>1){
+      formula<- paste0("I","(",paste("Age", 2:k,sep = "^"),")",collapse = "+")
+      paste0("cbind(Neg,Pos)"," ~","-1+Age+",formula)
+    } else {
+      paste0("cbind(Neg,Pos)"," ~","-1+Age")
+    }
+  }
+  model$info <- glm(age(k), family=binomial(link="log"),df)
+  X <- X(Age, k)
+  model$sp <- 1 - model$info$fitted.values
+  model$foi <- X%*%model$info$coefficients
+  model$df <- list(Age=Age, Pos=Pos, Tot= Pos + Neg)
+  class(model) <- "polynomial_model"
+  model
+}
+```
+:::
+
+::: {.column width="50%"}
+**New**
+
+```{r}
+X <- function(t, degree) {
+  X_matrix <- matrix(rep(1, length(t)), ncol = 1)
+  if (degree > 1) {
+    for (i in 2:degree) {
+      X_matrix <- cbind(X_matrix, i * t^(i-1))
+    }
+  }
+  -X_matrix
+}
+
+## polynomial_model with link
+
+polynomial_model1 <- function(age,positive,negative,link = "log",k,type){
+  Age <- as.numeric(age)
+  Pos <- as.numeric(positive)
+  Neg <- as.numeric(negative)
+  df <- data.frame(cbind(Age, Pos,Neg))
+  model <- list()
+  if(missing(k)){
+    k <- switch(type,
+                "Muench" = 1 ,
+                "Griffith" = 2,
+                "Grenfell" = 3)}
+  age <- function(k){
+    if(k>1){
+      formula<- paste0("I","(",paste("Age", 2:k,sep = "^"),")",collapse = "+")
+      paste0("cbind(Neg,Pos)"," ~","-1+Age+",formula)
+    } else {
+      paste0("cbind(Neg,Pos)"," ~","-1+Age")
+    }
+  }
+  model$info <- glm(age(k), family=binomial(link= link),df)
+  X <- X(Age, k)
+  model$sp <- 1 - model$info$fitted.values
+  model$foi <- X%*%model$info$coefficients
+  model$df <- list(Age=Age, Pos=Pos, Neg = Neg, Tot= Pos + Neg)
+  class(model) <- "polynomial_model"
+  model
+}
+```
+
+**Unit test**
+
+```{r,message= FALSE}
+library(testthat)
+library(stats4)
+test_that("polynomial_model returns same result as in the book (Muench)", {
+  expected <- c(-0.0505004)
+
+  df <- hav_bg_1964
+  model <- polynomial_model1(
+    df$age, df$pos, df$tot - df$pos,
+    type= "Muench"
+  )
+  actual <- unname(c(
+    coef(model$info)[1]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+test_that("polynomial_model returns same result as in the book (Muench)", {
+  expected <- c(-0.0505004)
+
+  df <- hav_bg_1964
+  model <- polynomial_model1(
+    df$age, df$pos, df$tot - df$pos,
+    k = 1
+  )
+  actual <- unname(c(
+    coef(model$info)[1]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+test_that("polynomial_model returns same result as in the book (Griffiths)", {
+  expected <- c(-0.0442615740, -0.0001888796)
+
+  df <- hav_bg_1964
+  model <- polynomial_model1(
+    df$age, df$pos, df$tot - df$pos,
+    type = "Griffith"
+  )
+  actual <- unname(c(
+    coef(model$info)[1],
+    coef(model$info)[2]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+
+
+test_that("polynomial_model returns same result as in the book (Griffiths)", {
+  expected <- c(-0.0442615740, -0.0001888796)
+
+  df <- hav_bg_1964
+  model <- polynomial_model1(
+    df$age, df$pos, df$tot - df$pos,
+    k = 2
+  )
+  actual <- unname(c(
+    coef(model$info)[1],
+    coef(model$info)[2]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+test_that("polynomial_model returns same result as in the book (Grenfell & Anderson)", {
+  expected <- c(-5.325918e-02, 5.065095e-04, -1.018736e-05)
+
+  df <- hav_bg_1964
+  model <- polynomial_model1(
+    df$age, df$pos, df$tot-df$pos,
+    type = "Grenfell"
+  )
+  actual <- unname(c(
+    coef(model$info)[1],
+    coef(model$info)[2],
+    coef(model$info)[3]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+
+test_that("polynomial_model returns same result as in the book (Grenfell & Anderson)", {
+  expected <- c(-5.325918e-02, 5.065095e-04, -1.018736e-05)
+
+  df <- hav_bg_1964
+  model <- polynomial_model1(
+    df$age, df$pos, df$tot-df$pos,
+    k = 3
+  )
+  actual <- unname(c(
+    coef(model$info)[1],
+    coef(model$info)[2],
+    coef(model$info)[3]
+  ))
+
+  expect_equal(actual, expected, tolerance=0.000001)
+})
+```
+:::
+::::
+
+## **New version of plot.polynomial function**
+
+```{r,message=FALSE}
+library(tidyverse)
+library(magrittr)
+## Polynomial model
+plot_polynomial_model <- function(x, ci = .95,le = 100, ...) {
+  
+  ## calculate 95% CI
+  p <- (1 - ci) / 2
+  link_inv <- x$info$family$linkinv
+  dataset <- x$info$data
+  n <- nrow(dataset) - length(x$info$coefficients)
+  age_range <- range(dataset$Age)
+  ages <- seq(age_range[1], age_range[2], le = le)
+  
+  mod1 <- predict.glm(model1$info,data.frame(Age = ages), se.fit = TRUE)
+  n1 <- mod1 |> extract(c("fit", "se.fit")) %>% 
+    c(age = list(ages), .) %>% 
+    as_tibble() |> 
+    mutate(lwr = link_inv(fit + qt(    p, n) * se.fit),
+           upr = link_inv(fit + qt(1 - p, n) * se.fit),
+           fit = link_inv(fit)) %>% 
+    select(-se.fit)
+  
+  out.DF <- data.frame(x = n1$age, y = 1- n1$fit, ymin= 1-  n1$lwr, ymax=1- n1$upr)
+  
+  with(x$df, {
+    ggplot(data = data.frame(x$df), aes(x = x$df$Age, y = x$df$Pos/x$df$Tot)) +
+      geom_point(size = 20*(x$df$Pos)/max(x$df$Tot), shape = 1)+
+      labs(y="Seroprevalence", x="Age")+
+      coord_cartesian(xlim=c(0,max(age)), ylim=c(0, 1)) + 
+      geom_smooth(aes_auto(out.DF), data=out.DF, stat="identity",
+                  col = "blueviolet",fill = "royalblue1",lwd=0.5)+
+      geom_line(aes( x = Age, y = as.numeric(model1$foi)),
+                  col = "#fc0328",
+                  lwd = 0.5, linetype="dashed")+
+      scale_y_continuous(
+        name = "Seroprevalence",
+        sec.axis = sec_axis(~.*1, name = " Force of infection")
+      )
+    })
+}
+
+
+```
+
+
+
+
+## **Plot polynomial model**
+::::{.columns}
+:::{.column width="50%"}
+**Old**
+```{r}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+muench_model<- polynomial_model(age,pos,neg,k =1)
+plot(muench_model)
+```
+
+:::
+:::{.column width="50%"}
+**New**
+```{r,warning=FALSE}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+model1<- polynomial_model1(age,pos,neg,k =1)
+plot_polynomial_model(model1)
+```
+:::
+::::
+
+
+::::{.columns}
+:::{.column width="50%"}
+**Old**
+```{r}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+muench_model<- polynomial_model(age,pos,neg,k =2)
+plot(muench_model)
+```
+
+:::
+:::{.column width="50%"}
+**New**
+```{r,warning=FALSE}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+model1<- polynomial_model1(age,pos,neg,k =2)
+plot_polynomial_model(model1)
+```
+:::
+::::
+
+::::{.columns}
+:::{.column width="50%"}
+**Old**
+```{r}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+muench_model<- polynomial_model(age,pos,neg,k =3)
+plot(muench_model)
+```
+
+:::
+:::{.column width="50%"}
+**New**
+```{r,warning=FALSE}
+a <- hav_bg_1964
+neg <- a$tot -a$pos
+pos <- a$pos
+age <- a$age
+tot <- a$tot
+model1<- polynomial_model1(age,pos,neg,k =3)
+plot_polynomial_model(model1)
+```
+:::
+::::
+
+<p style="text-align: center;">**Note: Do FOI em chưa biết cách tính 95% CI nên chưa plot được**</p>
+
+## **Plot Farrington model**
+
+**Do function predict chỉ dùng cho các kết quả fit ra từ các function như glm,lm,gam. Farrington model dùng mle nên không bỏ vào được function predict để tính được SE**
+
+## **New version of plot.weibull_model function**
+```{r}
+plot_weibull_model <- function(x,ci = .95, ...){
+  
+  df_ <- serosv::transform(x$df$t, x$df$spos)
+  names(df_)[names(df_) == "t"] <- "exposure"
+  
+  ## calculate 95% CI
+  p <- (1 - ci) / 2
+  link_inv <- x$info$family$linkinv
+  dataset <- x$info$model
+  n <- nrow(dataset) - length(x$info$coefficients)
+  age_range <- range(dataset$`log(t)`)
+  exposure_time <- dataset$`log(t)` 
+  
+  mod1 <- predict.glm(x$info,data.frame("log(t)" = exposure_time), se.fit = TRUE)
+  n1 <- mod1 |> extract(c("fit", "se.fit")) %>% 
+    c(exposure = list(exposure_time), .) %>% 
+    as_tibble() |> 
+    mutate(lwr = link_inv(fit + qt(    p, n) * se.fit),
+           upr = link_inv(fit + qt(1 - p, n) * se.fit),
+           fit = link_inv(fit)) %>% 
+    select(-se.fit)
+  
+  out.DF <- data.frame(x = x$df$t, y = n1$fit, 
+                       ymin= n1$lwr, ymax= n1$upr)
+  
+  ggplot(data = data.frame(df_), aes(x = df_$exposure, y = df_$pos/df_$tot))+
+    geom_point(size = 7*(df_$pos)/max(df_$tot), shape = 1)+
+    labs(y="Seroprevalence", x="Exposure")+
+    coord_cartesian(xlim=c(0,max(df_$exposure)), ylim=c(0, 1))+
+    geom_smooth(aes_auto(out.DF), data=out.DF, stat="identity",
+                col = "blueviolet",fill = "royalblue1",
+                lwd = .5) +
+    geom_line(data = x$df,
+              aes(x = x$df$t, y = x$foi),
+              col = "#fc0328",
+              lwd = 0.5, linetype="dashed")+
+      scale_y_continuous(
+        name = "Seroprevalence",
+        sec.axis = sec_axis(~.*1, name = " Force of infection")
+      )
+  }
+
+```
+
+
+## **Plot Weibull model**
+
+::::{.columns}
+:::{.column width="50%"}
+**Old**
+```{r,echo = F}
+plot.weibull_model <- function(x, ...) {
+  CEX_SCALER <- 4 # arbitrary number for better visual
+
+  df_ <- transform(x$df$t, x$df$spos)
+  names(df_)[names(df_) == "t"] <- "exposure"
+
+  with(c(x$df, df_), {
+    par(las=1,cex.axis=1,cex.lab=1,lwd=2,mgp=c(2, 0.5, 0),mar=c(4,4,4,3))
+    plot(
+      exposure,
+      pos/tot,
+      cex=CEX_SCALER*tot/max(tot),
+      xlab="exposure", ylab="seroprevalence",
+      xlim=c(0, max(exposure)), ylim=c(0,1)
+    )
+    lines(t, x$sp, lwd=2)
+    lines(t, x$foi, lwd=2, lty=2)
+    axis(side=4, at=round(seq(0.0, max(x$foi), length.out=10), 2))
+    mtext(side=4, "force of infection", las=3, line=2)
+  })
+}
+```
+
+```{r}
+hcv <- hcv_be_2006[order(hcv_be_2006$dur), ]
+dur <- hcv$dur
+infected <- hcv$seropositive
+wb_md <- weibull_model(
+   t= dur ,
+   spos= infected
+   )
+plot(wb_md)
+```
+
+:::
+:::{.column width="50%"}
+**New**
+```{r,warning=FALSE}
+hcv <- hcv_be_2006[order(hcv_be_2006$dur), ]
+dur <- hcv$dur
+infected <- hcv$seropositive
+wb_md <- weibull_model(
+   t= dur ,
+   spos= infected
+   )
+plot_weibull_model(wb_md)
+
+```
+:::
+::::
+
+## **Plot fractional polynomial**
+
+```{r}
+plot_fp_model <- function(x,ci = .95,le=100,...){
+  
+  ## calculate 95% CI
+  p <- (1 - ci) / 2
+  link_inv <- x$info$family$linkinv
+  dataset <- data.frame(x$df)
+  n <- nrow(dataset) - length(x$info$coefficients)
+  age_range <- range(dataset$age)
+  ages <- seq(age_range[1], age_range[2], le = le)
+  
+  mod1 <- predict.glm(x$info,data.frame(age = ages), se.fit = TRUE)
+  n1 <- data.frame(mod1)[,-3] %>% 
+    c(age = list(ages), .) %>% 
+    as_tibble() |> 
+    mutate(lwr = link_inv(fit + qt(    p, n) * se.fit),
+           upr = link_inv(fit + qt(1 - p, n) * se.fit),
+           fit = link_inv(fit)) %>% 
+    select(-se.fit)
+  out.DF <- data.frame(x = n1$age, y = n1$fit, 
+                       ymin= n1$lwr, ymax= n1$upr)
+  
+  ggplot(data = data.frame(x$df), aes(x = x$df$age, y = x$df$pos/x$df$tot))+
+    geom_point(size = 7*(x$df$tot)/max(x$df$pos), shape = 1)+
+    labs(y="Seroprevalence", x="Age")+
+    coord_cartesian(xlim=c(0,max(x$df$age)), ylim=c(min(x$foi), 1))+
+    geom_smooth(aes_auto(out.DF), data=out.DF, stat="identity",
+                col = "blueviolet",fill = "royalblue1",
+                lwd = .5) +    
+    geom_line(data = data.frame(x$df$age[c(-1,-length(x$df$age))], x$foi),
+              aes(x = x$df$age[c(-1,-length(x$df$age))], y = x$foi),
+              col = "#fc0328",
+              lwd = 0.5, linetype="dashed")+
+    scale_y_continuous(
+      name = "Seroprevalence",
+      sec.axis = sec_axis(~.*1, name = " Force of infection")
+    )
+}
+```
+
+::::{.columns}
+:::{.column width="50%"}
+**Old**
+```{r,echo = F}
+library(serosv)
+df <- hav_be_1993_1994
+model <- fp_model(df$age, df$pos, df$tot, p=c(1.5, 1.6), link="cloglog")
+plot(model)
+```
+
+:::
+:::{.column width="50%"}
+
+**New**
+```{r}
+plot_fp_model(model,le=100)
+```
+:::
+::::
+
+
+
+## **Chap 7**
+
+## **Plot local polynomial model**
+
+```{r}
+plot_lp_model <- function(x,ci = .95,...){
+  
+  ## calculate 95% CI
+  ages <- x$df$age
+  crit<- crit(x$pi,cov = ci)$crit.val
+  mod1 <- predict(x$pi, data.frame(a = ages),se.fit = TRUE)
+  out.DF <- data.frame(x = ages, y = mod1$fit,ymin= mod1$fit-crit*(mod1$se.fit/100), 
+                       ymax= mod1$fit+crit*(mod1$se.fit/100))
+  
+  ggplot(data = data.frame(x$df), aes(x = x$df$age, y = x$df$pos/x$df$tot))+
+    geom_point(size = 7*(x$df$tot)/max(x$df$pos), shape = 1)+
+    labs(y="Seroprevalence", x="Age")+
+    coord_cartesian(xlim=c(0,max(x$df$age)), ylim=c(min(x$foi), max(out.DF$ymax)))+
+    geom_smooth(aes_auto(out.DF), data=out.DF, stat="identity",
+                col = "blueviolet",fill = "royalblue1",
+                lwd = .5)+
+    geom_line(aes(x = x$df$age, y = x$foi),
+              col = "#fc0328",
+              lwd = 0.5, linetype="dashed")+
+    scale_y_continuous(
+      name = "Seroprevalence",
+      sec.axis = sec_axis(~.*1, name = " Force of infection",breaks=seq(0, 1,by=0.2)),
+      breaks=seq(0, 1,by=0.2)
+      )
+}
+```
+
+::::{.columns}
+:::{.column width="50%"}
+**Old**
+```{r,echo = F}
+library(serosv)
+mump <- mumps_uk_1986_1987
+a = age <- mump$age
+pos <- mump$pos
+tot <- mump$tot
+y <- pos/tot
+lp1 <- lp_model(age, pos, tot, kern="tcub", nn=0.7, deg=2)
+plot(lp1)
+```
+
+:::
+:::{.column width="50%"}
+
+**New**
+```{r,message=FALSE}
+library(locfit)
+plot_lp_model(lp1,ci=.95)
+```
+:::
+::::
+
+## **Chap 8: Semiparametric Approaches to Model the Prevalence and Force of Infection**
+
+Data của package là data đã được tổng hợp lại còn data trong sách là data theo từng ca
+
+
+# 8.2.1.1 Smoothing Spline
+
+
+Package
+```{r,message=FALSE}
+## data
+
+parvovirus<-read.table("D:/OUCRU/serobook/code in the book/Chapter4/VZV-B19-BE.dat",header=T)
+
+subset<-(parvovirus$age>0.5)&(parvovirus$age<76)&(!is.na(parvovirus$age))&!is.na(parvovirus$parvores)
+
+parvovirus<-parvovirus[subset,]
+
+library(gam)
+
+find_best_ss_smoothparms <- function(age,seropositive,link = "logit", upper = 100){
+  
+  y<-seropositive[order(age)]
+  a<-age[order(age)]
+  
+  BICf<-function(fit){return(fit$deviance+log(length(fit$y))*(fit$nl.df+2))}
+  UBRE<-function(fit){return(fit$deviance+log(length(fit$y))*sum(fit$edf))}
+  out<-matrix(NA,ncol=4,nrow = upper)
+  
+  for (i in 1:upper){
+    dfi <- 1+0.5*i
+    fit.gam <- gam::gam(y~s(a,df=dfi),family=binomial(link = link))
+    out[i,] <- c(dfi,
+                   BICf(fit.gam),
+                   AIC(fit.gam),
+                   UBRE(fit.gam))
+  }
+  df.BIC <- out[which.min(out[,2]),1]
+  df.AIC <- out[which.min(out[,3]),1]
+  df.UBRE <- out[which.min(out[,4]),1]
+  val.BIC <- out[which.min(out[,2]),2]
+  val.AIC <- out[which.min(out[,3]),3]
+  val.UBRE <- out[which.min(out[,4]),4]
+  opt_df <- data.frame(
+    "Methods" = c("BIC","AIC","UBRE"),
+    "Value"   = c(val.BIC,val.AIC,val.UBRE),
+    "Effective df" = c(df.BIC,df.AIC,df.UBRE)
+    )
+  opt_df
+}
+
+find_best_ss_smoothparms(parvovirus$age,parvovirus$parvores)
+```
+
+
+
+
+::::{.columns}
+:::{.column width="50%"}
+Package
+```{r}
+smoothing_splines <- function(age,parvores,df,link = "logit"){
+  
+  ## calculate FOI
+  foi.num <-function(x,p)
+  {
+    grid<-sort(unique(x))
+    pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+    dp<-diff(pgrid)/diff(grid)
+    foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+    return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+  }
+  
+  y<-parvores[order(age)]
+  a<-age[order(age)]
+  grid<-sort(unique(round(a)))
+  neg<-table(y,round(a))[1,]
+  pos<-table(y,round(a))[2,]
+  tot<-neg+pos
+  model <- list()
+  
+  model$info <- gam::gam(y~s(a,df=df),family=binomial(link = link))
+  model$sp <- model$info$fitted.values
+  h1 <- foi.num(a,model$sp)
+  model$foi <- data.frame("age" = h1$grid, "foi" = h1$foi)
+  model$df <- list(age=age, pos=pos, tot=tot, grid = grid)
+  class(model) <- "smoothing_splines"
+  model
+}
+
+outcome <- smoothing_splines(parvovirus$age,parvovirus$parvores,df=5,link = "logit")
+
+summariseee <- function(x){
+  return(list(x$info,head(x$sp),head(x$foi),
+              head(x$df$age),head(x$df[2:4])))
+}
+
+summariseee(outcome)
+
+```
+
+:::
+:::{.column width="50%"}
+Book
+```{r,message=FALSE}
+parvovirus<-read.table("D:/OUCRU/serobook/code in the book/Chapter4/VZV-B19-BE.dat",header=T)
+subset<-(parvovirus$age>0.5)&(parvovirus$age<76)&(!is.na(parvovirus$age))&!is.na(parvovirus$parvores)
+parvovirus<-parvovirus[subset,]
+y<-parvovirus$parvores[order(parvovirus$age)]
+a<-parvovirus$age[order(parvovirus$age)]
+s<-parvovirus$sex[order(parvovirus$age)]
+
+grid<-sort(unique(round(a)))
+neg<-table(y,round(a))[1,]
+pos<-table(y,round(a))[2,]
+tot<-neg+pos
+
+## Calculating FOI function
+
+foi.num<-function(x,p)
+{
+grid<-sort(unique(x))
+pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+dp<-diff(pgrid)/diff(grid)
+foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+}
+
+##### Hastie and Tibshirani (use BIC to select the smoothing parameter) ######
+
+BICf<-function(fit){return(fit$deviance+log(length(fit$y))*(fit$nl.df+2))}
+
+library(gam)
+out<-matrix(NA,ncol=3,nrow=100)
+for (i in 1:100){
+dfi<-1+0.5*i
+fit.gam.logit.ht<-gam(y~s(a,df=dfi),family=binomial(link="logit"))
+fit.gam.cloglog.ht<-gam(y~s(a,df=dfi),family=binomial(link="cloglog"))
+out[i,]<-c(dfi,BICf(fit.gam.logit.ht),BICf(fit.gam.cloglog.ht))
+}
+
+fit.gam.logit.ht<-gam(y~s(a,df=out[which.min(out[,2]),1]),family=binomial(link="logit"))
+fit.gam.logit.ht
+```
+:::
+::::
+
+## **Unit test smoothing splines function**
+
+```{r}
+library(testthat)
+
+test_that("smoothingsplines returns same result as in the book", {
+  expected_coefs <- c(-0.13949542, 0.03577971)
+  expected_D <- 3432.623
+  
+  df <- parvovirus
+  model <- smoothing_splines(
+    df$age, df$parvores, 
+    df = 5,
+    link="logit"
+  )
+  actual_coefs <- unname(c(
+    coef(model$info)[1], # intercept
+    coef(model$info)[2]
+  ))
+  actual_D <- model$info$deviance
+  
+  expect_equal(actual_coefs, expected_coefs)
+  expect_equal(actual_D, expected_D)
+})
+
+test_that("find_best_smoothparms returns same result as in the book ", {
+  expected_p <- c(5,6)
+  
+  df <- parvovirus
+  out1 <- find_best_ss_smoothparms(parvovirus$age,
+                        parvovirus$parvores,
+                         link = "logit",upper=100)
+  out2 <- find_best_ss_smoothparms(parvovirus$age,
+                        parvovirus$parvores,
+                        link = "cloglog",upper=100)
+  
+  actual_p <- c(out1[1,3],out2[1,3])
+  
+  expect_equal(actual_p, expected_p)
+})
+```
+
+## **Plot smoothing splines**
+
+```{r}
+plot_smoothing_splines <- function(x, ...) {
+  CEX_SCALER <- 0.02 # arbitrary number for better visual
+  
+  with(x$df, {
+    par(las=1,cex.axis=1,cex.lab=1,lwd=2,mgp=c(2, 0.5, 0),mar=c(4,4,4,3))
+    plot(grid,
+         pos/tot,
+         cex=CEX_SCALER*tot,
+         pch=1,
+         xlab="age",
+         ylab="seroprevalence",
+         xlim=c(0,max(grid)),
+         ylim=c(-0.1,1))
+    lines(a,x$sp,lty=1,lwd=2,col=1)
+    lines(x$foi[,1], x$foi[,2], lwd=2, lty=2)
+    axis(side=4, at=round(seq(0.0, max(x$foi), length.out=3), 2))
+    mtext(side=4, "force of infection", las=3, line=2)
+  })
+}
+
+plot_smoothing_splines(outcome)
+```
+
+<p style="text-align: center;">**Note: Do smoothing splines fit bằng GAM của gam package nên dùng predict không được**</p>
+
+# 8.2.1.2 Penalize spline
+
+Phần này tác giả dùng function của Eilers and Marx, em có tìm hiểu thì package(mgcv) có function gam với option bs = "ps" tương đương với function này, nhưng làm mọi cách vẫn k ra được kết quả giống package lý do không set up knots được.
+
+## Cubic Regression Splines, Thin Plate Regression Splines 
+
+```{r,message = FALSE}
+library(mgcv)
+library(tidyverse)
+
+psfit <- function(age,parvores, link = "logit"){
+  y<-parvores[order(age)]
+  a<-age[order(age)]
+smooths  <- c("tp", "ds", "cr", "cs", "cc", "bs", "ps", "cp", "re", "gp", "ad",
+              "sz", "fs")
+s <- c("Thin plate regression splines",
+       "Duchon splines",
+       "Cubic regression splines",
+       "Shrinkage version of cr",
+       "Cyclic cubic regression splines",
+       "B-splines basis",
+       "P-splines proposed by Eilers and Marx (1996)",
+       "A cyclic version of a P-spline",
+       "Random effects",
+       "Gaussian process smooths",
+       "Adaptive smoothers",
+       "Factor smooth interactions",
+       "Random factor smooth interactions")
+p_values <- function(x) {
+  tibble( "Estimate" = x$p.table[1, 1],
+          "Std.Error"= x$p.table[1, 2],
+          "z-value"  = x$p.table[1, 3])
+}
+
+quality <- function(x) {
+  tibble(deviance = deviance(x),
+         AIC      = AIC(x),
+         GCV      = x$gcv.ubre)
+}
+
+rel <- smooths |>
+  map_dfr(~ p_values(anova(gam(y ~ s(a, bs = .x),binomial(link = link)))))
+rel1 <- smooths |>
+  map_dfr(~ quality(gam(y ~ s(a, bs = .x),binomial(link = link))))
+
+bind_cols(tibble(Smooth = s), rel,rel1)
+}
+
+psfit(parvovirus$age,parvovirus$parvores,link = "logit")
+
+```
+
+## Combine gam fit and plot
+
+```{r}
+library(mgcv)
+library(tidyverse)
+library(magrittr)
+
+gam_plot <- function(age,parvores,s = "bs",link = "logit", ci = .95, m =1){
+  
+  y<-parvores[order(age)]
+  a<-age[order(age)]
+  grid<-sort(unique(round(a)))
+  neg<-table(y,round(a))[1,]
+  pos<-table(y,round(a))[2,]
+  tot<-neg+pos
+  
+  ## calculate FOI
+  foi.num <-function(x,p)
+  {
+    grid<-sort(unique(x))
+    pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+    dp<-diff(pgrid)/diff(grid)
+    foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+    return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+  }
+  
+  out <- mgcv::gam(y ~ s(a, bs = s),binomial(link = link))
+  
+  
+  p <- (1 - ci) / 2
+  link_inv <- out$family$linkinv
+  dataset <- out$model
+  n <- nrow(dataset) - length(out$coefficients)
+  age_range <- range(dataset[2])
+  ages <- dataset[2]
+  
+  bs1 <- predict(out,data.frame(a = ages), se.fit = TRUE) |> 
+    extract(c("fit", "se.fit")) %>%
+    c(age = list(ages), .) |>
+    as_tibble() |> 
+    mutate(lwr = m * link_inv(fit + qt(    p, n) * se.fit),
+           upr = m * link_inv(fit + qt(1 - p, n) * se.fit),
+           fit = m * link_inv(fit)) |> 
+    select(- se.fit)
+  
+  foi1 <- foi.num(a,bs1$fit)
+  
+  out.DF <- data.frame(x = a, y = bs1$fit, 
+                       ymin= bs1$lwr, ymax = bs1$upr)
+  out.FOI <- data.frame(x = foi.num(a,bs1$fit)$grid, y = foi.num(a,bs1$fit)$foi, 
+                        ymin= foi.num(a,bs1$lwr)$foi, ymax = foi.num(a,bs1$upr)$foi)
+
+  fig <- ggplot(data = data.frame(grid,tot,pos,neg), aes(x = grid, y = pos/tot)) +
+    geom_point(size = 10*(pos)/max(tot), shape = 1)+
+    labs(y="Seroprevalence", x="Age")+
+    coord_cartesian(xlim=c(0,max(grid)), ylim = c(-0.1,1)) + 
+    geom_smooth(aes_auto(out.DF), data=out.DF, stat="identity",
+                col = "blueviolet",fill = "royalblue1",
+                lwd = 0.5)+
+    geom_smooth(aes_auto(out.FOI), data=out.FOI, stat="identity",
+                col = "hotpink1",fill = "#f05bcb",
+                lwd = 0.5)+
+    scale_y_continuous(
+      name = "Seroprevalence",
+      sec.axis = sec_axis(~.*1, name = " Force of infection")
+    )
+  model <- list()
+  model$sp <- out.DF$y
+  model$foi <- out.FOI$y
+  model
+  return(list(model,fig))
+}
+
+model1 <- gam_plot(parvovirus$age, parvovirus$parvores,s = "tp", link = "logit")
+list(head(model1[[1]]$sp),head(model1[[1]]$foi))
+```
+
+::::{.columns}
+:::{.column width="50%"}
+**Package**
+```{r}
+model1[[2]]
+```
+:::
+:::{.column width="50%"}
+**Book**
+```{r,message=FALSE,echo=FALSE}
+detach(package:gam)
+library(mgcv)
+fit.gam.logit.tps<-gam(y~s(a,bs="tp"),family=binomial(link="logit"))
+plot(grid,pos/tot,cex=0.02*tot,pch=1,xlab="age",ylab="sero-prevalence",xlim=c(0,72),ylim=c(-0.1,1))
+lines(a,predict(fit.gam.logit.tps,type="response"),lty=1,lwd=2)
+h1<-foi.num(a,predict(fit.gam.logit.tps,type="response"))
+lines(h1$grid,h1$foi,lty=1,lwd=2)
+axis(side=4,at=c(0.0,0.1,0.2,0.3,0.4))
+mtext(side=4,"force-of-infection",las=3,line=1.5,cex=0.9)
+
+```
+
+:::
+::::
+
+## **Unit test function gam_plot**
+
+```{r}
+library(testthat)
+
+## calculate FOI
+  foi.num <-function(x,p)
+  {
+    grid<-sort(unique(x))
+    pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+    dp<-diff(pgrid)/diff(grid)
+    foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+    return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+  }
+
+test_that("gam_plot returns same result as in the book", {
+  
+  expected_sp_summary <- mgcv::gam(y~s(a,bs="tp"),family=binomial(link="logit"))$fitted.values
+  
+  expected_sp <- c(min(expected_sp_summary),mean(expected_sp_summary),median(expected_sp_summary),max(expected_sp_summary))
+  expected_foi <- c(-0.08079526,0.05375112,0.06207138,0.13285975)  
+  df <- parvovirus
+  model <- gam_plot(parvovirus$age, parvovirus$parvores,s = "tp", link = "logit")
+  
+  actual_sp <- c(min(model[[1]]$sp),mean(model[[1]]$sp),median(model[[1]]$sp),max(model[[1]]$sp))
+  actual_foi <- c(min(model[[1]]$foi),mean(model[[1]]$foi),median(model[[1]]$foi),max(model[[1]]$foi))
+  
+  expect_equal(actual_sp, expected_sp)
+  expect_equal(actual_foi, expected_foi)
+})
+
+```
+
+## **Generalized Linear Mixed Model Framework**
+
+```{r}
+library(mgcv)
+library(tidyverse)
+library(magrittr)
+
+glmm_plot <- function(age,parvores,s = "bs",link = "logit", ci = .95, m = 1){
+  
+  y<-parvores[order(age)]
+  a<-age[order(age)]
+  grid<-sort(unique(round(a)))
+  neg<-table(y,round(a))[1,]
+  pos<-table(y,round(a))[2,]
+  tot<-neg+pos
+  
+  ## calculate FOI
+  foi.num <-function(x,p)
+  {
+    grid<-sort(unique(x))
+    pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+    dp<-diff(pgrid)/diff(grid)
+    foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+    return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+  }
+  
+  out <- mgcv::gamm(y ~ s(a, bs = s ),family = binomial(link = link))
+  
+  p <- (1 - ci) / 2
+  link_inv <- out$gam$family$linkinv
+  dataset <- out$gam$model[,1:2]
+  n <- nrow(dataset) - length(out$gam$coefficients)
+  age_range <- range(dataset[2])
+  ages <- dataset[2]
+  
+  bs1 <- predict.gam(out$gam,data.frame(a = ages), se.fit = TRUE) |> 
+    extract(c("fit", "se.fit")) %>%
+    c(age = list(ages), .) |>
+    as_tibble() |> 
+    mutate(lwr = m * link_inv(fit + qt(    p, n) * se.fit),
+           upr = m * link_inv(fit + qt(1 - p, n) * se.fit),
+           fit = m * link_inv(fit)) |> 
+    select(- se.fit)
+  out.DF <- data.frame(x = a, y = bs1$fit, 
+                       ymin= bs1$lwr, ymax = bs1$upr)
+  out.FOI <- data.frame(x = foi.num(a,bs1$fit)$grid, y = foi.num(a,bs1$fit)$foi, 
+                       ymin= foi.num(a,bs1$lwr)$foi, ymax = foi.num(a,bs1$upr)$foi)
+  
+  fig <- ggplot(data = data.frame(grid,tot,pos,neg), aes(x = grid, y = pos/tot)) +
+    geom_point(size = 10*(pos)/max(tot), shape = 1)+
+    labs(y="Seroprevalence", x="Age")+
+    coord_cartesian(xlim=c(0,max(grid)), ylim = c(-0.1,1)) + 
+    geom_smooth(aes_auto(out.DF), data=out.DF, stat="identity",
+                col = "blueviolet",fill = "royalblue1",
+                lwd = 0.5)+
+    geom_smooth(aes_auto(out.FOI), data=out.FOI, stat="identity",
+                col = "hotpink1",fill = "#f05bcb",
+                lwd = 0.5)+
+    scale_y_continuous(
+      name = "Seroprevalence",
+      sec.axis = sec_axis(~.*1, name = " Force of infection")
+    )
+  model <- list()
+  model$sp <- out.DF$y
+  model$foi <- out.FOI$y
+  model
+  return(list(model,fig))
+  }
+
+model2 <- glmm_plot(age = parvovirus$age, parvores = parvovirus$parvores,s = "tp", link = "logit")
+
+list(head(model2[[1]]$sp),head(model2[[1]]$foi))
+```
+
+::::{.columns}
+:::{.column width="50%"}
+**Package**
+```{r}
+model2[[2]]
+```
+:::
+:::{.column width="50%"}
+**Book**
+```{r,message=FALSE,echo=FALSE}
+fit.gamm.logit.tps<-gamm(y~s(a,bs="tp"),family=binomial(link="logit"))
+plot(grid,pos/tot,cex=0.02*tot,pch=1,xlab="age",ylab="seroprevalence",xlim=c(0,72),ylim=c(-0.1,1))
+lines(a,predict(fit.gamm.logit.tps$gam,type="response"),lty=2,lwd=2)
+h1<-foi.num(a,predict(fit.gamm.logit.tps$gam,type="response"))
+lines(h1$grid,h1$foi,lty=2,lwd=2)
+axis(side=4,at=c(0.0,0.1,0.2,0.3,0.4))
+mtext(side=4,"force-of-infection",las=3,line=1.5)
+```
+
+:::
+::::
+
+
+
+
+
+## **Unit test of glmm_plot**
+
+```{r}
+library(testthat)
+
+test_that("glmm_plot returns same result as in the book", {
+  
+  expected_sp_summary <- predict.gam(gamm(y~s(a,bs="tp"),
+                       family=binomial(link="logit"))$gam, type = "response")
+  expected_foi_summary <- foi.num(a,predict.gam(gamm(y~s(a,bs="tp"),
+                      family=binomial(link="logit"))$gam,type="response"))$foi
+  expected_sp <- c(min(expected_sp_summary),mean(expected_sp_summary),median(expected_sp_summary),max(expected_sp_summary))
+  expected_foi <- c(min(expected_foi_summary),mean(expected_foi_summary),median(expected_foi_summary),max(expected_foi_summary))  
+  df <- parvovirus
+  model <- glmm_plot(parvovirus$age, parvovirus$parvores,s = "tp", link = "logit")
+  
+  actual_sp <- c(min(model[[1]]$sp),mean(model[[1]]$sp),
+                 median(model[[1]]$sp),max(model[[1]]$sp))
+  actual_foi <- c(min(model[[1]]$foi),mean(model[[1]]$foi),
+                  median(model[[1]]$foi),max(model[[1]]$foi))
+  
+  expect_equal(actual_sp, expected_sp)
+  expect_equal(actual_foi, expected_foi)
+})
+
+```
+
+## **Adaptive Spline Smoothing**
+
+Function AdaptFit bị xóa trên CRAN rồi, có thể dùng mgcv::gam để fit nhưng không có data để unit test
+
+## **Chap 9 The Constraint of Monotonicity**
+
+## **9.2 Piecewise Constant Forces of Infection**
+
+Hiện đang fail
+
+## 9.3.2 Keiding(1991)
+
+```{r}
+pavit<- function(pos=pos,tot=rep(1,length(pos)))
+{
+  gi<- pos/tot
+  pai1 <- pai2 <- gi
+  N <- length(pai1)
+  ni<-tot
+  for(i in 1:(N - 1)) {
+    if(pai2[i] > pai2[i + 1]) {
+      pool <- (ni[i]*pai1[i] + ni[i+1]*pai1[i + 1])/(ni[i]+ni[i+1])
+      pai2[i:(i + 1)] <- pool
+      k <- i + 1
+      for(j in (k - 1):1) {
+        if(pai2[j] > pai2[k]) {
+          pool.2 <- sum(ni[j:k]*pai1[j:k])/(sum(ni[j:k]))
+          pai2[j:k] <- pool.2
+        }
+      }
+    }
+  }
+  return(list(pai1=pai1,pai2=pai2))
+}
+
+foi.num<-function(x,p)
+{
+  grid<-sort(unique(x))
+  pgrid<-(p[order(x)])[duplicated(sort(x))==F]
+  dp<-diff(pgrid)/diff(grid)
+  foi<-approx((grid[-1]+grid[-length(grid)])/2,dp,grid[c(-1,-length(grid))])$y/(1-pgrid[c(-1,-length(grid))])
+  return(list(grid=grid[c(-1,-length(grid))],foi=foi))
+}
+
+#' Keiding model
+#'
+#' @param age the age vector
+#' @param pos the positive vector
+#' @param tot the total vector
+#' @param kernel kernel-based estimate
+#' @param bw bandwidth
+#'
+#'
+#' @examples
+#' df <- hav_bg_1964
+#' model <- keiding_model(df$age,df$pos,df$tot, kernel = "normal", bw = 30)
+#' plot(model)
+
+keiding_model <- function(age, pos, tot,kernel ="normal", bw){
+  grid <- sort(age)
+  model <- list()
+  xx <- pavit(pos=pos,tot=tot)
+  foi.k1<-foi.num(grid,xx$pai2)$foi
+  foi.k1[is.na(foi.k1)]<-0
+  foi.k1[foi.k1>10]<-0
+  age.k1<-foi.num(grid,xx$pai2)$grid
+  fit.k1<- ksmooth(age.k1,foi.k1,kernel=kernel,bandwidth=bw,n.points=length(age.k1))
+  model$age <- fit.k1$x
+  model$foi <- fit.k1$y
+  model$sp <- 1-exp(-cumsum(c(age.k1[1],diff(age.k1))*model$foi))
+  model$df <- list(age=age, pos=pos, tot=tot,grid = grid)
+  class(model) <- "keiding_model"
+  model
+  }
+library(serosv)
+df <- hav_bg_1964
+model <- keiding_model(df$age,df$pos,df$tot, kernel = "normal", bw = 30)
+model
+```
+
+## **Plot Keiding Model** 
+
+```{r}
+#' plot() overloading Keiding model
+#'
+#' @param x the keiding model object.
+#' @param ... arbitrary params
+#'
+#' 
+#' @export
+plot.keiding_model <- function(x, ...) {
+  CEX_SCALER <- 4 # arbitrary number for better visual
+  with(x$df, {
+    par(las=1,cex.axis=1,cex.lab=1,lwd=2,mgp=c(2, 0.5, 0),mar=c(4,4,4,3))
+    plot(
+      grid,
+      pos/tot,
+      cex=CEX_SCALER*tot/max(tot),
+      xlab="age", ylab="seroprevalence",
+      xlim=c(0, max(age)), ylim=c(0,1)
+    )
+    lines(x$age, x$sp, lwd=2)
+    lines(x$age, x$foi, lwd=2, lty=2)
+    axis(side=4, at=round(seq(0.0, max(x$foi), length.out=3), 2))
+    mtext(side=4, "force of infection", las=3, line=2)
+  })
+}
+plot(model)
+```
+
+**Note**: Keiding model ước tính FOI trước theo monotonicity rồi từ FOI mới tính ra SP nên không dùng function predict cho SP được
+
+## **Unit test Keiding model**
+```{r}
+library(testthat)
+test_that("keiding_model returns expected results", {
+  expected_foi_summary <- c(0.02330453, 0.05276397, 0.05504527, 0.08295355)
+  expected_sp_summary <- c(0.06664893, 0.9155623, 0.7704096, 0.9892495)
+  df <- hav_bg_1964
+  model <- keiding_model(
+    df$age,df$pos,df$tot, 
+    kernel = "normal", bw = 30)
+  actual_foi_summary <- c(
+    min(model$foi), median(model$foi), mean(model$foi), max(model$foi)
+  )
+  actual_sp_summary  <- c(
+    min(model$sp), median(model$sp), mean(model$sp), max(model$sp)
+  )
+  expect_equal(actual_foi_summary, expected_foi_summary, tolerance=0.000001)
+  expect_equal(actual_sp_summary, expected_sp_summary, tolerance=0.000001)
+})
+
+```
+
+
+
+## **Smooth then constraint model**
+
+```{r}
+library(locfit)
+
+pavit<- function(pos=pos,tot=rep(1,length(pos)))
+{
+  gi<- pos/tot
+  pai1 <- pai2 <- gi
+  N <- length(pai1)
+  ni<-tot
+  for(i in 1:(N - 1)) {
+    if(pai2[i] > pai2[i + 1]) {
+      pool <- (ni[i]*pai1[i] + ni[i+1]*pai1[i + 1])/(ni[i]+ni[i+1])
+      pai2[i:(i + 1)] <- pool
+      k <- i + 1
+      for(j in (k - 1):1) {
+        if(pai2[j] > pai2[k]) {
+          pool.2 <- sum(ni[j:k]*pai1[j:k])/(sum(ni[j:k]))
+          pai2[j:k] <- pool.2
+        }
+      }
+    }
+  }
+  return(list(pai1=pai1,pai2=pai2))
+}
+
+#' Returns the optimal smoothing parameter of GCV  
+#'
+#' Refers to section 9.3.3.
+#' @param age the age vector
+#' @param pos the positive vector
+#' @param tot the total vector
+#' @param alphagrid a alpha sequence
+#' @param family family of gcvplot. Default to "binomal"
+#' @param deg degree of gcvplot
+#'
+#' @examples
+#' df <- hav_bg_1964
+#' find_the_min_alpha(df$age,df$pos,df$tot,
+#'            seq(0.2,2, by=0.05),family = "binomial", deg =2)
+
+find_the_min_alpha <- function(age,pos,tot,alphagrid, family = "binomial",deg){
+  neg <- tot - pos 
+  a<-c(rep(age,pos),rep(age,neg))
+  y<-c(rep(rep(1,length(age)),pos),rep(rep(0,length(age)),neg))
+  gcvp<-gcvplot(y~a,family="binomial",alpha= alphagrid,deg = deg)
+  alpha<-alphagrid[which.min(gcvp$values)]
+  alpha
+}
+
+
+
+#' A Smooth then constrain model
+#'
+#' @param age the age vector
+#' @param pos the positive vector
+#' @param tot the total vector
+#' @param alpha alpha of local fit
+#' @param family family of local fit
+#'
+#' @examples
+#' df <- hav_bg_1964
+#' model <- stc(df$age,df$pos,df$tot,
+#'             alpha = 0.35,family = "binomial")
+stc <- function(age,pos,tot,alpha,family = "binomial"){
+  neg <- tot - pos
+  grid <- sort(age)
+  model <- list()
+  a<-c(rep(age,pos),rep(age,neg))
+  y<-c(rep(rep(1,length(age)),pos),rep(rep(0,length(age)),neg))
+  y<-y[order(a)]
+  a<-a[order(a)]
+  lpfit1 <- locfit(y~a,family= family ,alpha=alpha)
+  lpfitd1 <- locfit(y~a,deriv=1,family= family,alpha=alpha)
+  lpfoi1 <- fitted(lpfitd1)*fitted(lpfit1)
+  model$sp <- pavit(pos=fitted(lpfit1))$pai2
+  lpfoi2 <- apply(cbind(0,fitted(lpfitd1)),1,max)*model$sp
+  model$foi <- apply(cbind(0,lpfoi2),1,max)
+  model$df <- list(age=age, pos=pos, tot = tot, grid = grid ,a=a )
+  class(model) <- "smooth_then_constrain_model"
+  model
+}
+
+
+df <- hav_bg_1964
+model <- stc(df$age,df$pos,df$tot,
+             alpha = 0.35,family = "binomial")
+model
+```
+
+
+## **Unit test**
+
+```{r}
+library(testthat)
+test_that("smooth_then_constrain_model returns expected results", {
+  expected_foi_summary <- c(0, 0.05875577, 0.09195305, 0.9057742)
+  expected_sp_summary <- c(0.1736335, 0.7792654, 0.6995438, 0.9999992)
+  df <- hav_bg_1964
+  model <- stc(df$age,df$pos,df$tot,
+               alpha = 0.35,family = "binomial")
+  actual_foi_summary <- c(
+    min(model$foi), median(model$foi), mean(model$foi), max(model$foi)
+  )
+  actual_sp_summary  <- c(
+    min(model$sp), median(model$sp), mean(model$sp), max(model$sp)
+  )
+  expect_equal(actual_foi_summary, expected_foi_summary, tolerance=0.000001)
+  expect_equal(actual_sp_summary, expected_sp_summary, tolerance=0.000001)
+})
+
+```
+
+## **plot smooth then constraint model**
+
+```{r}
+
+#' plot() overloading smooth then constrain model
+#'
+#' @param x the smooth then constrain model object
+#' @param ... arbitrary params
+#'
+#'
+#' @export
+plot.smooth_then_constrain_model <- function(x, ...) {
+  CEX_SCALER <- 4 # arbitrary number for better visual
+  with(x$df, {
+    par(las=1,cex.axis=1,cex.lab=1,lwd=2,mgp=c(2, 0.5, 0),mar=c(4,4,4,3))
+    plot(
+      grid,
+      pos/tot,
+      cex=CEX_SCALER*tot/max(tot),
+      xlab="age", ylab="seroprevalence",
+      xlim=c(0, max(age)), ylim=c(0,1)
+    )
+    lines(x$df$a,x$sp,lty=1)
+    lines(x$df$a,x$foi,lwd=2, lty=2)
+    axis(side=4, at=round(seq(0.0, max(x$foi), length.out=3), 2))
+    mtext(side=4, "force of infection", las=3, line=2)
+  })
+}
+plot(model)
+```
+
+## **9.4 P-spline Regression with Shape Constraints
+
+Dùng function của Eilers và Marx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
