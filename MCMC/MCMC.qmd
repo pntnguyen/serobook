@@ -1,0 +1,168 @@
+---
+title: "Chap 10 Gibbs sampling"
+format: html
+editor: visual
+---
+
+```{r}
+library(rstan)
+```
+
+```{r}
+rrr<-list(
+  age=c(1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,
+        15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,23.5,24.5,25.5,26.5,27.5,
+        28.5,29.5,30.5,31.5,32.5,33.5,34.5,35.5,36.5,37.5,38.5,39.5,40.5,41.5,42.5,43.5,44.5),
+  posi=c(31,30,34,57,95,104,90,96,134,110,111,147,138,141,53,49,73,
+         69,97,65,74,84,82,79,90,84,81,72,71,51,45,45,35,39,
+         36,37,37,37,28,26,25,21,18,18),
+  ni=c(206,146,168,189,219,195,164,145,180,160,148,178,177,165,67,58,81,
+       79,111,76,82,101,88,85,94,91,89,76,79,56,52,48,37,41,40,38,39,41,30,27,25,22,19,18),
+  Nage=44)
+```
+
+Define the model 
+
+```{r}
+mcmc <- "
+data {
+  int<lower=1> Nage;           // Number of age groups
+  vector[Nage] age;            // Age vector
+  int<lower=0> posi[Nage];     // Number of positive cases
+  int<lower=0> ni[Nage];       // Number of trials
+}
+
+parameters {
+  real<lower=0.00001> alpha1;  // Parameter alpha1
+  real<lower=0.00001> alpha2;  // Parameter alpha2
+  real<lower=0.00001> alpha3;  // Parameter alpha3
+  real<lower=0> tau_alpha1;    // Precision (inverse variance) of alpha1
+  real<lower=0> tau_alpha2;    // Precision (inverse variance) of alpha2
+  real<lower=0> tau_alpha3;    // Precision (inverse variance) of alpha3
+  real mu_alpha1;              // Mean of normal prior for alpha1
+  real mu_alpha2;              // Mean of normal prior for alpha2
+  real mu_alpha3;              // Mean of normal prior for alpha3
+}
+
+transformed parameters {
+  real<lower=0> sigma_alpha1;  // Standard deviation of alpha1
+  real<lower=0> sigma_alpha2;  // Standard deviation of alpha2
+  real<lower=0> sigma_alpha3;  // Standard deviation of alpha3
+ 
+  sigma_alpha1 = sqrt(1 / tau_alpha1);
+  sigma_alpha2 = sqrt(1 / tau_alpha2);
+  sigma_alpha3 = sqrt(1 / tau_alpha3);
+}
+
+model {
+  vector[Nage] theta;
+  vector[Nage] foi;
+  vector[Nage] ai;
+  real ef;
+  real avei2;
+  real Pi;
+
+  // Priors
+  alpha1 ~ normal(mu_alpha1, sigma_alpha1);
+  alpha2 ~ normal(mu_alpha2, sigma_alpha2);
+  alpha3 ~ normal(mu_alpha3, sigma_alpha3);
+  tau_alpha1 ~ gamma(0.01, 0.01);
+  tau_alpha2 ~ gamma(0.01, 0.01);
+  tau_alpha3 ~ gamma(0.01, 0.01);
+  mu_alpha1 ~ normal(0, sqrt(1 / 0.0001));
+  mu_alpha2 ~ normal(0, sqrt(1 / 0.0001));
+  mu_alpha3 ~ normal(0, sqrt(1 / 0.0001));
+
+  // Likelihood
+  for (i in 1:Nage) {
+    real eta;  // Declare eta as a real variable
+    eta = (alpha1 / alpha2) * age[i] * exp(-alpha2 * age[i]) +
+          (1 / alpha2) * ((alpha1 / alpha2) - alpha3) * (exp(-alpha2 * age[i]) - 1) -
+          alpha3 * age[i];
+    theta[i] = 1 - exp(eta);
+    posi[i] ~ binomial(ni[i], theta[i]);
+
+    foi[i] = (alpha1 * age[i] - alpha3) * exp(-alpha2 * age[i]) + alpha3;
+    ai[i] = 1 - theta[i];
+  }
+
+  ef = 1 - theta[Nage];
+  avei2 = sum(ai) + ef * (75 - age[Nage]);
+  Pi = 1 - avei2 / 75;
+}
+"
+```
+
+Run sampling
+```{r}
+fit1 <- stan(
+  model_code =  mcmc,  
+  data = rrr,    
+  chains = 1,             
+  warmup = 1000,          
+  iter = 5000            
+)
+```
+
+```{r}
+out <- print(summary(fit1)$summary)
+alpha1 <- out["alpha1",c("mean")]
+alpha2 <- out["alpha2",c("mean")]
+alpha3 <- out["alpha3",c("mean")]
+```
+
+```{r}
+theta <- data.frame(sp = rep (0,44))
+
+for (i in 1:44){
+theta$sp[i] = 1-exp((alpha1/alpha2)*rrr$age[i]*exp(-alpha2*rrr$age[i])+
+                   (1/alpha2)*((alpha1/alpha2)-alpha3)*(exp(-alpha2*rrr$age[i])-1)-alpha3*rrr$age[i])
+}
+```
+
+
+plot
+
+```{r}
+plot(rrr$age,rrr$posi/rrr$ni,xlim=c(0,46),cex=0.01*rrr$ni,xlab="age",ylab="proportion of seropositive",
+     ylim=c(0,1),lwd=2)
+lines(rrr$age,theta$sp,lty=1,lwd=2)
+```
+
+## The other sampling
+
+Run sampling
+```{r}
+fit1 <- stan(
+  model_code =  mcmc,  
+  data = rrr,    
+  chains = 1,             
+  warmup = 1000,          
+  iter = 5000            
+)
+```
+
+```{r}
+out <- print(summary(fit1)$summary)
+alpha1 <- out["alpha1",c("mean")]
+alpha2 <- out["alpha2",c("mean")]
+alpha3 <- out["alpha3",c("mean")]
+```
+
+```{r}
+theta <- data.frame(sp = rep (0,44))
+
+for (i in 1:44){
+theta$sp[i] = 1-exp((alpha1/alpha2)*rrr$age[i]*exp(-alpha2*rrr$age[i])+
+                   (1/alpha2)*((alpha1/alpha2)-alpha3)*(exp(-alpha2*rrr$age[i])-1)-alpha3*rrr$age[i])
+}
+```
+
+
+plot
+
+```{r}
+plot(rrr$age,rrr$posi/rrr$ni,xlim=c(0,46),cex=0.01*rrr$ni,xlab="age",ylab="proportion of seropositive",
+     ylim=c(0,1),lwd=2)
+lines(rrr$age,theta$sp,lty=1,lwd=2)
+```
