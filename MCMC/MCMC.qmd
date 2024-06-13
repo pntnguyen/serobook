@@ -41,7 +41,7 @@ ni=c(407,292,332,368,421,330,294,258,312,304,282,321,313,366,116,121,148,
 ```
 
 
-## Farrington model with 3 parameters
+## 10.3.1 Farrington model with 3 parameters
 
 
 ```{r}
@@ -77,11 +77,6 @@ transformed parameters {
 
 model {
   vector[Nage] theta;
-  vector[Nage] foi;
-  vector[Nage] ai;
-  real ef;
-  real avei2;
-  real Pi;
 
   // Priors
   alpha1 ~ normal(mu_alpha1, sigma_alpha1);
@@ -103,13 +98,8 @@ model {
     theta[i] = 1 - exp(eta);
     posi[i] ~ binomial(ni[i], theta[i]);
 
-    foi[i] = (alpha1 * age[i] - alpha3) * exp(-alpha2 * age[i]) + alpha3;
-    ai[i] = 1 - theta[i];
   }
 
-  ef = 1 - theta[Nage];
-  avei2 = sum(ai) + ef * (75 - age[Nage]);
-  Pi = 1 - avei2 / 75;
 }
 "
 ```
@@ -188,11 +178,7 @@ transformed parameters {
 
 model {
   vector[Nage] theta;
-  vector[Nage] foi;
-  vector[Nage] ai;
-  real ef;
-  real avei2;
-  real Pi;
+
 
   // Priors
   alpha1 ~ normal(mu_alpha1, sigma_alpha1);
@@ -209,14 +195,8 @@ model {
           (1 / alpha2) * ((alpha1 / alpha2)) * (exp(-alpha2 * age[i]) - 1);
     theta[i] = 1 - exp(eta);
     posi[i] ~ binomial(ni[i], theta[i]);
-
-    foi[i] = (alpha1 * age[i]) * exp(-alpha2 * age[i]);
-    ai[i] = 1 - theta[i];
   }
 
-  ef = 1 - theta[Nage];
-  avei2 = sum(ai) + ef * (75 - age[Nage]);
-  Pi = 1 - avei2 / 75;
 }
 "
 ```
@@ -263,7 +243,7 @@ lines(rrr$age,theta$foi,lty=1,lwd=2)
 ```
 
 
-## Log - logistic model
+## 10.3.3 Log - logistic model
 
 ```{r}
 log_logistic <-"
@@ -284,25 +264,18 @@ parameters {
 }
 
 transformed parameters {
-  vector[Nage] theta;          // Probability of success for each age group
-  vector[Nage] foi;            // Force of infection for each age group
-  vector[Nage] ai;             // Complement of theta for each age group
   real<lower=0> sigma_alpha1;  // Standard deviation of alpha1
   real<lower=0> sigma_alpha2;  // Standard deviation of alpha2
  
   sigma_alpha1 = sqrt(1 / tau_alpha1);
   sigma_alpha2 = sqrt(1 / tau_alpha2);
-  
-
-  for (i in 1:Nage) {
-    theta[i] = inv_logit(alpha2 + alpha1 * log(age[i]));
-    ai[i] = 1 - theta[i];
-    foi[i] = alpha1 * exp(alpha2) * pow(age[i], alpha1 - 1) * (1 - theta[i]);
-  }
-  
 }
 
 model {
+  vector[Nage] theta; 
+  for (i in 1:Nage) {
+    theta[i] = inv_logit(alpha2 + alpha1 * log(age[i]));
+  }
   // Likelihood
   for (i in 1:Nage) {
     posi[i] ~ binomial(ni[i], theta[i]);
@@ -315,14 +288,6 @@ model {
   tau_alpha2 ~ gamma(0.01,0.01);
   mu_alpha1 ~ normal(0, sqrt(10000));
   mu_alpha2 ~ normal(0, sqrt(10000));
-}
-
-generated quantities {
-  vector[Nage] loglike;   // Log-likelihood for each observation
- 
-  for (i in 1:Nage) {
-    loglike[i] = posi[i] * log(theta[i]) + (ni[i] - posi[i]) * log(1 - theta[i]);
-  }
 }
 "
 ```

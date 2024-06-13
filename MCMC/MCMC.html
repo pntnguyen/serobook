@@ -184,41 +184,31 @@ rstan_options(threads_per_chain = 1)</code></pre>
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="st">model {</span></span>
 <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] theta;</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] foi;</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] ai;</span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="st">  real ef;</span></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="st">  real avei2;</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="st">  real Pi;</span></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="st">  // Priors</span></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha1 ~ normal(mu_alpha1, sigma_alpha1);</span></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha2 ~ normal(mu_alpha2, sigma_alpha2);</span></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha3 ~ normal(mu_alpha3, sigma_alpha3);</span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha1 ~ gamma(0.01, 0.01);</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha2 ~ gamma(0.01, 0.01);</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha3 ~ gamma(0.01, 0.01);</span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha1 ~ normal(0, sqrt(1 / 0.0001));</span></span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha2 ~ normal(0, sqrt(1 / 0.0001));</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha3 ~ normal(0, sqrt(1 / 0.0001));</span></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="st">  // Likelihood</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="st">    real eta;  // Declare eta as a real variable</span></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="st">    eta = (alpha1 / alpha2) * age[i] * exp(-alpha2 * age[i]) +</span></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="st">          (1 / alpha2) * ((alpha1 / alpha2) - alpha3) * (exp(-alpha2 * age[i]) - 1) -</span></span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="st">          alpha3 * age[i];</span></span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="st">    theta[i] = 1 - exp(eta);</span></span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a><span class="st">    posi[i] ~ binomial(ni[i], theta[i]);</span></span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="st">    foi[i] = (alpha1 * age[i] - alpha3) * exp(-alpha2 * age[i]) + alpha3;</span></span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="st">    ai[i] = 1 - theta[i];</span></span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="st">  ef = 1 - theta[Nage];</span></span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a><span class="st">  avei2 = sum(ai) + ef * (75 - age[Nage]);</span></span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a><span class="st">  Pi = 1 - avei2 / 75;</span></span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="st">  // Priors</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha1 ~ normal(mu_alpha1, sigma_alpha1);</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha2 ~ normal(mu_alpha2, sigma_alpha2);</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha3 ~ normal(mu_alpha3, sigma_alpha3);</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha1 ~ gamma(0.01, 0.01);</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha2 ~ gamma(0.01, 0.01);</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha3 ~ gamma(0.01, 0.01);</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha1 ~ normal(0, sqrt(1 / 0.0001));</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha2 ~ normal(0, sqrt(1 / 0.0001));</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha3 ~ normal(0, sqrt(1 / 0.0001));</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="st">  // Likelihood</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="st">    real eta;  // Declare eta as a real variable</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="st">    eta = (alpha1 / alpha2) * age[i] * exp(-alpha2 * age[i]) +</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="st">          (1 / alpha2) * ((alpha1 / alpha2) - alpha3) * (exp(-alpha2 * age[i]) - 1) -</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="st">          alpha3 * age[i];</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="st">    theta[i] = 1 - exp(eta);</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="st">    posi[i] ~ binomial(ni[i], theta[i]);</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Run sampling</p>
 <div class="cell">
@@ -233,8 +223,8 @@ rstan_options(threads_per_chain = 1)</code></pre>
 <pre><code>
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 8.1e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.81 seconds.
+Chain 1: Gradient evaluation took 7.3e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.73 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -251,15 +241,18 @@ Chain 1: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 1: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 1: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 4.697 seconds (Warm-up)
-Chain 1:                4.076 seconds (Sampling)
-Chain 1:                8.773 seconds (Total)
+Chain 1:  Elapsed Time: 4.36 seconds (Warm-up)
+Chain 1:                4.99 seconds (Sampling)
+Chain 1:                9.35 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
+Chain 2: Rejecting initial value:
+Chain 2:   Log probability evaluates to log(0), i.e. negative infinity.
+Chain 2:   Stan can't start sampling from this initial value.
 Chain 2: 
-Chain 2: Gradient evaluation took 3.1e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.31 seconds.
+Chain 2: Gradient evaluation took 2.2e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -276,15 +269,18 @@ Chain 2: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 2: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 2: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 5.456 seconds (Warm-up)
-Chain 2:                3.199 seconds (Sampling)
-Chain 2:                8.655 seconds (Total)
+Chain 2:  Elapsed Time: 3.627 seconds (Warm-up)
+Chain 2:                5.29 seconds (Sampling)
+Chain 2:                8.917 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
+Chain 3: Rejecting initial value:
+Chain 3:   Log probability evaluates to log(0), i.e. negative infinity.
+Chain 3:   Stan can't start sampling from this initial value.
 Chain 3: 
-Chain 3: Gradient evaluation took 3.3e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.33 seconds.
+Chain 3: Gradient evaluation took 3.4e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.34 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -301,9 +297,9 @@ Chain 3: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 3: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 3: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 4.495 seconds (Warm-up)
-Chain 3:                4.344 seconds (Sampling)
-Chain 3:                8.839 seconds (Total)
+Chain 3:  Elapsed Time: 3.477 seconds (Warm-up)
+Chain 3:                1.147 seconds (Sampling)
+Chain 3:                4.624 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
@@ -314,8 +310,8 @@ Chain 4: Rejecting initial value:
 Chain 4:   Log probability evaluates to log(0), i.e. negative infinity.
 Chain 4:   Stan can't start sampling from this initial value.
 Chain 4: 
-Chain 4: Gradient evaluation took 3.2e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.32 seconds.
+Chain 4: Gradient evaluation took 2.3e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -332,13 +328,13 @@ Chain 4: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 4: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 4: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 4.75 seconds (Warm-up)
-Chain 4:                4.48 seconds (Sampling)
-Chain 4:                9.23 seconds (Total)
+Chain 4:  Elapsed Time: 3.493 seconds (Warm-up)
+Chain 4:                2.506 seconds (Sampling)
+Chain 4:                5.999 seconds (Total)
 Chain 4: </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: There were 4876 divergent transitions after warmup. See
+<pre><code>Warning: There were 4259 divergent transitions after warmup. See
 https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 to find out why this is a problem and how to eliminate them.</code></pre>
 </div>
@@ -346,7 +342,7 @@ to find out why this is a problem and how to eliminate them.</code></pre>
 <pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: The largest R-hat is 1.33, indicating chains have not mixed.
+<pre><code>Warning: The largest R-hat is 1.1, indicating chains have not mixed.
 Running the chains for more iterations may help. See
 https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
 </div>
@@ -372,47 +368,47 @@ https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">print</span>(<span class="fu">summary</span>(fit1)<span class="sc">$</span>summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                      mean      se_mean           sd          2.5%
-alpha1        1.377949e-01 1.356413e-03 6.477214e-03  1.269931e-01
-alpha2        1.968310e-01 1.639308e-03 8.832138e-03  1.840533e-01
-alpha3        9.134560e-03 5.242484e-04 6.674477e-03  3.833332e-04
-tau_alpha1    2.471138e+00 2.045045e+00 5.885599e+00  1.150209e-06
-tau_alpha2    9.399499e-01 3.993434e-01 2.411675e+00  8.324525e-06
-tau_alpha3    9.844887e-01 4.629932e-01 2.148341e+00  5.289459e-06
-mu_alpha1    -3.110397e+00 3.378143e+00 3.870296e+01 -1.025569e+02
-mu_alpha2    -3.190045e-01 1.263578e+00 3.185998e+01 -6.809557e+01
-mu_alpha3     9.064964e-01 1.774647e+00 3.383859e+01 -8.164462e+01
-sigma_alpha1  1.237127e+02 3.858333e+01 6.245687e+02  2.182158e-01
-sigma_alpha2  6.527550e+01 8.809371e+00 4.309725e+02  3.451051e-01
-sigma_alpha3  7.528983e+01 1.141970e+01 4.275138e+02  3.538524e-01
-lp__         -2.534168e+03 6.669886e-01 3.901138e+00 -2.542794e+03
+alpha1        1.398871e-01 3.893200e-04 5.861503e-03  1.288345e-01
+alpha2        1.993565e-01 7.443385e-04 8.326250e-03  1.849609e-01
+alpha3        9.233694e-03 4.885911e-04 7.250027e-03  3.949589e-04
+tau_alpha1    3.694078e-01 7.391564e-02 1.021693e+00  3.510241e-06
+tau_alpha2    4.603382e-01 1.093640e-01 1.790550e+00  4.295532e-06
+tau_alpha3    3.001096e+00 2.164134e+00 7.548081e+00  3.222508e-06
+mu_alpha1     2.436239e+00 1.037896e+00 3.198708e+01 -6.917167e+01
+mu_alpha2    -5.220122e+00 5.106837e+00 4.609041e+01 -8.395180e+01
+mu_alpha3    -8.863015e-01 1.885352e+00 3.683355e+01 -1.033878e+02
+sigma_alpha1  7.744595e+01 1.057048e+01 6.198680e+02  5.585575e-01
+sigma_alpha2  1.330520e+02 2.429645e+01 1.382404e+03  5.638393e-01
+sigma_alpha3  1.011283e+02 1.808729e+01 9.796796e+02  1.892543e-01
+lp__         -2.534617e+03 2.442620e-01 3.631426e+00 -2.542792e+03
                        25%           50%           75%         97.5%      n_eff
-alpha1        1.331020e-01  1.377105e-01  1.426439e-01  1.503565e-01   22.80303
-alpha2        1.899231e-01  1.950367e-01  2.023577e-01  2.153369e-01   29.02756
-alpha3        4.015465e-03  8.114989e-03  1.252331e-02  2.539671e-02  162.09154
-tau_alpha1    4.624868e-04  2.141161e-02  6.624250e-01  2.100040e+01    8.28277
-tau_alpha2    1.125474e-03  3.126430e-02  3.336055e-01  8.396479e+00   36.47075
-tau_alpha3    9.794611e-04  9.102244e-03  4.319432e-01  7.986497e+00   21.53066
-mu_alpha1    -5.423560e+00  3.477333e-02  2.578425e+00  8.005556e+01  131.26001
-mu_alpha2    -4.041709e+00  1.613027e-01  3.355707e+00  7.528180e+01  635.75121
-mu_alpha3    -2.957940e+00 -3.991722e-02  3.065528e+00  7.047584e+01  363.58029
-sigma_alpha1  1.228660e+00  6.834007e+00  4.649974e+01  9.324269e+02  262.03603
-sigma_alpha2  1.731344e+00  5.655561e+00  2.980797e+01  3.465934e+02 2393.36685
-sigma_alpha3  1.521552e+00  1.048156e+01  3.195262e+01  4.348048e+02 1401.49215
-lp__         -2.536832e+03 -2.533543e+03 -2.531109e+03 -2.528419e+03   34.20943
+alpha1        1.357765e-01  1.403476e-01  1.436101e-01  1.513523e-01  226.67543
+alpha2        1.938630e-01  1.980331e-01  2.038204e-01  2.183703e-01  125.12901
+alpha3        3.479706e-03  7.483794e-03  1.310451e-02  2.695384e-02  220.18522
+tau_alpha1    8.385090e-04  7.650421e-03  1.722013e-01  3.205268e+00  191.05930
+tau_alpha2    1.526774e-04  5.566572e-03  1.836770e-01  3.145498e+00  268.05542
+tau_alpha3    9.004484e-04  3.601741e-02  9.327355e-01  2.791955e+01   12.16479
+mu_alpha1    -2.773429e+00  6.003407e-01  8.924905e+00  8.920066e+01  949.82083
+mu_alpha2    -1.481109e+01 -2.435433e-01  3.799111e+00  1.146450e+02   81.45491
+mu_alpha3    -2.867533e+00  7.345540e-03  2.637112e+00  7.353354e+01  381.68262
+sigma_alpha1  2.409804e+00  1.143292e+01  3.453394e+01  5.337422e+02 3438.81810
+sigma_alpha2  2.333311e+00  1.340313e+01  8.093059e+01  4.824936e+02 3237.31228
+sigma_alpha3  1.035430e+00  5.269192e+00  3.332503e+01  5.570613e+02 2933.73544
+lp__         -2.536872e+03 -2.533999e+03 -2.532240e+03 -2.528690e+03  221.02558
                  Rhat
-alpha1       1.205012
-alpha2       1.158713
-alpha3       1.021708
-tau_alpha1   1.938669
-tau_alpha2   1.108961
-tau_alpha3   1.218554
-mu_alpha1    1.012271
-mu_alpha2    1.006315
-mu_alpha3    1.005280
-sigma_alpha1 1.014735
-sigma_alpha2 1.002789
-sigma_alpha3 1.009108
-lp__         1.106857</code></pre>
+alpha1       1.034336
+alpha2       1.035575
+alpha3       1.018924
+tau_alpha1   1.019124
+tau_alpha2   1.021687
+tau_alpha3   1.243733
+mu_alpha1    1.003870
+mu_alpha2    1.027011
+mu_alpha3    1.002700
+sigma_alpha1 1.000877
+sigma_alpha2 1.001666
+sigma_alpha3 1.000724
+lp__         1.019524</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>alpha1 <span class="ot">&lt;-</span> out[<span class="st">"alpha1"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>alpha2 <span class="ot">&lt;-</span> out[<span class="st">"alpha2"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span>
@@ -469,37 +465,27 @@ lp__         1.106857</code></pre>
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="st">model {</span></span>
 <span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] theta;</span></span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] foi;</span></span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] ai;</span></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="st">  real ef;</span></span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="st">  real avei2;</span></span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="st">  real Pi;</span></span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a><span class="st">  // Priors</span></span>
-<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha1 ~ normal(mu_alpha1, sigma_alpha1);</span></span>
-<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha2 ~ normal(mu_alpha2, sigma_alpha2);</span></span>
-<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha1 ~ gamma(0.01, 0.01);</span></span>
-<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha2 ~ gamma(0.01, 0.01);</span></span>
-<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha1 ~ normal(0, sqrt(1 / 0.0001));</span></span>
-<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha2 ~ normal(0, sqrt(1 / 0.0001));</span></span>
-<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a><span class="st">  // Likelihood</span></span>
-<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
-<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a><span class="st">    real eta;  // Declare eta as a real variable</span></span>
-<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a><span class="st">    eta = (alpha1 / alpha2) * age[i] * exp(-alpha2 * age[i]) +</span></span>
-<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a><span class="st">          (1 / alpha2) * ((alpha1 / alpha2)) * (exp(-alpha2 * age[i]) - 1);</span></span>
-<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a><span class="st">    theta[i] = 1 - exp(eta);</span></span>
-<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a><span class="st">    posi[i] ~ binomial(ni[i], theta[i]);</span></span>
-<span id="cb24-49"><a href="#cb24-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-50"><a href="#cb24-50" aria-hidden="true" tabindex="-1"></a><span class="st">    foi[i] = (alpha1 * age[i]) * exp(-alpha2 * age[i]);</span></span>
-<span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a><span class="st">    ai[i] = 1 - theta[i];</span></span>
-<span id="cb24-52"><a href="#cb24-52" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb24-53"><a href="#cb24-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-54"><a href="#cb24-54" aria-hidden="true" tabindex="-1"></a><span class="st">  ef = 1 - theta[Nage];</span></span>
-<span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a><span class="st">  avei2 = sum(ai) + ef * (75 - age[Nage]);</span></span>
-<span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a><span class="st">  Pi = 1 - avei2 / 75;</span></span>
-<span id="cb24-57"><a href="#cb24-57" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="st">  // Priors</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha1 ~ normal(mu_alpha1, sigma_alpha1);</span></span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha2 ~ normal(mu_alpha2, sigma_alpha2);</span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha1 ~ gamma(0.01, 0.01);</span></span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha2 ~ gamma(0.01, 0.01);</span></span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha1 ~ normal(0, sqrt(1 / 0.0001));</span></span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha2 ~ normal(0, sqrt(1 / 0.0001));</span></span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a><span class="st">  // Likelihood</span></span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a><span class="st">    real eta;  // Declare eta as a real variable</span></span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a><span class="st">    eta = (alpha1 / alpha2) * age[i] * exp(-alpha2 * age[i]) +</span></span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a><span class="st">          (1 / alpha2) * ((alpha1 / alpha2)) * (exp(-alpha2 * age[i]) - 1);</span></span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a><span class="st">    theta[i] = 1 - exp(eta);</span></span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a><span class="st">    posi[i] ~ binomial(ni[i], theta[i]);</span></span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Sampling</p>
 <div class="cell">
@@ -514,8 +500,8 @@ lp__         1.106857</code></pre>
 <pre><code>
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 0.000117 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.17 seconds.
+Chain 1: Gradient evaluation took 3.7e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -532,15 +518,15 @@ Chain 1: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 1: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 1: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 2.611 seconds (Warm-up)
-Chain 1:                1.317 seconds (Sampling)
-Chain 1:                3.928 seconds (Total)
+Chain 1:  Elapsed Time: 1.685 seconds (Warm-up)
+Chain 1:                1.549 seconds (Sampling)
+Chain 1:                3.234 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 3e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.3 seconds.
+Chain 2: Gradient evaluation took 4.7e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.47 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -557,15 +543,15 @@ Chain 2: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 2: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 2: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 2.077 seconds (Warm-up)
-Chain 2:                0.955 seconds (Sampling)
-Chain 2:                3.032 seconds (Total)
+Chain 2:  Elapsed Time: 1.849 seconds (Warm-up)
+Chain 2:                1.881 seconds (Sampling)
+Chain 2:                3.73 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 4.2e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.42 seconds.
+Chain 3: Gradient evaluation took 4.4e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -582,15 +568,15 @@ Chain 3: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 3: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 3: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 2.421 seconds (Warm-up)
-Chain 3:                1.299 seconds (Sampling)
-Chain 3:                3.72 seconds (Total)
+Chain 3:  Elapsed Time: 1.678 seconds (Warm-up)
+Chain 3:                2.04 seconds (Sampling)
+Chain 3:                3.718 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 4.7e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.47 seconds.
+Chain 4: Gradient evaluation took 4.5e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -607,23 +593,18 @@ Chain 4: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 4: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 4: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 2.112 seconds (Warm-up)
-Chain 4:                1.643 seconds (Sampling)
-Chain 4:                3.755 seconds (Total)
+Chain 4:  Elapsed Time: 1.439 seconds (Warm-up)
+Chain 4:                1.599 seconds (Sampling)
+Chain 4:                3.038 seconds (Total)
 Chain 4: </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: There were 3886 divergent transitions after warmup. See
+<pre><code>Warning: There were 2523 divergent transitions after warmup. See
 https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 to find out why this is a problem and how to eliminate them.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: The largest R-hat is 1.13, indicating chains have not mixed.
-Running the chains for more iterations may help. See
-https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -638,62 +619,62 @@ https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
 </div>
 <p>Posterior</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">traceplot</span>(fit2, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"alpha1"</span>, <span class="st">"alpha2"</span>), <span class="at">inc_warmup =</span> <span class="cn">TRUE</span>, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">traceplot</span>(fit2, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"alpha1"</span>, <span class="st">"alpha2"</span>), <span class="at">inc_warmup =</span> <span class="cn">TRUE</span>, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="MCMC_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>out2 <span class="ot">&lt;-</span> <span class="fu">print</span>(<span class="fu">summary</span>(fit2)<span class="sc">$</span>summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>out2 <span class="ot">&lt;-</span> <span class="fu">print</span>(<span class="fu">summary</span>(fit2)<span class="sc">$</span>summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                      mean      se_mean           sd          2.5%
-alpha1        6.811011e-02 2.708084e-04 4.079390e-03  6.054523e-02
-alpha2        1.596669e-01 3.882848e-04 7.057945e-03  1.462758e-01
-tau_alpha1    1.018076e-01 3.992487e-02 3.078394e-01  1.681976e-06
-tau_alpha2    4.085429e-01 3.094675e-01 1.215332e+00  3.671486e-06
-mu_alpha1     3.565220e+00 3.522457e+00 4.328513e+01 -9.504241e+01
-mu_alpha2     6.121823e+00 4.241820e+00 4.353109e+01 -8.639544e+01
-sigma_alpha1  5.598504e+02 2.457563e+02 1.081422e+04  8.210091e-01
-sigma_alpha2  1.463594e+02 3.630405e+01 2.128661e+03  4.127936e-01
-lp__         -1.961438e+03 2.069182e-01 2.863299e+00 -1.967732e+03
+alpha1        6.807932e-02 1.399606e-04 3.859667e-03  6.067262e-02
+alpha2        1.595302e-01 2.520518e-04 6.983351e-03  1.457747e-01
+tau_alpha1    1.366339e-01 1.569115e-02 3.246402e-01  1.252438e-06
+tau_alpha2    6.073561e-01 3.550313e-01 1.888031e+00  3.002961e-06
+mu_alpha1    -3.869368e+00 3.469069e+00 5.113172e+01 -1.481796e+02
+mu_alpha2    -1.500031e+00 1.137836e+00 4.024455e+01 -1.053855e+02
+sigma_alpha1  1.680182e+02 4.395805e+01 3.939599e+03  9.714173e-01
+sigma_alpha2  1.389699e+02 2.777417e+01 2.199740e+03  3.615656e-01
+lp__         -1.960865e+03 2.985607e-01 3.186952e+00 -1.967434e+03
                        25%           50%           75%         97.5%      n_eff
-alpha1        6.559917e-02  6.776699e-02  7.026665e-02  7.817864e-02  226.91655
-alpha2        1.552739e-01  1.595900e-01  1.635680e-01  1.760103e-01  330.41199
-tau_alpha1    1.478878e-04  2.555563e-03  4.101560e-02  1.483556e+00   59.45132
-tau_alpha2    2.929413e-04  7.548455e-03  1.414518e-01  5.868595e+00   15.42266
-mu_alpha1    -6.463837e+00  7.337127e-01  1.608563e+01  9.174360e+01  151.00318
-mu_alpha2    -4.187913e+00  3.346785e-01  8.756444e+00  1.212367e+02  105.31606
-sigma_alpha1  4.937708e+00  1.978138e+01  8.223105e+01  7.710670e+02 1936.33758
-sigma_alpha2  2.658862e+00  1.150988e+01  5.842648e+01  5.218901e+02 3437.97546
-lp__         -1.963127e+03 -1.961220e+03 -1.959521e+03 -1.956121e+03  191.48563
+alpha1        6.543422e-02  6.799261e-02  7.058884e-02  7.608291e-02  760.48037
+alpha2        1.548217e-01  1.594675e-01  1.639545e-01  1.734438e-01  767.62299
+tau_alpha1    3.488719e-04  5.277105e-03  9.275786e-02  1.059713e+00  428.05054
+tau_alpha2    5.242891e-04  1.074844e-02  2.047653e-01  7.649374e+00   28.28036
+mu_alpha1    -7.190849e+00 -2.278986e-01  5.333784e+00  1.031465e+02  217.24764
+mu_alpha2    -5.610240e+00  1.000932e-01  4.392012e+00  9.035752e+01 1250.99162
+sigma_alpha1  3.283406e+00  1.376582e+01  5.353861e+01  8.935561e+02 8032.06348
+sigma_alpha2  2.209896e+00  9.645555e+00  4.367316e+01  5.770655e+02 6272.78923
+lp__         -1.962983e+03 -1.960734e+03 -1.958675e+03 -1.955234e+03  113.94252
                  Rhat
-alpha1       1.017918
-alpha2       1.014602
-tau_alpha1   1.074296
-tau_alpha2   1.269404
-mu_alpha1    1.032357
-mu_alpha2    1.039581
-sigma_alpha1 1.001997
-sigma_alpha2 1.001929
-lp__         1.033089</code></pre>
+alpha1       1.006421
+alpha2       1.005391
+tau_alpha1   1.008341
+tau_alpha2   1.109137
+mu_alpha1    1.018824
+mu_alpha2    1.001285
+sigma_alpha1 1.000194
+sigma_alpha2 1.000379
+lp__         1.030276</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>alpha1 <span class="ot">&lt;-</span> out2[<span class="st">"alpha1"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>alpha2 <span class="ot">&lt;-</span> out2[<span class="st">"alpha2"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>alpha1 <span class="ot">&lt;-</span> out2[<span class="st">"alpha1"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>alpha2 <span class="ot">&lt;-</span> out2[<span class="st">"alpha2"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Plot</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>( <span class="at">sp =</span> <span class="fu">rep</span> (<span class="dv">0</span>,<span class="dv">44</span>),</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">foi =</span> <span class="fu">rep</span> (<span class="dv">0</span>,<span class="dv">44</span>))</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">44</span>){</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  theta<span class="sc">$</span>sp[i] <span class="ot">=</span> <span class="dv">1</span><span class="sc">-</span><span class="fu">exp</span>((alpha1 <span class="sc">/</span> alpha2) <span class="sc">*</span> rrr<span class="sc">$</span>age[i] <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha2 <span class="sc">*</span> rrr<span class="sc">$</span>age[i]) <span class="sc">+</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">1</span> <span class="sc">/</span> alpha2) <span class="sc">*</span> ((alpha1 <span class="sc">/</span> alpha2)) <span class="sc">*</span> (<span class="fu">exp</span>(<span class="sc">-</span>alpha2 <span class="sc">*</span> rrr<span class="sc">$</span>age[i]) <span class="sc">-</span> <span class="dv">1</span>));</span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  theta<span class="sc">$</span>foi[i] <span class="ot">=</span> (alpha1<span class="sc">*</span>rrr<span class="sc">$</span>age[i])<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>alpha2<span class="sc">*</span>rrr<span class="sc">$</span>age[i])</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rrr<span class="sc">$</span>age,rrr<span class="sc">$</span>posi<span class="sc">/</span>rrr<span class="sc">$</span>ni,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">46</span>),<span class="at">cex=</span><span class="fl">0.01</span><span class="sc">*</span>rrr<span class="sc">$</span>ni,<span class="at">xlab=</span><span class="st">"age"</span>,<span class="at">ylab=</span><span class="st">"proportion of seropositive"</span>,</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),<span class="at">lwd=</span><span class="dv">2</span>)</span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(rrr<span class="sc">$</span>age,theta<span class="sc">$</span>sp,<span class="at">lty=</span><span class="dv">1</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(rrr<span class="sc">$</span>age,theta<span class="sc">$</span>foi,<span class="at">lty=</span><span class="dv">1</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">data.frame</span>( <span class="at">sp =</span> <span class="fu">rep</span> (<span class="dv">0</span>,<span class="dv">44</span>),</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">foi =</span> <span class="fu">rep</span> (<span class="dv">0</span>,<span class="dv">44</span>))</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">44</span>){</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  theta<span class="sc">$</span>sp[i] <span class="ot">=</span> <span class="dv">1</span><span class="sc">-</span><span class="fu">exp</span>((alpha1 <span class="sc">/</span> alpha2) <span class="sc">*</span> rrr<span class="sc">$</span>age[i] <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>alpha2 <span class="sc">*</span> rrr<span class="sc">$</span>age[i]) <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">1</span> <span class="sc">/</span> alpha2) <span class="sc">*</span> ((alpha1 <span class="sc">/</span> alpha2)) <span class="sc">*</span> (<span class="fu">exp</span>(<span class="sc">-</span>alpha2 <span class="sc">*</span> rrr<span class="sc">$</span>age[i]) <span class="sc">-</span> <span class="dv">1</span>));</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  theta<span class="sc">$</span>foi[i] <span class="ot">=</span> (alpha1<span class="sc">*</span>rrr<span class="sc">$</span>age[i])<span class="sc">*</span><span class="fu">exp</span>(<span class="sc">-</span>alpha2<span class="sc">*</span>rrr<span class="sc">$</span>age[i])</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(rrr<span class="sc">$</span>age,rrr<span class="sc">$</span>posi<span class="sc">/</span>rrr<span class="sc">$</span>ni,<span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">46</span>),<span class="at">cex=</span><span class="fl">0.01</span><span class="sc">*</span>rrr<span class="sc">$</span>ni,<span class="at">xlab=</span><span class="st">"age"</span>,<span class="at">ylab=</span><span class="st">"proportion of seropositive"</span>,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>),<span class="at">lwd=</span><span class="dv">2</span>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(rrr<span class="sc">$</span>age,theta<span class="sc">$</span>sp,<span class="at">lty=</span><span class="dv">1</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(rrr<span class="sc">$</span>age,theta<span class="sc">$</span>foi,<span class="at">lty=</span><span class="dv">1</span>,<span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="MCMC_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -702,80 +683,65 @@ lp__         1.033089</code></pre>
 <section id="log---logistic-model" class="level2">
 <h2 class="anchored" data-anchor-id="log---logistic-model">Log - logistic model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>log_logistic <span class="ot">&lt;-</span><span class="st">"</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="st">data {</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="st">  int&lt;lower=1&gt; Nage;           // Number of age groups</span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] age;            // Age vector</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="st">  int&lt;lower=0&gt; posi[Nage];     // Number of positive cases</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="st">  int&lt;lower=0&gt; ni[Nage];       // Number of trials</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="st">parameters {</span></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0.00001&gt; alpha1;                 // Parameter alpha1</span></span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="st">  real alpha2;                 // Parameter alpha2</span></span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; tau_alpha1;    // Precision (inverse variance) of alpha1</span></span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; tau_alpha2;    // Precision (inverse variance) of alpha2</span></span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="st">  real mu_alpha1;              // Mean of normal prior for alpha1</span></span>
-<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="st">  real mu_alpha2;              // Mean of normal prior for alpha2</span></span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="st">transformed parameters {</span></span>
-<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] theta;          // Probability of success for each age group</span></span>
-<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] foi;            // Force of infection for each age group</span></span>
-<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] ai;             // Complement of theta for each age group</span></span>
-<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; sigma_alpha1;  // Standard deviation of alpha1</span></span>
-<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; sigma_alpha2;  // Standard deviation of alpha2</span></span>
-<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a><span class="st"> </span></span>
-<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="st">  sigma_alpha1 = sqrt(1 / tau_alpha1);</span></span>
-<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="st">  sigma_alpha2 = sqrt(1 / tau_alpha2);</span></span>
-<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
-<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
-<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="st">    theta[i] = inv_logit(alpha2 + alpha1 * log(age[i]));</span></span>
-<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="st">    ai[i] = 1 - theta[i];</span></span>
-<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="st">    foi[i] = alpha1 * exp(alpha2) * pow(age[i], alpha1 - 1) * (1 - theta[i]);</span></span>
-<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
-<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a><span class="st">model {</span></span>
-<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a><span class="st">  // Likelihood</span></span>
-<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
-<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="st">    posi[i] ~ binomial(ni[i], theta[i]);</span></span>
-<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a><span class="st"> </span></span>
-<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a><span class="st">  // Priors</span></span>
-<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha1 ~ normal(mu_alpha1, sigma_alpha1);  // Adjust these priors as needed</span></span>
-<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha2 ~ normal(mu_alpha2, sigma_alpha2);  // Adjust these priors as needed</span></span>
-<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha1 ~ gamma(0.01,0.01);</span></span>
-<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha2 ~ gamma(0.01,0.01);</span></span>
-<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha1 ~ normal(0, sqrt(10000));</span></span>
-<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha2 ~ normal(0, sqrt(10000));</span></span>
-<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a><span class="st">generated quantities {</span></span>
-<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] loglike;   // Log-likelihood for each observation</span></span>
-<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a><span class="st"> </span></span>
-<span id="cb37-55"><a href="#cb37-55" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
-<span id="cb37-56"><a href="#cb37-56" aria-hidden="true" tabindex="-1"></a><span class="st">    loglike[i] = posi[i] * log(theta[i]) + (ni[i] - posi[i]) * log(1 - theta[i]);</span></span>
-<span id="cb37-57"><a href="#cb37-57" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb37-58"><a href="#cb37-58" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
-<span id="cb37-59"><a href="#cb37-59" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>log_logistic <span class="ot">&lt;-</span><span class="st">"</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="st">data {</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="st">  int&lt;lower=1&gt; Nage;           // Number of age groups</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] age;            // Age vector</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="st">  int&lt;lower=0&gt; posi[Nage];     // Number of positive cases</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="st">  int&lt;lower=0&gt; ni[Nage];       // Number of trials</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="st">parameters {</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0.00001&gt; alpha1;                 // Parameter alpha1</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="st">  real alpha2;                 // Parameter alpha2</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; tau_alpha1;    // Precision (inverse variance) of alpha1</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; tau_alpha2;    // Precision (inverse variance) of alpha2</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="st">  real mu_alpha1;              // Mean of normal prior for alpha1</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="st">  real mu_alpha2;              // Mean of normal prior for alpha2</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="st">transformed parameters {</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; sigma_alpha1;  // Standard deviation of alpha1</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="st">  real&lt;lower=0&gt; sigma_alpha2;  // Standard deviation of alpha2</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a><span class="st"> </span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a><span class="st">  sigma_alpha1 = sqrt(1 / tau_alpha1);</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a><span class="st">  sigma_alpha2 = sqrt(1 / tau_alpha2);</span></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a><span class="st">model {</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a><span class="st">  vector[Nage] theta; </span></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a><span class="st">    theta[i] = inv_logit(alpha2 + alpha1 * log(age[i]));</span></span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a><span class="st">  // Likelihood</span></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a><span class="st">  for (i in 1:Nage) {</span></span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a><span class="st">    posi[i] ~ binomial(ni[i], theta[i]);</span></span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a><span class="st"> </span></span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a><span class="st">  // Priors</span></span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha1 ~ normal(mu_alpha1, sigma_alpha1);  // Adjust these priors as needed</span></span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a><span class="st">  alpha2 ~ normal(mu_alpha2, sigma_alpha2);  // Adjust these priors as needed</span></span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha1 ~ gamma(0.01,0.01);</span></span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a><span class="st">  tau_alpha2 ~ gamma(0.01,0.01);</span></span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha1 ~ normal(0, sqrt(10000));</span></span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a><span class="st">  mu_alpha2 ~ normal(0, sqrt(10000));</span></span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a><span class="st">}</span></span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> log_logistic,  </span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> rrr,    </span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,             </span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1500</span>,          </span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">5000</span>            </span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">stan</span>(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">model_code =</span> log_logistic,  </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> rrr,    </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,             </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">warmup =</span> <span class="dv">1500</span>,          </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">5000</span>            </span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 5.9e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
+Chain 1: Gradient evaluation took 2.6e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -792,15 +758,15 @@ Chain 1: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 1: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 1: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 1.377 seconds (Warm-up)
-Chain 1:                4.243 seconds (Sampling)
-Chain 1:                5.62 seconds (Total)
+Chain 1:  Elapsed Time: 0.811 seconds (Warm-up)
+Chain 1:                0.572 seconds (Sampling)
+Chain 1:                1.383 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
+Chain 2: Gradient evaluation took 1.6e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -817,15 +783,15 @@ Chain 2: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 2: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 2: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 1.529 seconds (Warm-up)
-Chain 2:                2.248 seconds (Sampling)
-Chain 2:                3.777 seconds (Total)
+Chain 2:  Elapsed Time: 0.669 seconds (Warm-up)
+Chain 2:                1.176 seconds (Sampling)
+Chain 2:                1.845 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 2e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
+Chain 3: Gradient evaluation took 9e-06 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.09 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -842,15 +808,15 @@ Chain 3: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 3: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 3: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 1.692 seconds (Warm-up)
-Chain 3:                1.144 seconds (Sampling)
-Chain 3:                2.836 seconds (Total)
+Chain 3:  Elapsed Time: 0.77 seconds (Warm-up)
+Chain 3:                0.124 seconds (Sampling)
+Chain 3:                0.894 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 2.5e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.25 seconds.
+Chain 4: Gradient evaluation took 9e-06 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.09 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -867,18 +833,23 @@ Chain 4: Iteration: 4000 / 5000 [ 80%]  (Sampling)
 Chain 4: Iteration: 4500 / 5000 [ 90%]  (Sampling)
 Chain 4: Iteration: 5000 / 5000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 1.639 seconds (Warm-up)
-Chain 4:                1.071 seconds (Sampling)
-Chain 4:                2.71 seconds (Total)
+Chain 4:  Elapsed Time: 0.858 seconds (Warm-up)
+Chain 4:                0.875 seconds (Sampling)
+Chain 4:                1.733 seconds (Total)
 Chain 4: </code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: There were 2692 divergent transitions after warmup. See
+<pre><code>Warning: There were 5500 divergent transitions after warmup. See
 https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
 to find out why this is a problem and how to eliminate them.</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Examine the pairs() plot to diagnose sampling problems</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The largest R-hat is 1.55, indicating chains have not mixed.
+Running the chains for more iterations may help. See
+https://mc-stan.org/misc/warnings.html#r-hat</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -900,564 +871,26 @@ https://mc-stan.org/misc/warnings.html#tail-ess</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>out3 <span class="ot">&lt;-</span> <span class="fu">print</span>(<span class="fu">summary</span>(fit3)<span class="sc">$</span>summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                      mean      se_mean           sd          2.5%
-alpha1        1.650497e+00 2.287777e-03 5.357297e-02  1.547750e+00
-alpha2       -2.976834e+00 5.707550e-03 1.261614e-01 -3.222762e+00
-tau_alpha1    4.024178e-01 1.881956e-01 1.355244e+00  3.596616e-06
-tau_alpha2    2.717547e-01 1.112149e-01 8.620216e-01  2.546150e-06
-mu_alpha1     1.349989e+00 1.433061e+00 3.882895e+01 -8.957699e+01
-mu_alpha2    -1.326752e+00 1.170405e+00 4.143610e+01 -9.753028e+01
-theta[1]      9.087105e-02 4.053234e-04 8.758192e-03  7.499241e-02
-theta[2]      1.880906e-01 5.645864e-04 1.235352e-02  1.651436e-01
-theta[3]      2.873596e-01 5.985591e-04 1.341399e-02  2.620112e-01
-theta[4]      3.789536e-01 5.553915e-04 1.297227e-02  3.540048e-01
-theta[5]      4.593253e-01 4.786372e-04 1.191211e-02  4.361509e-01
-theta[6]      5.280997e-01 3.941993e-04 1.075949e-02  5.073274e-01
-theta[7]      5.862824e-01 3.160830e-04 9.755555e-03  5.676736e-01
-theta[8]      6.353264e-01 2.496413e-04 8.968872e-03  6.177716e-01
-theta[9]      6.767022e-01 2.030629e-04 8.382611e-03  6.600830e-01
-theta[10]     7.117270e-01 1.765857e-04 7.949599e-03  6.959367e-01
-theta[11]     7.415175e-01 1.629017e-04 7.621371e-03  7.262073e-01
-theta[12]     7.669951e-01 1.585204e-04 7.359550e-03  7.521827e-01
-theta[13]     7.889099e-01 1.581447e-04 7.137598e-03  7.745432e-01
-theta[14]     8.078694e-01 1.596002e-04 6.938711e-03  7.939107e-01
-theta[15]     8.243655e-01 1.615459e-04 6.752947e-03  8.108282e-01
-theta[16]     8.387968e-01 1.633907e-04 6.574797e-03  8.255273e-01
-theta[17]     8.514879e-01 1.647169e-04 6.401446e-03  8.386085e-01
-theta[18]     8.627041e-01 1.654055e-04 6.231643e-03  8.501974e-01
-theta[19]     8.726633e-01 1.654559e-04 6.064988e-03  8.604815e-01
-theta[20]     8.815456e-01 1.649397e-04 5.901518e-03  8.697259e-01
-theta[21]     8.895004e-01 1.641143e-04 5.741457e-03  8.779615e-01
-theta[22]     8.966526e-01 1.629356e-04 5.585089e-03  8.853962e-01
-theta[23]     9.031068e-01 1.614011e-04 5.432685e-03  8.920898e-01
-theta[24]     9.089514e-01 1.595785e-04 5.284469e-03  8.982341e-01
-theta[25]     9.142613e-01 1.575125e-04 5.140607e-03  9.038371e-01
-theta[26]     9.191004e-01 1.552780e-04 5.001205e-03  9.088848e-01
-theta[27]     9.235232e-01 1.529095e-04 4.866319e-03  9.135592e-01
-theta[28]     9.275766e-01 1.504434e-04 4.735954e-03  9.178223e-01
-theta[29]     9.313012e-01 1.479095e-04 4.610080e-03  9.217757e-01
-theta[30]     9.347321e-01 1.453417e-04 4.488632e-03  9.254501e-01
-theta[31]     9.378997e-01 1.427509e-04 4.371524e-03  9.288445e-01
-theta[32]     9.408308e-01 1.401504e-04 4.258648e-03  9.320037e-01
-theta[33]     9.435486e-01 1.375561e-04 4.149886e-03  9.349632e-01
-theta[34]     9.460738e-01 1.349862e-04 4.045106e-03  9.376657e-01
-theta[35]     9.484244e-01 1.324446e-04 3.944175e-03  9.401781e-01
-theta[36]     9.506164e-01 1.299365e-04 3.846952e-03  9.425549e-01
-theta[37]     9.526641e-01 1.274675e-04 3.753297e-03  9.447864e-01
-theta[38]     9.545801e-01 1.250417e-04 3.663071e-03  9.468867e-01
-theta[39]     9.563757e-01 1.226625e-04 3.576134e-03  9.488773e-01
-theta[40]     9.580610e-01 1.203321e-04 3.492352e-03  9.507151e-01
-theta[41]     9.596449e-01 1.180521e-04 3.411593e-03  9.524467e-01
-theta[42]     9.611357e-01 1.158236e-04 3.333727e-03  9.541069e-01
-theta[43]     9.625407e-01 1.136472e-04 3.258631e-03  9.556558e-01
-theta[44]     9.638664e-01 1.115216e-04 3.186186e-03  9.571381e-01
-foi[1]        9.969752e-02 3.027039e-04 6.668374e-03  8.719846e-02
-foi[2]        1.239444e-01 2.025013e-04 4.962490e-03  1.142524e-01
-foi[3]        1.353440e-01 1.088799e-04 3.762581e-03  1.281802e-01
-foi[4]        1.388806e-01 7.336315e-05 3.481099e-03  1.320554e-01
-foi[5]        1.377693e-01 9.253509e-05 3.682768e-03  1.305908e-01
-foi[6]        1.340556e-01 1.167996e-04 3.932641e-03  1.264201e-01
-foi[7]        1.289998e-01 1.342788e-04 4.086442e-03  1.209629e-01
-foi[8]        1.233572e-01 1.443600e-04 4.134617e-03  1.152127e-01
-foi[9]        1.175684e-01 1.488801e-04 4.101806e-03  1.095058e-01
-foi[10]       1.118826e-01 1.495866e-04 4.014678e-03  1.040232e-01
-foi[11]       1.064332e-01 1.478856e-04 3.894275e-03  9.884415e-02
-foi[12]       1.012854e-01 1.446866e-04 3.755528e-03  9.399933e-02
-foi[13]       9.646408e-02 1.405917e-04 3.608494e-03  8.948831e-02
-foi[14]       9.197089e-02 1.360103e-04 3.459710e-03  8.531139e-02
-foi[15]       8.779480e-02 1.313923e-04 3.313288e-03  8.142974e-02
-foi[16]       8.391811e-02 1.267463e-04 3.171709e-03  7.781867e-02
-foi[17]       8.032016e-02 1.221271e-04 3.036372e-03  7.447871e-02
-foi[18]       7.697944e-02 1.176132e-04 2.907977e-03  7.138056e-02
-foi[19]       7.387487e-02 1.132523e-04 2.786765e-03  6.849873e-02
-foi[20]       7.098640e-02 1.090716e-04 2.672694e-03  6.584768e-02
-foi[21]       6.829536e-02 1.050720e-04 2.565550e-03  6.337777e-02
-foi[22]       6.578461e-02 1.012516e-04 2.465014e-03  6.107290e-02
-foi[23]       6.343848e-02 9.763330e-05 2.370716e-03  5.890342e-02
-foi[24]       6.124279e-02 9.421082e-05 2.282265e-03  5.687846e-02
-foi[25]       5.918468e-02 9.097593e-05 2.199265e-03  5.497965e-02
-foi[26]       5.725256e-02 8.791919e-05 2.121332e-03  5.319768e-02
-foi[27]       5.543597e-02 8.503063e-05 2.048100e-03  5.152689e-02
-foi[28]       5.372546e-02 8.230021e-05 1.979220e-03  4.994359e-02
-foi[29]       5.211252e-02 7.971805e-05 1.914371e-03  4.845135e-02
-foi[30]       5.058944e-02 7.727464e-05 1.853253e-03  4.704114e-02
-foi[31]       4.914928e-02 7.496090e-05 1.795588e-03  4.570933e-02
-foi[32]       4.778573e-02 7.276812e-05 1.741122e-03  4.444601e-02
-foi[33]       4.649308e-02 7.068844e-05 1.689620e-03  4.325264e-02
-foi[34]       4.526614e-02 6.871434e-05 1.640868e-03  4.212362e-02
-foi[35]       4.410022e-02 6.683886e-05 1.594668e-03  4.104533e-02
-foi[36]       4.299101e-02 6.505550e-05 1.550841e-03  4.002292e-02
-foi[37]       4.193461e-02 6.335790e-05 1.509219e-03  3.904499e-02
-foi[38]       4.092745e-02 6.174083e-05 1.469652e-03  3.811249e-02
-foi[39]       3.996625e-02 6.019918e-05 1.432000e-03  3.722245e-02
-foi[40]       3.904802e-02 5.872817e-05 1.396135e-03  3.637384e-02
-foi[41]       3.817002e-02 5.732339e-05 1.361940e-03  3.556321e-02
-foi[42]       3.732972e-02 5.598074e-05 1.329306e-03  3.478779e-02
-foi[43]       3.652480e-02 5.469643e-05 1.298135e-03  3.404124e-02
-foi[44]       3.575312e-02 5.346696e-05 1.268334e-03  3.332301e-02
-ai[1]         9.091290e-01 4.053234e-04 8.758192e-03  8.911431e-01
-ai[2]         8.119094e-01 5.645864e-04 1.235352e-02  7.865445e-01
-ai[3]         7.126404e-01 5.985591e-04 1.341399e-02  6.850718e-01
-ai[4]         6.210464e-01 5.553915e-04 1.297227e-02  5.944503e-01
-ai[5]         5.406747e-01 4.786372e-04 1.191211e-02  5.162728e-01
-ai[6]         4.719003e-01 3.941993e-04 1.075949e-02  4.501984e-01
-ai[7]         4.137176e-01 3.160830e-04 9.755555e-03  3.943725e-01
-ai[8]         3.646736e-01 2.496413e-04 8.968872e-03  3.468936e-01
-ai[9]         3.232978e-01 2.030629e-04 8.382611e-03  3.071712e-01
-ai[10]        2.882730e-01 1.765857e-04 7.949599e-03  2.728189e-01
-ai[11]        2.584825e-01 1.629017e-04 7.621371e-03  2.436741e-01
-ai[12]        2.330049e-01 1.585204e-04 7.359550e-03  2.185660e-01
-ai[13]        2.110901e-01 1.581447e-04 7.137598e-03  1.971621e-01
-ai[14]        1.921306e-01 1.596002e-04 6.938711e-03  1.786157e-01
-ai[15]        1.756345e-01 1.615459e-04 6.752947e-03  1.624548e-01
-ai[16]        1.612032e-01 1.633907e-04 6.574797e-03  1.484311e-01
-ai[17]        1.485121e-01 1.647169e-04 6.401446e-03  1.361030e-01
-ai[18]        1.372959e-01 1.654055e-04 6.231643e-03  1.252268e-01
-ai[19]        1.273367e-01 1.654559e-04 6.064988e-03  1.155850e-01
-ai[20]        1.184544e-01 1.649397e-04 5.901518e-03  1.070565e-01
-ai[21]        1.104996e-01 1.641143e-04 5.741457e-03  9.939370e-02
-ai[22]        1.033474e-01 1.629356e-04 5.585089e-03  9.260110e-02
-ai[23]        9.689324e-02 1.614011e-04 5.432685e-03  8.641570e-02
-ai[24]        9.104862e-02 1.595785e-04 5.284469e-03  8.083916e-02
-ai[25]        8.573868e-02 1.575125e-04 5.140607e-03  7.579701e-02
-ai[26]        8.089960e-02 1.552780e-04 5.001205e-03  7.121687e-02
-ai[27]        7.647681e-02 1.529095e-04 4.866319e-03  6.706614e-02
-ai[28]        7.242336e-02 1.504434e-04 4.735954e-03  6.327741e-02
-ai[29]        6.869876e-02 1.479095e-04 4.610080e-03  5.979460e-02
-ai[30]        6.526791e-02 1.453417e-04 4.488632e-03  5.660957e-02
-ai[31]        6.210029e-02 1.427509e-04 4.371524e-03  5.368521e-02
-ai[32]        5.916922e-02 1.401504e-04 4.258648e-03  5.098645e-02
-ai[33]        5.645137e-02 1.375561e-04 4.149886e-03  4.847875e-02
-ai[34]        5.392620e-02 1.349862e-04 4.045106e-03  4.618205e-02
-ai[35]        5.157560e-02 1.324446e-04 3.944175e-03  4.402593e-02
-ai[36]        4.938356e-02 1.299365e-04 3.846952e-03  4.201908e-02
-ai[37]        4.733586e-02 1.274675e-04 3.753297e-03  4.016158e-02
-ai[38]        4.541986e-02 1.250417e-04 3.663071e-03  3.844133e-02
-ai[39]        4.362428e-02 1.226625e-04 3.576134e-03  3.681977e-02
-ai[40]        4.193903e-02 1.203321e-04 3.492352e-03  3.528532e-02
-ai[41]        4.035508e-02 1.180521e-04 3.411593e-03  3.385749e-02
-ai[42]        3.886428e-02 1.158236e-04 3.333727e-03  3.252419e-02
-ai[43]        3.745932e-02 1.136472e-04 3.258631e-03  3.127176e-02
-ai[44]        3.613359e-02 1.115216e-04 3.186186e-03  3.009323e-02
-sigma_alpha1  1.024358e+02 1.823856e+01 1.237829e+03  4.964283e-01
-sigma_alpha2  1.449909e+02 2.904974e+01 1.558518e+03  5.475937e-01
-loglike[1]   -9.117093e+01 5.671485e-02 1.299043e+00 -9.394325e+01
-loglike[2]   -7.437342e+01 7.941633e-03 2.237378e-01 -7.496568e+01
-loglike[3]   -8.785578e+01 4.362150e-02 9.460854e-01 -8.996700e+01
-loglike[4]   -1.182498e+02 3.645731e-02 8.170103e-01 -1.200988e+02
-loglike[5]   -1.502240e+02 1.278820e-02 2.871210e-01 -1.509711e+02
-loglike[6]   -1.347860e+02 1.747533e-03 7.712494e-02 -1.349980e+02
-loglike[7]   -1.133992e+02 8.857280e-03 2.532691e-01 -1.139881e+02
-loglike[8]   -9.300045e+01 3.822659e-03 1.537456e-01 -9.336221e+01
-loglike[9]   -1.042983e+02 1.102787e-02 4.685576e-01 -1.052987e+02
-loglike[10]  -9.962495e+01 3.629128e-03 1.550299e-01 -9.999112e+01
-loglike[11]  -8.327554e+01 1.223483e-03 5.909455e-02 -8.344038e+01
-loglike[12]  -8.417522e+01 9.291473e-03 4.325024e-01 -8.510904e+01
-loglike[13]  -9.341154e+01 1.779252e-03 8.141511e-02 -9.363057e+01
-loglike[14]  -6.969382e+01 7.976240e-03 3.454497e-01 -7.044728e+01
-loglike[15]  -3.459953e+01 2.499905e-03 1.058350e-01 -3.483882e+01
-loglike[16]  -2.504836e+01 5.495076e-04 2.138046e-02 -2.510886e+01
-loglike[17]  -2.700242e+01 5.286254e-03 2.043691e-01 -2.744020e+01
-loglike[18]  -3.005844e+01 1.308987e-03 4.775305e-02 -3.018215e+01
-loglike[19]  -4.208306e+01 6.850671e-04 2.754028e-02 -4.216260e+01
-loglike[20]  -3.167573e+01 3.157319e-03 1.152497e-01 -3.193846e+01
-loglike[21]  -2.629936e+01 1.884056e-03 6.442721e-02 -2.645864e+01
-loglike[22]  -4.777398e+01 1.149184e-02 3.977454e-01 -4.861326e+01
-loglike[23]  -2.237279e+01 4.721572e-03 1.576438e-01 -2.272219e+01
-loglike[24]  -2.193125e+01 3.429833e-03 1.122741e-01 -2.218912e+01
-loglike[25]  -1.790192e+01 8.198501e-03 2.665782e-01 -1.846640e+01
-loglike[26]  -2.470269e+01 1.089188e-03 3.230777e-02 -2.479487e+01
-loglike[27]  -2.702779e+01 2.606504e-03 8.599934e-02 -2.723971e+01
-loglike[28]  -1.592335e+01 3.433264e-03 1.070037e-01 -1.616959e+01
-loglike[29]  -2.649634e+01 5.915439e-03 1.873484e-01 -2.691236e+01
-loglike[30]  -1.710096e+01 3.189057e-03 1.005128e-01 -1.732991e+01
-loglike[31]  -2.235593e+01 9.189152e-03 2.841082e-01 -2.295542e+01
-loglike[32]  -1.123494e+01 4.836145e-04 1.700026e-02 -1.128361e+01
-loglike[33]  -7.788256e+00 3.810552e-04 1.085499e-02 -7.820033e+00
-loglike[34]  -8.008217e+00 6.657567e-04 1.891968e-02 -8.060596e+00
-loglike[35]  -1.377715e+01 5.207210e-03 1.569751e-01 -1.411279e+01
-loglike[36]  -4.885327e+00 2.448497e-03 7.208332e-02 -5.045886e+00
-loglike[37]  -7.901786e+00 4.781356e-04 1.582125e-02 -7.946331e+00
-loglike[38]  -1.410040e+01 6.118552e-03 1.813671e-01 -1.448488e+01
-loglike[39]  -7.520123e+00 2.014938e-03 5.992700e-02 -7.653853e+00
-loglike[40]  -4.289119e+00 4.603455e-04 1.273374e-02 -4.324200e+00
-loglike[41]  -1.029956e+00 3.076984e-03 8.890864e-02 -1.218029e+00
-loglike[42]  -4.083917e+00 4.553053e-04 1.394403e-02 -4.120133e+00
-loglike[43]  -3.975607e+00 9.005583e-04 2.652956e-02 -4.036921e+00
-loglike[44]  -6.625447e-01 2.083662e-03 5.952256e-02 -7.885362e-01
-lp__         -1.952709e+03 2.193530e-01 3.176000e+00 -1.959338e+03
-                       25%           50%           75%         97.5%      n_eff
-alpha1        1.613425e+00  1.652742e+00  1.686780e+00  1.755234e+00  548.35762
-alpha2       -3.065690e+00 -2.980596e+00 -2.891583e+00 -2.735807e+00  488.60031
-tau_alpha1    5.158766e-04  1.008920e-02  1.620068e-01  4.057765e+00   51.85797
-tau_alpha2    4.053909e-04  8.179008e-03  1.007024e-01  3.334903e+00   60.07725
-mu_alpha1    -4.006830e+00  1.555433e+00  6.308534e+00  9.218661e+01  734.14558
-mu_alpha2    -8.652450e+00 -2.981269e+00  3.864514e+00  1.038693e+02 1253.38678
-theta[1]      8.459492e-02  9.021057e-02  9.651361e-02  1.088569e-01  466.90178
-theta[2]      1.793640e-01  1.873459e-01  1.961722e-01  2.134555e-01  478.76280
-theta[3]      2.778945e-01  2.867123e-01  2.960965e-01  3.149282e-01  502.22893
-theta[4]      3.701329e-01  3.785000e-01  3.874239e-01  4.055497e-01  545.54875
-theta[5]      4.512860e-01  4.588977e-01  4.669065e-01  4.837272e-01  619.38991
-theta[6]      5.208955e-01  5.279692e-01  5.349450e-01  5.498016e-01  744.99260
-theta[7]      5.797811e-01  5.862819e-01  5.925638e-01  6.056275e-01  952.58052
-theta[8]      6.292154e-01  6.352525e-01  6.411443e-01  6.531064e-01 1290.75210
-theta[9]      6.711535e-01  6.766605e-01  6.822294e-01  6.928288e-01 1704.10872
-theta[10]     7.065261e-01  7.117734e-01  7.170189e-01  7.271811e-01 2026.65353
-theta[11]     7.364789e-01  7.415812e-01  7.465429e-01  7.563259e-01 2188.84468
-theta[12]     7.621455e-01  7.670867e-01  7.718249e-01  7.814340e-01 2155.42034
-theta[13]     7.841973e-01  7.889773e-01  7.936889e-01  8.028379e-01 2037.01908
-theta[14]     8.033402e-01  8.079994e-01  8.125880e-01  8.213843e-01 1890.12574
-theta[15]     8.199534e-01  8.244364e-01  8.288731e-01  8.375452e-01 1747.41056
-theta[16]     8.344954e-01  8.387991e-01  8.431461e-01  8.515689e-01 1619.23611
-theta[17]     8.473073e-01  8.514398e-01  8.557102e-01  8.638970e-01 1510.35858
-theta[18]     8.586518e-01  8.626814e-01  8.668175e-01  8.747732e-01 1419.40170
-theta[19]     8.687265e-01  8.727227e-01  8.766565e-01  8.844150e-01 1343.67922
-theta[20]     8.777178e-01  8.817300e-01  8.854648e-01  8.929435e-01 1280.19715
-theta[21]     8.857770e-01  8.896888e-01  8.933261e-01  9.006063e-01 1223.91535
-theta[22]     8.930443e-01  8.968454e-01  9.003502e-01  9.073989e-01 1174.97346
-theta[23]     8.995856e-01  9.032522e-01  9.067257e-01  9.135843e-01 1132.96469
-theta[24]     9.054934e-01  9.091232e-01  9.124866e-01  9.191608e-01 1096.61473
-theta[25]     9.109041e-01  9.144152e-01  9.177014e-01  9.242030e-01 1065.12036
-theta[26]     9.158298e-01  9.192658e-01  9.224336e-01  9.287831e-01 1037.36061
-theta[27]     9.203573e-01  9.236883e-01  9.267758e-01  9.329339e-01 1012.81946
-theta[28]     9.244885e-01  9.277394e-01  9.307492e-01  9.367226e-01  990.98938
-theta[29]     9.282845e-01  9.314662e-01  9.343889e-01  9.402054e-01  971.45920
-theta[30]     9.317788e-01  9.349021e-01  9.377380e-01  9.433904e-01  953.77843
-theta[31]     9.349906e-01  9.380688e-01  9.408281e-01  9.463148e-01  937.79534
-theta[32]     9.379971e-01  9.409917e-01  9.436810e-01  9.490135e-01  923.32609
-theta[33]     9.407399e-01  9.437184e-01  9.463296e-01  9.515212e-01  910.14891
-theta[34]     9.433387e-01  9.462422e-01  9.487837e-01  9.538179e-01  898.01000
-theta[35]     9.457610e-01  9.485904e-01  9.510612e-01  9.559741e-01  886.83695
-theta[36]     9.480243e-01  9.507715e-01  9.531963e-01  9.579809e-01  876.53840
-theta[37]     9.501296e-01  9.528293e-01  9.551813e-01  9.598384e-01  867.01567
-theta[38]     9.520999e-01  9.547367e-01  9.570432e-01  9.615587e-01  858.18416
-theta[39]     9.539608e-01  9.565243e-01  9.587748e-01  9.631802e-01  849.97095
-theta[40]     9.557057e-01  9.582027e-01  9.603980e-01  9.647147e-01  842.31291
-theta[41]     9.573442e-01  9.597895e-01  9.619307e-01  9.661425e-01  835.15511
-theta[42]     9.588909e-01  9.612820e-01  9.633765e-01  9.674758e-01  828.44955
-theta[43]     9.603432e-01  9.626826e-01  9.647380e-01  9.687282e-01  822.15416
-theta[44]     9.617145e-01  9.640085e-01  9.660136e-01  9.699068e-01  816.25199
-foi[1]        9.493382e-02  9.930864e-02  1.040284e-01  1.133077e-01  485.29271
-foi[2]        1.205945e-01  1.237489e-01  1.271239e-01  1.340918e-01  600.54242
-foi[3]        1.327908e-01  1.352862e-01  1.377670e-01  1.429162e-01 1194.19788
-foi[4]        1.365415e-01  1.388476e-01  1.411249e-01  1.458469e-01 2251.52512
-foi[5]        1.353209e-01  1.376682e-01  1.401465e-01  1.451426e-01 1583.92906
-foi[6]        1.314275e-01  1.340437e-01  1.365924e-01  1.419549e-01 1133.66784
-foi[7]        1.261545e-01  1.290030e-01  1.316564e-01  1.373061e-01  926.13765
-foi[8]        1.204644e-01  1.233534e-01  1.260450e-01  1.317667e-01  820.30736
-foi[9]        1.146669e-01  1.175642e-01  1.202433e-01  1.258347e-01  759.06111
-foi[10]       1.089523e-01  1.118756e-01  1.145593e-01  1.199934e-01  720.30496
-foi[11]       1.036100e-01  1.064462e-01  1.090251e-01  1.143145e-01  693.42788
-foi[12]       9.856236e-02  1.013043e-01  1.037881e-01  1.088718e-01  673.72901
-foi[13]       9.385844e-02  9.649208e-02  9.887559e-02  1.037499e-01  658.76794
-foi[14]       8.948170e-02  9.200120e-02  9.428066e-02  9.894094e-02  647.04734
-foi[15]       8.542130e-02  8.784062e-02  9.001096e-02  9.446982e-02  635.88545
-foi[16]       8.167058e-02  8.399171e-02  8.604021e-02  9.031788e-02  626.20412
-foi[17]       7.817726e-02  8.040981e-02  8.234471e-02  8.642031e-02  618.13868
-foi[18]       7.492084e-02  7.707954e-02  7.892222e-02  8.281599e-02  611.32140
-foi[19]       7.190967e-02  7.397631e-02  7.574284e-02  7.944961e-02  605.48913
-foi[20]       6.909771e-02  7.108596e-02  7.277579e-02  7.631106e-02  600.44762
-foi[21]       6.648259e-02  6.838974e-02  7.001250e-02  7.339799e-02  596.19274
-foi[22]       6.404252e-02  6.587652e-02  6.743360e-02  7.067473e-02  592.69955
-foi[23]       6.175985e-02  6.353021e-02  6.502618e-02  6.813323e-02  589.60785
-foi[24]       5.963092e-02  6.133236e-02  6.276914e-02  6.575716e-02  586.85460
-foi[25]       5.763559e-02  5.927038e-02  6.065433e-02  6.352839e-02  584.38916
-foi[26]       5.575364e-02  5.733544e-02  5.866997e-02  6.143723e-02  582.17046
-foi[27]       5.398985e-02  5.551445e-02  5.680414e-02  5.947364e-02  580.16478
-foi[28]       5.232973e-02  5.379998e-02  5.504834e-02  5.762773e-02  578.34421
-foi[29]       5.076482e-02  5.218485e-02  5.339135e-02  5.588252e-02  576.68544
-foi[30]       4.928398e-02  5.066266e-02  5.182748e-02  5.423683e-02  575.16888
-foi[31]       4.788547e-02  4.921824e-02  5.034821e-02  5.268058e-02  573.77789
-foi[32]       4.656032e-02  4.785076e-02  4.894892e-02  5.120750e-02  572.50057
-foi[33]       4.530277e-02  4.655477e-02  4.762397e-02  4.981418e-02  571.32254
-foi[34]       4.410929e-02  4.532518e-02  4.636482e-02  4.849031e-02  570.23313
-foi[35]       4.297776e-02  4.415790e-02  4.517005e-02  4.723199e-02  569.22329
-foi[36]       4.190145e-02  4.304869e-02  4.403437e-02  4.603467e-02  568.28510
-foi[37]       4.087484e-02  4.199096e-02  4.295259e-02  4.489527e-02  567.41784
-foi[38]       3.989677e-02  4.098208e-02  4.191675e-02  4.380825e-02  566.60982
-foi[39]       3.896275e-02  4.002043e-02  4.092900e-02  4.277186e-02  565.85469
-foi[40]       3.807030e-02  3.910058e-02  3.998563e-02  4.178128e-02  565.14776
-foi[41]       3.721606e-02  3.822224e-02  3.908576e-02  4.083377e-02  564.48484
-foi[42]       3.639861e-02  3.738082e-02  3.822547e-02  3.992848e-02  563.86224
-foi[43]       3.561614e-02  3.657502e-02  3.740134e-02  3.906101e-02  563.27661
-foi[44]       3.486556e-02  3.580169e-02  3.660927e-02  3.823104e-02  562.72499
-ai[1]         9.034864e-01  9.097894e-01  9.154051e-01  9.250076e-01  466.90178
-ai[2]         8.038278e-01  8.126541e-01  8.206360e-01  8.348564e-01  478.76280
-ai[3]         7.039035e-01  7.132877e-01  7.221055e-01  7.379888e-01  502.22893
-ai[4]         6.125761e-01  6.215000e-01  6.298671e-01  6.459952e-01  545.54875
-ai[5]         5.330935e-01  5.411023e-01  5.487140e-01  5.638491e-01  619.38991
-ai[6]         4.650550e-01  4.720308e-01  4.791045e-01  4.926726e-01  744.99260
-ai[7]         4.074362e-01  4.137181e-01  4.202189e-01  4.323264e-01  952.58052
-ai[8]         3.588557e-01  3.647475e-01  3.707846e-01  3.822284e-01 1290.75210
-ai[9]         3.177706e-01  3.233395e-01  3.288465e-01  3.399170e-01 1704.10872
-ai[10]        2.829811e-01  2.882266e-01  2.934739e-01  3.040633e-01 2026.65353
-ai[11]        2.534571e-01  2.584188e-01  2.635211e-01  2.737927e-01 2188.84468
-ai[12]        2.281751e-01  2.329133e-01  2.378545e-01  2.478173e-01 2155.42034
-ai[13]        2.063111e-01  2.110227e-01  2.158027e-01  2.254568e-01 2037.01908
-ai[14]        1.874120e-01  1.920006e-01  1.966598e-01  2.060893e-01 1890.12574
-ai[15]        1.711269e-01  1.755636e-01  1.800466e-01  1.891718e-01 1747.41056
-ai[16]        1.568539e-01  1.612009e-01  1.655046e-01  1.744727e-01 1619.23611
-ai[17]        1.442898e-01  1.485602e-01  1.526927e-01  1.613915e-01 1510.35858
-ai[18]        1.331825e-01  1.373186e-01  1.413482e-01  1.498026e-01 1419.40170
-ai[19]        1.233435e-01  1.272773e-01  1.312735e-01  1.395185e-01 1343.67922
-ai[20]        1.145352e-01  1.182700e-01  1.222822e-01  1.302741e-01 1280.19715
-ai[21]        1.066739e-01  1.103112e-01  1.142230e-01  1.220385e-01 1223.91535
-ai[22]        9.964982e-02  1.031546e-01  1.069557e-01  1.146038e-01 1174.97346
-ai[23]        9.327430e-02  9.674777e-02  1.004144e-01  1.079102e-01 1132.96469
-ai[24]        8.751339e-02  9.087677e-02  9.450658e-02  1.017659e-01 1096.61473
-ai[25]        8.229857e-02  8.558481e-02  8.909589e-02  9.616290e-02 1065.12036
-ai[26]        7.756641e-02  8.073417e-02  8.417022e-02  9.111523e-02 1037.36061
-ai[27]        7.322416e-02  7.631172e-02  7.964274e-02  8.644080e-02 1012.81946
-ai[28]        6.925075e-02  7.226056e-02  7.551150e-02  8.217769e-02  990.98938
-ai[29]        6.561114e-02  6.853381e-02  7.171552e-02  7.822430e-02  971.45920
-ai[30]        6.226195e-02  6.509790e-02  6.822122e-02  7.454991e-02  953.77843
-ai[31]        5.917187e-02  6.193120e-02  6.500938e-02  7.115553e-02  937.79534
-ai[32]        5.631903e-02  5.900827e-02  6.200289e-02  6.799628e-02  923.32609
-ai[33]        5.367036e-02  5.628157e-02  5.926007e-02  6.503682e-02  910.14891
-ai[34]        5.121626e-02  5.375778e-02  5.666129e-02  6.233426e-02  898.01000
-ai[35]        4.893876e-02  5.140960e-02  5.423899e-02  5.982193e-02  886.83695
-ai[36]        4.680371e-02  4.922845e-02  5.197570e-02  5.744505e-02  876.53840
-ai[37]        4.481868e-02  4.717067e-02  4.987043e-02  5.521360e-02  867.01567
-ai[38]        4.295676e-02  4.526331e-02  4.790010e-02  5.311329e-02  858.18416
-ai[39]        4.122518e-02  4.347568e-02  4.603923e-02  5.112266e-02  849.97095
-ai[40]        3.960202e-02  4.179725e-02  4.429434e-02  4.928493e-02  842.31291
-ai[41]        3.806932e-02  4.021055e-02  4.265582e-02  4.755332e-02  835.15511
-ai[42]        3.662355e-02  3.871799e-02  4.110911e-02  4.589313e-02  828.44955
-ai[43]        3.526205e-02  3.731743e-02  3.965680e-02  4.434416e-02  822.15416
-ai[44]        3.398638e-02  3.599152e-02  3.828550e-02  4.286187e-02  816.25199
-sigma_alpha1  2.484471e+00  9.955699e+00  4.402781e+01  5.272951e+02 4606.17165
-sigma_alpha2  3.151230e+00  1.105732e+01  4.966644e+01  6.266993e+02 2878.31898
-loglike[1]   -9.203432e+01 -9.111874e+01 -9.024170e+01 -8.891815e+01  524.63038
-loglike[2]   -7.448054e+01 -7.430891e+01 -7.419895e+01 -7.415473e+01  793.70477
-loglike[3]   -8.842965e+01 -8.775002e+01 -8.716572e+01 -8.625128e+01  470.39141
-loglike[4]   -1.187403e+02 -1.181595e+02 -1.176684e+02 -1.168705e+02  502.21055
-loglike[5]   -1.503577e+02 -1.501524e+02 -1.500094e+02 -1.498802e+02  504.09315
-loglike[6]   -1.348061e+02 -1.347573e+02 -1.347364e+02 -1.347301e+02 1947.77662
-loglike[7]   -1.135392e+02 -1.133661e+02 -1.132159e+02 -1.130133e+02  817.64277
-loglike[8]   -9.308960e+01 -9.297729e+01 -9.288898e+01 -9.277560e+01 1617.61098
-loglike[9]   -1.045930e+02 -1.042749e+02 -1.039757e+02 -1.034704e+02 1805.27067
-loglike[10]  -9.971060e+01 -9.959994e+01 -9.951179e+01 -9.940076e+01 1824.84592
-loglike[11]  -8.329687e+01 -8.325488e+01 -8.323294e+01 -8.322568e+01 2332.91649
-loglike[12]  -8.444680e+01 -8.414761e+01 -8.387954e+01 -8.339450e+01 2166.74542
-loglike[13]  -9.344322e+01 -9.338530e+01 -9.335247e+01 -9.333877e+01 2093.80020
-loglike[14]  -6.990647e+01 -6.966651e+01 -6.944858e+01 -6.908420e+01 1875.74235
-loglike[15]  -3.466237e+01 -3.458848e+01 -3.452447e+01 -3.442545e+01 1792.30302
-loglike[16]  -2.505492e+01 -2.504061e+01 -2.503359e+01 -2.503150e+01 1513.86288
-loglike[17]  -2.713013e+01 -2.699445e+01 -2.686257e+01 -2.663477e+01 1494.63305
-loglike[18]  -3.008034e+01 -3.004652e+01 -3.002252e+01 -3.000744e+01 1330.85802
-loglike[19]  -4.208885e+01 -4.207227e+01 -4.206587e+01 -4.206411e+01 1616.10792
-loglike[20]  -3.174237e+01 -3.166415e+01 -3.159362e+01 -3.149178e+01 1332.42405
-loglike[21]  -2.633229e+01 -2.628498e+01 -2.625130e+01 -2.621673e+01 1169.36786
-loglike[22]  -4.802119e+01 -4.776118e+01 -4.750279e+01 -4.705115e+01 1197.92872
-loglike[23]  -2.246802e+01 -2.235767e+01 -2.226232e+01 -2.210264e+01 1114.75807
-loglike[24]  -2.199726e+01 -2.191620e+01 -2.185075e+01 -2.175100e+01 1071.55146
-loglike[25]  -1.807076e+01 -1.788534e+01 -1.771909e+01 -1.741290e+01 1057.25637
-loglike[26]  -2.471214e+01 -2.469042e+01 -2.468107e+01 -2.467825e+01  879.84952
-loglike[27]  -2.707337e+01 -2.701326e+01 -2.696410e+01 -2.690938e+01 1088.61283
-loglike[28]  -1.598694e+01 -1.591022e+01 -1.584719e+01 -1.574741e+01  971.36706
-loglike[29]  -2.661032e+01 -2.648410e+01 -2.636399e+01 -2.616859e+01 1003.05791
-loglike[30]  -1.716054e+01 -1.709230e+01 -1.702865e+01 -1.693266e+01  993.38636
-loglike[31]  -2.253593e+01 -2.234906e+01 -2.215741e+01 -2.182184e+01  955.90929
-loglike[32]  -1.123998e+01 -1.122875e+01 -1.122354e+01 -1.122201e+01 1235.69825
-loglike[33]  -7.791052e+00 -7.784104e+00 -7.781206e+00 -7.780493e+00  811.49032
-loglike[34]  -8.016239e+00 -8.001851e+00 -7.994416e+00 -7.991288e+00  807.60006
-loglike[35]  -1.387511e+01 -1.377174e+01 -1.366497e+01 -1.348623e+01  908.76383
-loglike[36]  -4.931859e+00 -4.879098e+00 -4.835367e+00 -4.757946e+00  866.70346
-loglike[37]  -7.907120e+00 -7.896362e+00 -7.890474e+00 -7.888669e+00 1094.91279
-loglike[38]  -1.421479e+01 -1.409486e+01 -1.397071e+01 -1.376062e+01  878.65817
-loglike[39]  -7.556185e+00 -7.515681e+00 -7.476239e+00 -7.416376e+00  884.54872
-loglike[40]  -4.294853e+00 -4.285060e+00 -4.279668e+00 -4.277110e+00  765.14595
-loglike[41]  -1.089808e+00 -1.026033e+00 -9.703223e-01 -8.610982e-01  834.90560
-loglike[42]  -4.090595e+00 -4.080693e+00 -4.073080e+00 -4.068132e+00  937.93106
-loglike[43]  -3.991126e+00 -3.972863e+00 -3.955855e+00 -3.932208e+00  867.83368
-loglike[44]  -7.026777e-01 -6.597933e-01 -6.223923e-01 -5.499959e-01  816.03490
-lp__         -1.954842e+03 -1.952458e+03 -1.950503e+03 -1.947407e+03  209.63985
-                 Rhat
-alpha1       1.008294
-alpha2       1.009096
-tau_alpha1   1.065947
-tau_alpha2   1.088170
-mu_alpha1    1.004789
-mu_alpha2    1.002442
-theta[1]     1.009002
-theta[2]     1.008929
-theta[3]     1.008624
-theta[4]     1.008055
-theta[5]     1.007214
-theta[6]     1.006166
-theta[7]     1.005055
-theta[8]     1.004056
-theta[9]     1.003299
-theta[10]    1.002824
-theta[11]    1.002599
-theta[12]    1.002559
-theta[13]    1.002640
-theta[14]    1.002793
-theta[15]    1.002982
-theta[16]    1.003186
-theta[17]    1.003391
-theta[18]    1.003591
-theta[19]    1.003781
-theta[20]    1.003959
-theta[21]    1.004125
-theta[22]    1.004279
-theta[23]    1.004422
-theta[24]    1.004554
-theta[25]    1.004677
-theta[26]    1.004790
-theta[27]    1.004896
-theta[28]    1.004994
-theta[29]    1.005085
-theta[30]    1.005170
-theta[31]    1.005250
-theta[32]    1.005325
-theta[33]    1.005395
-theta[34]    1.005460
-theta[35]    1.005522
-theta[36]    1.005580
-theta[37]    1.005635
-theta[38]    1.005687
-theta[39]    1.005737
-theta[40]    1.005784
-theta[41]    1.005828
-theta[42]    1.005870
-theta[43]    1.005910
-theta[44]    1.005949
-foi[1]       1.008862
-foi[2]       1.007559
-foi[3]       1.004616
-foi[4]       1.002802
-foi[5]       1.003347
-foi[6]       1.004377
-foi[7]       1.005202
-foi[8]       1.005796
-foi[9]       1.006226
-foi[10]      1.006546
-foi[11]      1.006791
-foi[12]      1.006983
-foi[13]      1.007137
-foi[14]      1.007263
-foi[15]      1.007368
-foi[16]      1.007456
-foi[17]      1.007531
-foi[18]      1.007595
-foi[19]      1.007651
-foi[20]      1.007700
-foi[21]      1.007743
-foi[22]      1.007781
-foi[23]      1.007815
-foi[24]      1.007846
-foi[25]      1.007873
-foi[26]      1.007898
-foi[27]      1.007920
-foi[28]      1.007941
-foi[29]      1.007959
-foi[30]      1.007977
-foi[31]      1.007992
-foi[32]      1.008007
-foi[33]      1.008020
-foi[34]      1.008033
-foi[35]      1.008044
-foi[36]      1.008055
-foi[37]      1.008065
-foi[38]      1.008074
-foi[39]      1.008083
-foi[40]      1.008091
-foi[41]      1.008099
-foi[42]      1.008106
-foi[43]      1.008113
-foi[44]      1.008120
-ai[1]        1.009002
-ai[2]        1.008929
-ai[3]        1.008624
-ai[4]        1.008055
-ai[5]        1.007214
-ai[6]        1.006166
-ai[7]        1.005055
-ai[8]        1.004056
-ai[9]        1.003299
-ai[10]       1.002824
-ai[11]       1.002599
-ai[12]       1.002559
-ai[13]       1.002640
-ai[14]       1.002793
-ai[15]       1.002982
-ai[16]       1.003186
-ai[17]       1.003391
-ai[18]       1.003591
-ai[19]       1.003781
-ai[20]       1.003959
-ai[21]       1.004125
-ai[22]       1.004279
-ai[23]       1.004422
-ai[24]       1.004554
-ai[25]       1.004677
-ai[26]       1.004790
-ai[27]       1.004896
-ai[28]       1.004994
-ai[29]       1.005085
-ai[30]       1.005170
-ai[31]       1.005250
-ai[32]       1.005325
-ai[33]       1.005395
-ai[34]       1.005460
-ai[35]       1.005522
-ai[36]       1.005580
-ai[37]       1.005635
-ai[38]       1.005687
-ai[39]       1.005737
-ai[40]       1.005784
-ai[41]       1.005828
-ai[42]       1.005870
-ai[43]       1.005910
-ai[44]       1.005949
-sigma_alpha1 1.000909
-sigma_alpha2 1.001566
-loglike[1]   1.009229
-loglike[2]   1.008611
-loglike[3]   1.008403
-loglike[4]   1.007832
-loglike[5]   1.006434
-loglike[6]   1.002044
-loglike[7]   1.005033
-loglike[8]   1.003624
-loglike[9]   1.003210
-loglike[10]  1.002787
-loglike[11]  1.002097
-loglike[12]  1.002601
-loglike[13]  1.001681
-loglike[14]  1.002924
-loglike[15]  1.002603
-loglike[16]  1.003614
-loglike[17]  1.003550
-loglike[18]  1.004242
-loglike[19]  1.002672
-loglike[20]  1.003351
-loglike[21]  1.004751
-loglike[22]  1.003973
-loglike[23]  1.004701
-loglike[24]  1.004949
-loglike[25]  1.004813
-loglike[26]  1.005350
-loglike[27]  1.003862
-loglike[28]  1.005341
-loglike[29]  1.004602
-loglike[30]  1.004571
-loglike[31]  1.004961
-loglike[32]  1.002724
-loglike[33]  1.005483
-loglike[34]  1.006157
-loglike[35]  1.005175
-loglike[36]  1.005760
-loglike[37]  1.003420
-loglike[38]  1.005363
-loglike[39]  1.005210
-loglike[40]  1.006417
-loglike[41]  1.005834
-loglike[42]  1.004510
-loglike[43]  1.005244
-loglike[44]  1.005954
-lp__         1.020842</code></pre>
+<pre><code>                      mean     se_mean           sd          2.5%           25%
+alpha1           1.6421094  0.00991942 4.869104e-02  1.547041e+00  1.613937e+00
+alpha2          -2.9634804  0.01626130 1.099762e-01 -3.200702e+00 -3.026924e+00
+tau_alpha1       0.7823449  0.41070495 2.198264e+00  5.327296e-06  1.491533e-04
+tau_alpha2      10.7230692 11.72896790 2.156223e+01  8.080966e-07  1.440420e-03
+mu_alpha1      -20.3432039 26.87438339 5.081815e+01 -1.029744e+02 -6.646458e+01
+mu_alpha2       -3.7089236  1.92508107 3.448179e+01 -8.127122e+01 -4.871576e+00
+sigma_alpha1   134.8650894 32.32936542 2.018286e+03  4.080959e-01  1.901529e+00
+sigma_alpha2   103.9587308 34.81224127 1.770166e+03  1.175367e-01  5.275538e-01
+lp__         -1951.6606910  0.44496548 3.032787e+00 -1.958650e+03 -1.953556e+03
+                       50%           75%        97.5%       n_eff     Rhat
+alpha1        1.629865e+00     1.6736811     1.750847   24.094928 1.085342
+alpha2       -2.942054e+00    -2.9085278    -2.736908   45.739012 1.060756
+tau_alpha1    4.005699e-03     0.2765632     6.004482   28.648362 1.100753
+tau_alpha2    1.047586e-01     3.5930764    72.385772    3.379619 3.709900
+mu_alpha1     7.546325e-01     2.7518199    75.815749    3.575697 1.584188
+mu_alpha2    -2.896036e+00    -0.9952554    81.509503  320.834914 1.006047
+sigma_alpha1  1.580014e+01    81.8810831   433.258006 3897.366607 1.001056
+sigma_alpha2  3.089624e+00    26.3484713  1112.420465 2585.615379 1.001227
+lp__         -1.950725e+03 -1950.0767013 -1946.594753   46.454857 1.099769</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>alpha1 <span class="ot">&lt;-</span> out3[<span class="st">"alpha1"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>alpha2 <span class="ot">&lt;-</span> out3[<span class="st">"alpha2"</span>,<span class="fu">c</span>(<span class="st">"mean"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
