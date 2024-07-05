@@ -441,13 +441,12 @@ age1<-as.numeric(as.vector(mix1$V2))
 pos <- as.numeric(as.vector(classify$V6))
 
 dta <- data.frame(age1,Zi,pos)
-dta
+
+head(dta)
 
 page_gr <- dta %>% 
   group_by(age1) %>% 
   summarise( sp = sum(pos == 1)/(sum(pos == 1)+sum(pos == 0)))
-
-page_gr
 
 mixdta <- list(
   age1 = as.numeric(unique(age1)),
@@ -455,7 +454,7 @@ mixdta <- list(
   Nage = as.numeric(length(unique(age1))),
   agegr = as.integer(age1),
   Nsub = as.numeric(length(age1)))
-mixdta
+lapply(mixdta, head)
 ```
 
 ```{r}
@@ -531,9 +530,9 @@ fit55 <- stan(
   iter = 5000
 )
 
-summary(fit55)
+
 traceplot(fit55, pars = c("mu1_y", "mu2_y","tau1_mu","tau2_mu","delta"), inc_warmup = TRUE, nrow = 1)
-out55 <- print(summary(fit55)$summary)
+out55 <- summary(fit55)$summary
 
 all_parms <- rstan::extract(fit55)
 
