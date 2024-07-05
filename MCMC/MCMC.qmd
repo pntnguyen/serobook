@@ -1,16 +1,20 @@
 ---
 title: "Chap 10 Gibbs sampling"
-format: html
+format: 
+  html:
+    page-layout: full
+    embed-resources: true
 editor: visual
+echo: true
 ---
 
 ```{r}
 library(rstan)
+library(tidyverse)
 ```
 
-
-
 rubella data
+
 ```{r}
 rrr<-list(
   age=c(1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,
@@ -40,9 +44,9 @@ ni=c(407,292,332,368,421,330,294,258,312,304,282,321,313,366,116,121,148,
      Nage=44)
 ```
 
+# 10.3.1 Nonlinear Hierarchical Model
 
-## 10.3.1 Farrington model with 3 parameters
-
+## Farrington model with 3 parameters
 
 ```{r}
 mcmc <- "
@@ -105,6 +109,7 @@ model {
 ```
 
 Run sampling
+
 ```{r}
 fit1 <- stan(
   model_code =  mcmc,  
@@ -116,6 +121,7 @@ fit1 <- stan(
 ```
 
 Posterior
+
 ```{r}
 traceplot(fit1, pars = c("alpha1", "alpha2","alpha3"), inc_warmup = TRUE, nrow = 1)
 ```
@@ -137,7 +143,6 @@ for (i in 1:44){
   theta$foi[i] = (alpha1*mmm2$age[i]-alpha3)*exp(-alpha2*mmm2$age[i])+alpha3
 }
 ```
-
 
 plot
 
@@ -242,8 +247,7 @@ lines(rrr$age,theta$sp,lty=1,lwd=2)
 lines(rrr$age,theta$foi,lty=1,lwd=2)
 ```
 
-
-## 10.3.3 Log - logistic model
+# 10.3.3 Log - logistic model
 
 ```{r}
 log_logistic <-"
@@ -292,7 +296,6 @@ model {
 "
 ```
 
-
 ```{r}
 fit3 <- stan(
   model_code = log_logistic,  
@@ -306,7 +309,6 @@ fit3 <- stan(
 ```{r}
 traceplot(fit3, pars = c("alpha1", "alpha2"), inc_warmup = TRUE, nrow = 1)
 ```
-
 
 ```{r}
 out3 <- print(summary(fit3)$summary)
@@ -330,4 +332,219 @@ plot(rrr$age,rrr$posi/rrr$ni,xlim=c(0,46),cex=0.01*rrr$ni,xlab="age",ylab="propo
 lines(rrr$age,theta$sp,lty=1,lwd=2)
 lines(rrr$age,theta$foi,lty=1,lwd=2)
 ```
+
+# 10.4.1 Hierarchical Beta/Binomial Model
+
+Model
+
+```{r}
+beta <- "
+data {
+  int<lower=1> Nage;           // Number of age groups
+  vector[Nage] age;            // Age vector
+  array[Nage] int<lower=0> posi;     // Number of positive cases
+  array[Nage] int<lower=0> ni;       // Number of trials
+}
+
+parameters {
+  vector<lower=0>[Nage] alpha;
+  vector<lower=0>[Nage] beta;
+  ordered[Nage] pi_unconstrained;
+}
+
+transformed parameters {
+  vector[Nage] pi = 0.96/(1+exp(-pi_unconstrained)); // positive ordered since pi_unconstrained is ordered, and constrained between [0,1]
+}
+
+model {
+  
+  for( i in 1:Nage){
+  alpha[i] ~ normal(0,sqrt(1/0.001));
+  beta[i] ~ normal(0,sqrt(1/0.00001));
+  }
+  
+  pi[1] ~ beta(alpha[1],beta[1]);
+  
+  
+  for(k in 2:(Nage-1)){
+  
+  pi[k] ~ beta(alpha[k],beta[k]);
+
+  }
+  pi[Nage] ~ beta(alpha[Nage],beta[Nage]);
+  
+  
+  target += sum(-pi_unconstrained)-2*sum(log(1+exp(pi_unconstrained))); // Jacobian adjustment for parameter transformation
+  
+  for( i in 1:Nage){
+  posi[i] ~ binomial(ni[i], pi[i]);
+  }
+}
+
+generated quantities {
+  vector[Nage] foi;
+  
+  
+  foi[1]<- (pi[1]/(1-pi[1]))/1.5;
+  
+  for(k in 2:(Nage-1)){
+  
+  foi[k]<- (pi[k]-pi[k-1])/(1-pi[k]);
+  
+  }
+  
+  foi[Nage]<-(pi[Nage]-pi[Nage-1])/(1-pi[Nage]);
+
+}
+
+"
+```
+
+```{r}
+fit4 <- stan(
+  model_code = beta,  
+  data = rrr,    
+  chains = 4,             
+  warmup = 1500,          
+  iter = 5000
+)
+```
+
+```{r}
+all_parms <- rstan::extract(fit4)
+pi_v <- all_parms$pi
+outpi <- colMeans(pi_v)
+foi_v <- all_parms$foi
+outfoi <- colMeans(foi_v)
+```
+
+```{r}
+plot(rrr$age,rrr$posi/rrr$ni,xlim=c(0,46),cex=0.01*rrr$ni,xlab="age",ylab="proportion of seropositive", ylim=c(0,1),lwd=2)
+lines(rrr$age,outpi,type="s",lty=1,lwd=2,)
+lines(rrr$age,outfoi,lty=1,lwd=2)
+```
+
+
+
+# 11.5 Modeling the Force of Infection Directly from Antibody Titers Using Hierarchical Mixture Models
+
+Data
+
+```{r,echo=FALSE}
+mix1 <-read.table("D:/OUCRU/serobook/code in the book/Chapter11/mix1.txt", header=FALSE, 
+                 na.strings="NA", dec=",",  strip.white=TRUE)
+classify <-read.table("D:/OUCRU/serobook/code in the book/Chapter11/clasify.txt",header=FALSE,
+                     na.strings="NA", dec=",",  strip.white=TRUE)
+
+Zi<- as.numeric(as.vector(mix1$V4))
+age1<-as.numeric(as.vector(mix1$V2))
+pos <- as.numeric(as.vector(classify$V6))
+
+dta <- data.frame(age1,Zi,pos)
+dta
+
+page_gr <- dta %>% 
+  group_by(age1) %>% 
+  summarise( sp = sum(pos == 1)/(sum(pos == 1)+sum(pos == 0)))
+
+page_gr
+
+mixdta <- list(
+  age1 = as.numeric(unique(age1)),
+  Zi = as.numeric(Zi),
+  Nage = as.numeric(length(unique(age1))),
+  agegr = as.integer(age1),
+  Nsub = as.numeric(length(age1)))
+mixdta
+```
+
+```{r}
+mixture <- "
+
+ data {
+   int<lower=0> Nsub;  // total sample size
+   int<lower=0> Nage;  // number of age groups
+   vector[Nsub] Zi;    // log antibody levels
+   int<lower=0> agegr[Nsub];  // age group for each subject (0-indexed)
+   vector[Nage] age1;  // midpoint of each age group
+ }
+
+ parameters {
+   real<lower=0> delta;
+   real<lower=0> mu1_y;
+   real<lower=0> tau1_mu;
+   real<lower=0> tau2_mu;
+   real gamma0;
+   real<lower=0> gamma1;
+   real<lower=0> tau_gamma0;
+   real<lower=0> tau_gamma1;
+ }
+
+ transformed parameters {
+   real mu2_y = mu1_y + delta;
+   vector[Nage] theta;
+   vector[Nage] p_i;
+   vector[Nage] foi;
+
+   for (i in 1:Nage) {
+     theta[i] = gamma0 + gamma1 * log(age1[i]);
+     p_i[i] = 1 - exp(theta[i]) / (1 + exp(theta[i]));
+     foi[i] = exp(gamma0) * gamma1 * pow(age1[i], gamma1-1) /
+              (1 + exp(gamma0) * pow(age1[i], gamma1));
+   }
+ }
+
+ model {
+   // Priors
+   mu1_y ~ uniform(0, mu2_y);
+   delta ~ uniform(0, 7);
+   tau1_mu ~ gamma(0.01, 0.01);
+   tau2_mu ~ gamma(0.01, 0.01);
+   gamma0 ~ normal(0, 1/sqrt(tau_gamma0));
+   gamma1 ~ normal(0, 1/sqrt(tau_gamma1)) T[0,];
+   tau_gamma0 ~ gamma(0.01, 0.01);
+   tau_gamma1 ~ gamma(0.01, 0.01);
+  
+   // Likelihood
+   for (i in 1:Nsub) {
+     real mu = mu1_y * p_i[agegr[i] + 1] + mu2_y * (1 - p_i[agegr[i] + 1]);
+     real tau = tau1_mu * p_i[agegr[i] + 1] + tau2_mu * (1 - p_i[agegr[i] + 1]);
+     Zi[i] ~ normal(mu, 1/sqrt(tau));
+   }
+ }
+
+ generated quantities {
+   array[Nsub] int<lower=0, upper=1> Yi;
+   for (i in 1:Nsub) {
+     Yi[i] = bernoulli_rng(p_i[agegr[i] + 1]);
+   }
+ }
+"
+```
+
+```{r}
+fit55 <- stan(
+  model_code = mixture,
+  data = mixdta,
+  chains = 4,
+  warmup = 1500,
+  iter = 5000
+)
+
+summary(fit55)
+traceplot(fit55, pars = c("mu1_y", "mu2_y","tau1_mu","tau2_mu","delta"), inc_warmup = TRUE, nrow = 1)
+out55 <- print(summary(fit55)$summary)
+
+all_parms <- rstan::extract(fit55)
+
+pi <- all_parms$p_i
+outpi <- colMeans(pi)
+foi <- all_parms$foi
+outfoi <- colMeans(foi)
+plot(unique(age1),page_gr$sp,xlim=c(0,46),cex=0.01*rrr$ni,xlab="age",ylab="proportion of seropositive",
+     ylim=c(0,1),lwd=2)
+lines(unique(age1),1 - outpi,type="l",lty=1,lwd=2,)
+lines(unique(age1),outfoi,type="l",lty=1,lwd=2,)
+```
+
 
